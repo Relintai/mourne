@@ -1,0 +1,27 @@
+type : text
+quality: 100%
+file: ironmine1.png
+padding: 0
+vert alignment: middle
+hor alignment: center
+hor offset: -1
+vert offset: -5
+text: 
+font path: ./system/fonts/DejaVuSansCondensed-Bold.ttf
+font size: 5
+font color: ffffff
+shadow color: ffffff
+shadow_distance: 0
+------------------------image---------------------------
+overlay image: ./img/imggen/overlay/menu.png
+opacity: 1
+x transp: 1
+y transp: 1
+------------------------rank----------------------------
+text: 1
+font size: 8
+V align: bottom
+H align: left
+H offset: 0
+V offset: 0
+padding: 0

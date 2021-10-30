@@ -1,0 +1,16 @@
+*~
+4
+*.swp
+*.swo
+*.swn
+*.swl
+*.sw*
+#*#
+*#*
+.#*
+log-*.php
+log_*.txt
+log.txt
+debug_*.sql
+map*.sql
+ai_village*.sql

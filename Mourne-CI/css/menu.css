@@ -1,0 +1,78 @@
+.menu_base
+{
+   /*height:33px;*/
+    height:28px;
+    width:100%;
+    //margin-left:-8px;
+    padding-left:0px;
+/*    padding-top:12px; */
+    padding-top:8px;
+    background-color:#141412;
+}
+
+.menu_news,.menu_hero,.menu_village,.menu_sel_village,.menu_forum,.menu_settings,
+.menu_logout,.menu_mail,.menu_alliance,.menu_alliance_menu
+{
+    float:left;
+    border-width:1px;
+    border-right-style:solid;
+    border-color:#363634;
+    padding-left:5px;
+    padding-right:5px;
+    text-align:center;
+}
+
+.menu_news
+{
+
+}
+
+.menu_sel_village
+{
+}
+
+.menu_village
+{
+
+}
+
+.menu_changelog
+{
+
+}
+
+.menu_logout
+{
+
+}
+
+.left
+{
+    float:left;
+}
+
+.right
+{
+    float:right;
+}
+
+/* weather */
+
+.weather
+{
+    float:left;
+    padding:0px 5px;
+    text-align:center;
+}
+
+/* weathers */
+
+.cold
+{
+    background-color:#001A3B;
+}
+
+.sunny
+{
+    background-color:#854D05;
+}

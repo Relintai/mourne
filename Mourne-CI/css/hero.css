@@ -1,0 +1,615 @@
+.rowf
+{
+    background-color:#191C16;
+}
+
+.rows
+{
+    background-color:#363634;
+}
+
+.vspace
+{
+    width:20px;
+    height:20px;
+}
+
+.hero_text
+{
+    width:950px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    text-align:center;
+}
+
+.hero_container
+{
+    width:100%;
+    margin:20px 0px;
+}
+
+.hero_message
+{
+    width:600px;
+    margin:8px auto;
+    padding:2px 0px;
+    background-color:#191C16;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    text-align:center;
+    font-size:12px;
+}
+
+/* Hero Menu */
+
+.hero_base_menu_container
+{
+    width:100%;
+    height:30px;
+    background-color:#141412;
+}
+
+.hero_base_menu
+{
+    height:20px;
+    width:885px;
+    padding-top:5px;
+    margin:0px auto;
+}
+
+.hero_base_menuentry,.hero_base_menuentry_first
+{
+    float:left;
+    width:175px;
+    text-align:center;
+    border-color:#363634;
+    border-right-style:solid;
+    border-width:1px;
+}
+
+.hero_base_menuentry_first
+{
+    border-left-style:solid;
+}
+
+/* menu class colors */
+.warrior
+{
+    background-color:#470101;
+}
+
+.rogue
+{
+    background-color:#361F01;
+}
+
+.archer
+{
+    background-color:#030124;
+}
+
+/* Hero menu */
+
+.hero_menu_container
+{
+    width:100%;
+    height:30px;
+}
+
+.hero_menu
+{
+    height:20px;
+    width:920px;
+    padding-top:5px;
+    margin:0px auto;
+}
+
+.hero_menuentry
+{
+    float:left;
+    width:175px;
+    margin:0px 3px;
+    text-align:center;
+    border:1px solid #141412;
+    border-bottom:none;
+    border-radius:5px 5px 0px 0px;
+    background-color:#141412;
+}
+
+.hero_menuentry:hover
+{
+    background-color:#292929;
+}
+
+.hero_menu_underline
+{
+    height:1px;
+    width:100%;
+    background-color:#363634;
+}
+
+/* Hero Create */
+.hero_create_container
+{
+    width:100%;
+    margin-top:20px;
+}
+
+.hero_create_data
+{
+    width:850px;
+    margin:0px auto 0px auto;
+}
+
+.hero_create_header
+{
+    width:850px;
+    height:16px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    text-align:center;
+}
+
+.hero_create_row
+{
+    width:850px;
+    height:70px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.input_row
+{
+    width:650px;
+    height:18px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.input_name
+{
+    float:left;
+}
+
+.input_input
+{
+    float:right;
+    width:185px;
+    margin-top:-1px;
+    text-align:center;
+}
+
+.hero_create_select
+{
+    height:40px;
+    width:50px;
+    padding:26px 0px 5px 30px;
+    border-left-style:solid;
+    border-color:#363634;
+    border-width:1px;
+}
+
+.hero_create_class
+{
+    width:200px;
+    border-radius:5px;
+    text-align:center;
+}
+
+.hero_create_description
+{
+    width:750px;
+    height:47px;
+    padding-top:3px;
+    font-size:12px;
+}
+
+
+/* Hero select */
+
+.hero_row
+{
+    width:970px;
+    height:18px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.hero_row_sel
+{
+    float:left;
+    width:120px;
+    text-align:center;
+}
+
+/* Hero Delete */
+
+.hero_delete_data
+{
+    width:950px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    text-align:center;
+}
+
+.hero_delete
+{
+    width:590px;
+    height:30px;
+    margin:10px auto 10px auto;
+    padding:6px 0px 0px 380px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+/* Hero Stats */
+
+.stats_base
+{
+    width:970px;
+    height:100px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.info_base
+{
+    width:850px;
+    height:20px;
+    margin-bottom:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    background-color:#141412;
+    text-align:center;
+}
+
+.info_slider
+{
+    width:850px;
+    height:20px;
+    margin-bottom:3px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    background-color:#141412;
+    text-align:center;
+}
+
+.info_slider_health,.info_slider_mana,.info_slider_experience
+{
+    height:20px;
+    border-radius:5px 5px 5px 5px;
+}
+
+.info_slider_health
+{
+    background-color:#470101;
+}
+
+.info_slider_mana
+{
+    background-color:#020D47;
+}
+
+.info_slider_experience
+{
+    background-color:#01434A;
+}
+
+.info_slider_text
+{
+    margin-top:-19px;
+}
+
+.stats_stats
+{
+    width:970px;
+    height:184px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.stats_stats_row
+{
+    height:23px;
+    margin-bottom:3px;
+    padding-top:3px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.info_stat
+{
+    float:left;
+    width:200px;
+    padding-left:5px;
+}
+
+.info_stat_desc
+{
+    float:left;
+    width:660px;
+    text-align:center;
+}
+
+.info_stat_add
+{
+    float:left;
+    width:100px;
+}
+
+.info_stat_points
+{
+    padding-left:5px;
+}
+
+.stats_other
+{
+    width:970px;
+    height:200px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.stats_other_box
+{
+    width:430px;
+    margin:0px auto 2px auto;
+    padding:10px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.stats_other_row
+{
+    width:425px;
+    height:18px;
+    margin-bottom:3px;
+    padding-top:3px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.stats_other_name
+{
+    float:left;
+    width:200px;
+    padding-left:5px;
+}
+
+.stats_other_value
+{
+    float:right;
+    width:200px;
+    padding-right:5px;
+    text-align:right;
+}
+
+/* inventory base */
+
+.hero_inventory_container
+{
+    margin:0px auto;
+    width:995px;
+    height:510px;
+}
+
+/* inventory */
+
+.inventory_box
+{
+    width:490px;
+    height:493px;
+    margin:0px 5px 5px 0px;
+    padding:5px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;    
+}
+
+.inventory_entry
+{
+    float:left;
+    padding:1px;
+    border:1px solid #363634;
+    border-radius:4px 4px 4px 4px;
+}
+
+.inventory_entry:hover
+{
+    border-color:white;
+}
+
+.inventory_entry_selected
+{
+    border-color:#D40404;
+}
+
+/* Equipment */
+
+.equipment_box
+{
+    width:470px;
+    height:493px;
+    margin:0px 5px 5px 0px;
+    padding:5px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.equipment_entry
+{
+    margin:2px 2px 5px 2px;
+    padding:5px 5px 5px 5px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.equipment_entry:hover
+{
+    border-color:#706F6F;
+}
+
+.equipment_entry_selected
+{
+    background-color:#470101;
+    border-color:#910404;
+}
+
+.equipment_entry_head_box
+{
+    width:326px;
+    height:105px;
+    margin:5px;
+    padding:5px 5px 1px 5px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+}
+
+.eq_name_box,.eq_info_box,.eq_st_box
+{
+    width:200px;
+    margin:3px 0px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    text-align:center;
+}
+
+.eq_base_stat_box
+{
+    width:326px;
+    height:105px;
+    margin:5px 5px;
+    padding:5px 5px 1px 5px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    font-size:12px;
+}
+
+.eq_base_stat_stat
+{
+    width:155px;
+    height:14px;
+    margin:3px 0px;
+    padding:0px 3px;
+    border:1px solid #363634;
+    border-radius:3px 3px 3px 3px;
+}
+
+.eq_other_stat_box
+{
+    width:326px;
+    height:160px;
+    margin:5px 5px 25px 5px;
+    padding:5px 5px 1px 5px;
+    border:1px solid #363634;
+    border-radius:5px 5px 5px 5px;
+    font-size:12px;
+}
+
+.eq_other_stat_stat
+{
+    width:318px;
+    height:14px;
+    margin:3px 0px;
+    padding:0px 3px;
+    border:1px solid #363634;
+    border-radius:3px 3px 3px 3px;
+}
+
+.eq_bspc
+{
+    float:left;
+    width:50px;
+    height:10px;
+}
+
+/* equipment quality (for boxes with background) */
+
+.eq_quality_really_poor
+{
+    background-color:#8C8C8C;
+}
+
+.eq_quality_poor
+{
+    background-color:#F0EDED;
+}
+
+.eq_quality_good
+{
+    background-color:#124001;
+}
+
+.eq_quality_great
+{
+    background-color:#030645;
+}
+
+.eq_quality_epic
+{
+    background-color:#2E0345;
+}
+
+.eq_quality_legendary
+{
+    background-color:#664600;
+}
+
+.eq_quality_omg
+{
+    background-color:#630204;
+}
+
+/* equipment quality (for boxes with only border) */
+
+.iv_quality_really_poor
+{
+    border-color:#8C8C8C;
+}
+
+.iv_quality_poor
+{
+    border-color:#F0EDED;
+}
+
+.iv_quality_good
+{
+    border-color:#124001;
+}
+
+.iv_quality_great
+{
+    border-color:#030645;
+}
+
+.iv_quality_epic
+{
+    border-color:#2E0345;
+}
+
+.iv_quality_legendary
+{
+    border-color:#664600;
+}
+
+.iv_quality_omg
+{
+    border-color:#630204;
+}
