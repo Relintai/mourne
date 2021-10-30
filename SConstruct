@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2019-2021 Péter Magyar
+# Copyright (c) 2019-2020 Péter Magyar
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,8 @@ module_folders = [
     '../custom_modules',
 ]
 
+databases=True
+
 main_file = 'main.cpp'
 
 repository_index = 0
@@ -58,7 +60,7 @@ exports = {
     'javascript': [],
 }
 
-engine_repository = [ ['https://github.com/Relintai/rcpp_framework.git', 'git@github.com:Relintai/rcpp_framework.git'], 'engine', '' ]
+engine_repository = [ ['https://github.com/Relintai/rcpp_cms.git', 'git@github.com:Relintai/rcpp_cms.git'], 'engine', '' ]
 
 module_repositories = [
 ]
@@ -336,18 +338,13 @@ if len(sys.argv) > 1:
         if 'v' in arg:
             build_string += 'vsproj=yes'
 
+        if databases:
+            build_string += " databases=yes "
+
         build_string += 'folders="'
 
         for f in folders:
             build_string += '../' + f
-            build_string += ';'
-
-        build_string += '" '
-
-        build_string += 'module_folders="'
-
-        for f in module_folders:
-            build_string += f
             build_string += ';'
 
         build_string += '" '
