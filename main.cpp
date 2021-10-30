@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 	//user_manager->set_path("./users/");
 
 	Settings *settings = new Settings(true);
-	settings->parse_file("settings.json");
+	//settings->parse_file("settings.json");
 
 	FileCache *file_cache = new FileCache(true);
 	file_cache->wwwroot = "./www";
