@@ -1,4 +1,4 @@
-# CrystalCMS
+# Mourne
 
 An old village builder / hero manager web rpg that I originally wrote using Code Igniter 3 ported to [rcpp_framework](https://github.com/Relintai/rcpp_framework).
 
