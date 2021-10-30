@@ -4,7 +4,7 @@ An old village builder / hero manager web rpg that I originally wrote using Code
 
 The original code is under the `Mourne-CI` folder. I wrote this about 9 years ago. I only have the application code in the folder.
 I decided not to commit the framework code itself to minimize the chance of committing passwords, or stray temp files and such.
-This was my first bigger app, even though when I wrote this I did pay attention to make it secure (it's probably not that bad), however it's still
+This was my first bigger app, so even though when I wrote this I did pay attention to make it secure (it's probably not that bad), however it's still
 probably not a good idea to use it as it is.
 
 This is highly experimental stuff. It probably shouldn't be used by anyone who's sane.
