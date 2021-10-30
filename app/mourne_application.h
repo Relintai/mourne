@@ -48,7 +48,6 @@ public:
 	MourneApplication();
 	~MourneApplication();
 
-	static std::vector<std::string> menu_strings;
 	static std::string menu_head;
 	static std::string footer;
 };
