@@ -10,6 +10,11 @@
 #include "modules/paged_article/paged_article.h"
 #include "modules/paged_list/paged_list.h"
 
+#define ENSURE_LOGIN(request) \
+	if (!ensure_login(request)) { \
+		return;\
+	}
+
 class MourneApplication : public DWebApplication {
 public:
 	enum MenuEntries {
@@ -29,6 +34,8 @@ public:
 	};
 
 public:
+	static bool ensure_login(Request *request);
+
 	static void index(Object *instance, Request *request);
 
 	static void session_middleware_func(Object *instance, Request *request);

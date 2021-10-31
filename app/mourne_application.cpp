@@ -17,7 +17,20 @@
 #include "modules/users/user.h"
 #include "modules/users/user_controller.h"
 
+bool MourneApplication::ensure_login(Request *request) {
+	Ref<User> u = request->reference_data["user"];
+
+	if (!u.is_valid()) {
+		request->send_redirect("/user/login");
+		return false;
+	}
+
+	return true;
+}
+
 void MourneApplication::index(Object *instance, Request *request) {
+	ENSURE_LOGIN(request);
+
 	add_menu(request, MENUENTRY_NEWS);
 
 	/*
@@ -45,12 +58,6 @@ void MourneApplication::index(Object *instance, Request *request) {
 }
 
 void MourneApplication::session_middleware_func(Object *instance, Request *request) {
-	std::cout << "test: session_middleware_func called" << std::endl;
-
-	//if fail
-	//request->send(); in middleware
-
-	request->next_stage();
 }
 
 void MourneApplication::add_menu(Request *request, const MenuEntries index) {
