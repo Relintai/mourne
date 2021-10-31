@@ -26,7 +26,6 @@ void MourneUserController::render_login_request_default(Request *request, LoginR
 
 	b.div()->cls("login");
 	{
-
 		//todo href path helper
 		b.form()->method("POST")->href("/user/login");
 		{
@@ -46,6 +45,10 @@ void MourneUserController::render_login_request_default(Request *request, LoginR
 			b.cinput();
 		}
 		b.cform();
+
+		b.a()->href("/user/register");
+		b.w("Register");
+		b.ca();
 	}
 	b.cdiv();
 
