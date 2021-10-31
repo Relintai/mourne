@@ -114,6 +114,12 @@ void MourneUserController::render_register_request_default(Request *request, Reg
 	request->compile_and_send_body();
 }
 
+void MourneUserController::render_login_success(Request *request) {
+	request->body = "Login Success!<br>";
+
+	request->send_redirect("/");
+}
+
 void MourneUserController::render_already_logged_in_error(Request *request) {
 	request->body += "You are already logged in.";
 
