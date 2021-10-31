@@ -36,7 +36,6 @@ folders = [
 ]
 
 module_folders = [
-    '../modules',
     '../custom_modules',
 ]
 
