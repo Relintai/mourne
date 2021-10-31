@@ -10,9 +10,10 @@
 #include "modules/paged_article/paged_article.h"
 #include "modules/paged_list/paged_list.h"
 
-#define ENSURE_LOGIN(request) \
-	if (!ensure_login(request)) { \
-		return;\
+#define ENSURE_LOGIN(request)                  \
+	if (!is_logged_in(request)) {              \
+		request->send_redirect("/user/login"); \
+		return;                                \
 	}
 
 class MourneApplication : public DWebApplication {
@@ -34,7 +35,7 @@ public:
 	};
 
 public:
-	static bool ensure_login(Request *request);
+	static bool is_logged_in(Request *request);
 
 	static void index(Object *instance, Request *request);
 

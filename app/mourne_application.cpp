@@ -17,15 +17,10 @@
 #include "modules/users/user.h"
 #include "modules/users/user_controller.h"
 
-bool MourneApplication::ensure_login(Request *request) {
+bool MourneApplication::is_logged_in(Request *request) {
 	Ref<User> u = request->reference_data["user"];
 
-	if (!u.is_valid()) {
-		request->send_redirect("/user/login");
-		return false;
-	}
-
-	return true;
+	return u.is_valid();
 }
 
 void MourneApplication::index(Object *instance, Request *request) {
@@ -51,7 +46,6 @@ void MourneApplication::index(Object *instance, Request *request) {
 	<?php endif; ?>
 	*/
 
-
 	//dynamic_cast<ListPage *>(instance)->index(request);
 	request->body += "test";
 	request->compile_and_send_body();
@@ -67,7 +61,7 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 
 	HTMLTag *t;
 
-/*
+	/*
 	<?php if ($weather): ?>
 	<div class="menu_base <?=$weather['css']; ?>">
 	<?php else: ?>
@@ -193,7 +187,7 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 		b.div()->cls("nofloat");
 		b.cdiv();
 	}
-	
+
 	b.cdiv();
 	b.div()->cls("main");
 	b.write_tag();
@@ -212,7 +206,9 @@ void MourneApplication::village_page_func(Object *instance, Request *request) {
 }
 
 void MourneApplication::user_page_func(Object *instance, Request *request) {
-	add_menu(request, MENUENTRY_SETTINGS);
+	if (is_logged_in(request)) {
+		add_menu(request, MENUENTRY_SETTINGS);
+	}
 
 	UserController::get_singleton()->handle_request_default(request);
 }
