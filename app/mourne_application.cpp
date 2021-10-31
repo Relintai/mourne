@@ -18,6 +18,10 @@
 #include "modules/users/user_controller.h"
 
 bool MourneApplication::is_logged_in(Request *request) {
+	if (!request->session) {
+		return false;
+	}
+
 	Ref<User> u = request->reference_data["user"];
 
 	return u.is_valid();
