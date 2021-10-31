@@ -10,7 +10,7 @@ class Request;
 class FormValidator;
 
 class MourneUserController : public UserController {
-	RCPP_OBJECT(UserController, UserController);
+	RCPP_OBJECT(MourneUserController, UserController);
 public:
 	void render_login_request_default(Request *request, LoginRequestData *data);
 	void render_register_request_default(Request *request, RegisterRequestData *data);
