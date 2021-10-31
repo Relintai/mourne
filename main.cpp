@@ -22,7 +22,7 @@
 #include "backends/hash_hashlib/setup.h"
 
 #include "modules/users/user.h"
-#include "modules/users/user_controller.h"
+#include "app/mourne_user_controller.h"
 #include "modules/users/user_model.h"
 
 #include "core/database/database_manager.h"
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
 	::SessionManager *session_manager = new ::SessionManager();
 
 	//todo init these in the module automatically
-	UserController *user_controller = new UserController();
+	UserController *user_controller = new MourneUserController();
 	UserModel *user_model = new UserModel();
 	//user_manager->set_path("./users/");
 
