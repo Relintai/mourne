@@ -296,7 +296,7 @@ MourneApplication::MourneApplication() :
 	b.div()->cls("back")->f()->a()->href("/")->f()->w("<--- Back")->ca()->cdiv();
 	b.br();
 
-	_admin_panel->set_default_body_top(b.result);
+	_admin_panel->set_default_main_body_top(b.result);
 
 	compile_menu();
 }
