@@ -10,6 +10,8 @@
 #include "modules/paged_article/paged_article.h"
 #include "modules/paged_list/paged_list.h"
 
+class AdminPanel;
+
 #define ENSURE_LOGIN(request)                  \
 	if (!is_logged_in(request)) {              \
 		request->send_redirect("/user/login"); \
@@ -46,6 +48,8 @@ public:
 	static void village_page_func(Object *instance, Request *request);
 	static void user_page_func(Object *instance, Request *request);
 
+	static void admin_page_func(Object *instance, Request *request);
+
 	virtual void setup_routes();
 	virtual void setup_middleware();
 
@@ -56,6 +60,8 @@ public:
 
 	MourneApplication();
 	~MourneApplication();
+
+	AdminPanel *_admin_panel; 
 
 	static std::string menu_head;
 	static std::string footer;

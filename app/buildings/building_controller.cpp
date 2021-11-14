@@ -8,8 +8,103 @@
 #include "core/http/session_manager.h"
 
 #include "building_model.h"
+#include "building_model.h"
 
 void BuildingController::handle_request_default(Request *request) {
+}
+
+void BuildingController::admin_handle_request_main(Request *request) {
+	String seg = request->get_current_path_segment();
+
+	if (seg == "") {
+		admin_render_building_list(request);
+		return;
+	}
+
+	request->send_error(404);
+}
+String BuildingController::admin_get_section_name() {
+	return "Building Editor";
+}
+void BuildingController::admin_add_section_links(Vector<AdminSectionLinkInfo> *links) {
+	links->push_back(AdminSectionLinkInfo("Editor", ""));
+}
+bool BuildingController::admin_full_render() {
+	return false;
+}
+
+void BuildingController::admin_render_building_list(Request *request) {
+	Vector<Ref<Building> > buildings = BuildingModel::get_singleton()->get_all();
+
+	HTMLBuilder b;
+
+	b.div()->cls("back")->f()->a()->href(request->get_url_root_parent())->f()->w("<--- Back")->ca()->cdiv();
+	b.br();
+	b.h4()->f()->w("Building Editor")->ch4();
+	b.br();
+	b.div()->cls("top_menu")->f()->a()->href(request->get_url_root("new"))->f()->w("Create New")->ca()->cdiv();
+	b.br();
+
+	b.div()->cls("list_container");
+
+	for (int i = 0; i < buildings.size(); ++i) {
+		Ref<Building> building = buildings[i];
+
+		if (!building.is_valid()) {
+			continue;
+		}
+
+		b.div()->cls("row");
+		{
+			//b.a()->href(request->get_url_root("permission_editor/") + String::num(r->id));
+
+
+		}
+		b.cdiv();
+	}
+
+	b.cdiv();
+
+/*
+<div class="back">
+	<a href="<?=site_url($link_back); ?>"><--- Back</a>
+</div>
+<div class="top_menu">
+	<a href="<?=site_url($link_new); ?>">Create New</a>
+</div>
+<div class="list_container">
+<?php $i = 1; ?>
+<?php foreach ($buildings as $row): ?>
+	<?php $link = $link_edit . $row['id']; ?>
+	<?php if (!($i % 2)): ?>
+		<div class="row">
+	<?php else: ?>
+		<div class="row second">
+	<?php endif; ?>
+		<div class="attr_box">
+			[<?=$row['id']; ?>]
+		</div>
+		<div class="attr_box">
+			[Rank: <?=$row['rank']; ?>]
+		</div>
+		<div class="attr_box">
+			[N Rank: <?=$row['next_rank']; ?>] 
+		</div>
+		<div class="name">
+			<?=$row['name']; ?>
+		</div>
+		<div class="actionbox">
+			<a href="<?=site_url($link); ?>">Edit</a>
+		</div>
+	</div>
+	<?php $i++; ?>
+<?php endforeach; ?>
+</div>
+*/
+
+	
+
+	request->body += b.result;
 }
 
 void BuildingController::migrate() {
@@ -24,7 +119,7 @@ BuildingController *BuildingController::get_singleton() {
 }
 
 BuildingController::BuildingController() :
-		Object() {
+		AdminController() {
 
 	if (_self) {
 		printf("BuildingController::BuildingController(): Error! self is not null!/n");

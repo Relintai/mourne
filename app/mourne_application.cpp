@@ -16,6 +16,7 @@
 
 #include "modules/users/user.h"
 #include "modules/users/user_controller.h"
+#include "modules/admin_panel/admin_panel.h"
 
 #include "buildings/building_initializer.h"
 #include "village/village_initializer.h"
@@ -220,12 +221,17 @@ void MourneApplication::user_page_func(Object *instance, Request *request) {
 	UserController::get_singleton()->handle_request_default(request);
 }
 
+void MourneApplication::admin_page_func(Object *instance, Request *request) {
+	AdminPanel::get_singleton()->handle_request_main(request);
+}
+
 void MourneApplication::setup_routes() {
 	DWebApplication::setup_routes();
 
 	index_func = HandlerInstance(index);
 	main_route_map["village"] = HandlerInstance(village_page_func);
 	main_route_map["user"] = HandlerInstance(user_page_func);
+	main_route_map["admin"] = HandlerInstance(admin_page_func);
 }
 
 void MourneApplication::setup_middleware() {
@@ -276,10 +282,15 @@ MourneApplication::MourneApplication() :
 	BuildingInitializer::allocate_all();
 	VillageInitializer::allocate_all();
 
+	_admin_panel = new AdminPanel();
+	_admin_panel->register_admin_controller("buildings", BuildingController::get_singleton());
+	
+
 	compile_menu();
 }
 
 MourneApplication::~MourneApplication() {
+	delete _admin_panel;
 
 	VillageInitializer::free_all();
 	BuildingInitializer::free_all();
