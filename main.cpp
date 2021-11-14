@@ -21,9 +21,12 @@
 //Backends
 #include "backends/hash_hashlib/setup.h"
 
-#include "modules/users/user.h"
 #include "app/mourne_user_controller.h"
+#include "modules/users/user.h"
 #include "modules/users/user_model.h"
+
+#include "core/os/platform.h"
+#include "platform/platform_initializer.h"
 
 #include "core/database/database_manager.h"
 
@@ -40,18 +43,11 @@ void create_databases() {
 	db->connect("database.sqlite");
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv, char **envp) {
+	PlatformInitializer::allocate_all();
+	PlatformInitializer::arg_setup(argc, argv, envp);
+
 	initialize_backends();
-
-	bool migrate = false;
-
-	for (int i = 1; i < argc; ++i) {
-		const char *a = argv[i];
-
-		if (a[0] == 'm') {
-			migrate = true;
-		}
-	}
 
 	::SessionManager *session_manager = new ::SessionManager();
 
@@ -73,17 +69,19 @@ int main(int argc, char **argv) {
 
 	DWebApplication *app = new MAIN_CLASS();
 
-	session_manager->load_sessions();
-
 	app->load_settings();
 	app->setup_routes();
 	app->setup_middleware();
 
-	app->add_listener("127.0.0.1", 8080);
-	LOG_INFO << "Server running on 127.0.0.1:8080";
+	bool migrate = Platform::get_singleton()->arg_parser.has_arg("m");
 
 	if (!migrate) {
 		printf("Initialized!\n");
+		session_manager->load_sessions();
+
+		app->add_listener("127.0.0.1", 8080);
+		LOG_INFO << "Server running on 127.0.0.1:8080";
+
 		app->run();
 	} else {
 		printf("Running migrations.\n");
@@ -101,6 +99,8 @@ int main(int argc, char **argv) {
 	delete user_controller;
 	delete user_model;
 	delete session_manager;
+
+	PlatformInitializer::free_all();
 
 	return 0;
 }
