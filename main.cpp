@@ -73,7 +73,7 @@ int main(int argc, char **argv, char **envp) {
 	app->setup_routes();
 	app->setup_middleware();
 
-	bool migrate = Platform::get_singleton()->arg_parser.has_arg("m");
+	bool migrate = Platform::get_singleton()->arg_parser.has_arg("-m");
 
 	if (!migrate) {
 		printf("Initialized!\n");
@@ -88,6 +88,11 @@ int main(int argc, char **argv, char **envp) {
 
 		session_manager->migrate();
 		user_model->migrate();
+
+		if (Platform::get_singleton()->arg_parser.has_arg("-u")) {
+			printf("Creating test users.\n");
+			user_model->create_test_users();
+		}
 
 		app->migrate();
 	}
