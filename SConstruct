@@ -33,6 +33,7 @@ import traceback
 
 folders = [
     'app',
+    'app/village',
 ]
 
 module_folders = [
