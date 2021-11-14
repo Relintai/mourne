@@ -9,6 +9,7 @@
 #include "core/hash/sha256.h"
 
 #define VILLAGE_TABLE_NAME "villages"
+#define VILLAGE_RESOURCES_TABLE_NAME "village_resources"
 #define VILLAGE_BUILDINGS_TABLE_NAME "village_buildings"
 #define VILLAGE_TECHNOLOGIES_TABLE_NAME "village_technologies"
 #define VILLAGE_UNITS_TABLE_NAME "village_units"
@@ -31,6 +32,51 @@ void VillageModel::create_table() {
 
 	tb->primary_key("id");
 	tb->foreign_key("userid")->references("users", "id");
+	tb->ccreate_table();
+
+	tb->run_query();
+	//tb->print();
+
+	tb->result = "";
+
+	tb->create_table(VILLAGE_RESOURCES_TABLE_NAME);
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("villageid", 11)->not_null()->next_row();
+
+	tb->real_double("food")->not_null()->defval("400")->next_row();
+	tb->real_double("wood")->not_null()->defval("400")->next_row();
+	tb->real_double("stone")->not_null()->defval("400")->next_row();
+	tb->real_double("iron")->not_null()->defval("400")->next_row();
+	tb->real_double("mana")->not_null()->defval("400")->next_row();
+
+	tb->integer("max_food", 11)->not_null()->defval("1000")->next_row();
+	tb->integer("max_wood", 11)->not_null()->defval("1000")->next_row();
+	tb->integer("max_stone", 11)->not_null()->defval("1000")->next_row();
+	tb->integer("max_iron", 11)->not_null()->defval("1000")->next_row();
+	tb->integer("max_mana", 11)->not_null()->defval("1000")->next_row();
+
+	tb->real_double("rate_nm_food")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_nm_wood")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_nm_stone")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_nm_iron")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_nm_mana")->not_null()->defval("0.1")->next_row();
+
+	tb->real_double("rate_food")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_wood")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_stone")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_iron")->not_null()->defval("0.1")->next_row();
+	tb->real_double("rate_mana")->not_null()->defval("0.1")->next_row();
+
+	tb->small_integer("percent_rate_food", 6)->not_null()->defval("100")->next_row();
+	tb->small_integer("percent_rate_wood", 6)->not_null()->defval("100")->next_row();
+	tb->small_integer("percent_rate_stone", 6)->not_null()->defval("100")->next_row();
+	tb->small_integer("percent_rate_iron", 6)->not_null()->defval("100")->next_row();
+	tb->small_integer("percent_rate_mana", 6)->not_null()->defval("100")->next_row();
+
+	tb->integer("last_updated", 11)->not_null()->next_row();
+
+	tb->primary_key("id");
+	tb->foreign_key("villageid")->references(VILLAGE_TABLE_NAME, "id");
 	tb->ccreate_table();
 
 	tb->run_query();
