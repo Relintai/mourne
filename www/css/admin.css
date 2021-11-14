@@ -1,164 +1,176 @@
-.menu_forum_mod,.menu_gm,.menu_admin
-{
-	float:left;
-	border-width:1px;
-	border-right-style:solid;
-	border-color:#363634;
-	padding-left:5px;
-	padding-right:5px;
-	text-align:center;
+.menu_forum_mod,
+.menu_gm,
+.menu_admin {
+    float: left;
+    border-width: 1px;
+    border-right-style: solid;
+    border-color: #363634;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
 }
 
-.back,.action
-{
-	width:970px;
-	margin-left:auto;
-	margin-right:auto;
-	border-style:solid;
-	border-width:1px;
-	border-color:#363634;
-	border-radius:5px 5px 5px 5px;
-	padding:2px;
-	margin-bottom:5px;
-	margin-top:5px;
-	text-align:center;
+.back,
+.action {
+    width: 970px;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #363634;
+    border-radius: 5px 5px 5px 5px;
+    padding: 2px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    text-align: center;
 }
 
-.top_menu
-{
-	width:970px;
-	margin-left:auto;
-	margin-right:auto;
-	border-style:solid;
-	border-width:1px;
-	border-color:#363634;
-	border-radius:5px 5px 5px 5px;
-	padding:2px;
-	margin-bottom:2px;
-	margin-top:5px;
+.section {
+    width: 970px;
+    padding-left: 2em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #363634;
+    border-radius: 5px 5px 5px 5px;
+    padding: 2px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
-.list_container,.edit_container
-{
-	width:100%;
-	margin-top:5px;
-	padding-top:15px;
+.section_header {
+    background-color: #202020;
+    margin-bottom: 0.5em;
+    padding: 0.4em;
 }
 
-.row
-{
-	height:18px;
-	width:970px;
-	margin-left:auto;
-	margin-right:auto;
-	margin-bottom:2px;
-	padding-top:2px;
-	font-size:14px;
-	border-style:solid;
-	border-width:1px;
-	border-color:#363634;
-	border-radius:5px 5px 5px 5px;
+.section_entry {
+    background-color: #2e2e2e;
+    padding: 0.2em;
 }
 
-.second
-{
-	background-color:#191C16;
+.top_menu {
+    width: 970px;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #363634;
+    border-radius: 5px 5px 5px 5px;
+    padding: 2px;
+    margin-bottom: 2px;
+    margin-top: 5px;
 }
 
-.attr_box
-{
-	float:left;
-	padding-left:2px;
-	padding-right:2px;
+.list_container,
+.edit_container {
+    width: 100%;
+    margin-top: 5px;
+    padding-top: 15px;
 }
 
-.name
-{
-	float:left;
-	padding-left:5px;
-	margin-right:15px;
+.row {
+    height: 18px;
+    width: 970px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2px;
+    padding-top: 2px;
+    font-size: 14px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #363634;
+    border-radius: 5px 5px 5px 5px;
 }
 
-.actionbox
-{
-	float:right;
-	margin-right:10px;
+.second {
+    background-color: #191C16;
 }
 
-.row_edit,.row_edit_textbox,.sql_textbox
-{
-	height:25px;
-	width:700px;
-	margin-left:auto;
-	margin-right:auto;
-	margin-bottom:2px;
-	padding-top:5px;
-	font-size:14px;
-	border-style:solid;
-	border-width:1px;
-	border-color:#363634;
-	border-radius:5px 5px 5px 5px;
+.attr_box {
+    float: left;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
-.row_edit_textbox
-{
-	height:95px;
+.name {
+    float: left;
+    padding-left: 5px;
+    margin-right: 15px;
 }
 
-.sql_textbox
-{
-	height:230px;
-	width:722px;
-	padding:5px;
+.actionbox {
+    float: right;
+    margin-right: 10px;
 }
 
-.edit_name
-{
-	padding-top:2px;
-	margin-left:10px;
-	float:left;
+.row_edit,
+.row_edit_textbox,
+.sql_textbox {
+    height: 25px;
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2px;
+    padding-top: 5px;
+    font-size: 14px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #363634;
+    border-radius: 5px 5px 5px 5px;
 }
 
-.edit_input
-{
-	float:right;
-	margin-right:10px;
+.row_edit_textbox {
+    height: 95px;
 }
 
-.edit_spacer
-{
-	margin-left:auto;
-	margin-right:auto;
-	width:500px;
-	margin-top:10px;
-	margin-bottom:10px;
-	border-color:#363634;
-	border-top-style:solid;
-	border-width:2px;
+.sql_textbox {
+    height: 230px;
+    width: 722px;
+    padding: 5px;
 }
 
-.edit_submit
-{
-	height:25px;
-	width:105px;
-	margin-left:auto;
-	margin-right:auto;
-	margin-bottom:30px;
-	margin-top:10px;
-	padding-top:3px;
-	padding-left:5px;
-	padding-rght:5px;
-	font-size:14px;
-	border-style:solid;
-	border-width:1px;
-	border-color:#363634;
-	border-radius:5px 5px 5px 5px;
+.edit_name {
+    padding-top: 2px;
+    margin-left: 10px;
+    float: left;
+}
+
+.edit_input {
+    float: right;
+    margin-right: 10px;
+}
+
+.edit_spacer {
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-color: #363634;
+    border-top-style: solid;
+    border-width: 2px;
+}
+
+.edit_submit {
+    height: 25px;
+    width: 105px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    margin-top: 10px;
+    padding-top: 3px;
+    padding-left: 5px;
+    padding-rght: 5px;
+    font-size: 14px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #363634;
+    border-radius: 5px 5px 5px 5px;
 
 }
 
 /* Admin Panel Stuff */
 
-.text_center
-{
-	text-align:center;
+.text_center {
+    text-align: center;
 }
