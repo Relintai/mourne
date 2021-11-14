@@ -54,55 +54,22 @@ void BuildingController::admin_render_building_list(Request *request) {
 			continue;
 		}
 
-		b.div()->cls("row");
+		if (i % 2 == 0) {
+			b.div()->cls("row");
+		} else {
+			b.div()->cls("row second");
+		}
 		{
-			//b.a()->href(request->get_url_root("permission_editor/") + String::num(r->id));
-
-
+			b.div()->cls("attr_box")->f()->w(String::num(building->id))->cdiv();
+			b.div()->cls("attr_box")->f()->w(String::num(building->rank))->cdiv();
+			b.div()->cls("attr_box")->f()->w(String::num(building->next_rank))->cdiv();
+			b.div()->cls("name")->f()->w(building->name)->cdiv();
+			b.div()->cls("actionbox")->f()->a()->href(request->get_url_root("edit/" + String::num(building->id)))->f()->w("Edit")->ca()->cdiv();
 		}
 		b.cdiv();
 	}
 
 	b.cdiv();
-
-/*
-<div class="back">
-	<a href="<?=site_url($link_back); ?>"><--- Back</a>
-</div>
-<div class="top_menu">
-	<a href="<?=site_url($link_new); ?>">Create New</a>
-</div>
-<div class="list_container">
-<?php $i = 1; ?>
-<?php foreach ($buildings as $row): ?>
-	<?php $link = $link_edit . $row['id']; ?>
-	<?php if (!($i % 2)): ?>
-		<div class="row">
-	<?php else: ?>
-		<div class="row second">
-	<?php endif; ?>
-		<div class="attr_box">
-			[<?=$row['id']; ?>]
-		</div>
-		<div class="attr_box">
-			[Rank: <?=$row['rank']; ?>]
-		</div>
-		<div class="attr_box">
-			[N Rank: <?=$row['next_rank']; ?>] 
-		</div>
-		<div class="name">
-			<?=$row['name']; ?>
-		</div>
-		<div class="actionbox">
-			<a href="<?=site_url($link); ?>">Edit</a>
-		</div>
-	</div>
-	<?php $i++; ?>
-<?php endforeach; ?>
-</div>
-*/
-
-	
 
 	request->body += b.result;
 }
