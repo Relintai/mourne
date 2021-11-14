@@ -3,6 +3,7 @@
 
 //#include "core/http/web_application.h"
 #include "core/object.h"
+#include "core/string.h"
 #include "modules/drogon/web_application.h"
 
 #include "modules/list_page/list_page.h"
@@ -63,8 +64,9 @@ public:
 
 	AdminPanel *_admin_panel; 
 
-	static std::string menu_head;
-	static std::string footer;
+	static String menu_head;
+	static String admin_headers;
+	static String footer;
 };
 
 #endif

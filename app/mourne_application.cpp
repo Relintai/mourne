@@ -14,9 +14,9 @@
 #include "core/http/http_session.h"
 #include "core/http/session_manager.h"
 
+#include "modules/admin_panel/admin_panel.h"
 #include "modules/users/user.h"
 #include "modules/users/user_controller.h"
-#include "modules/admin_panel/admin_panel.h"
 
 #include "buildings/building_initializer.h"
 #include "village/village_initializer.h"
@@ -68,6 +68,20 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 	HTMLBuilder b;
 
 	HTMLTag *t;
+
+	int userlevel = 0;
+
+	if (request->session) {
+		Ref<User> user = request->reference_data["user"];
+
+		if (user.is_valid()) {
+			userlevel = user->rank;
+		}
+	}
+
+	if (userlevel > 4) {
+		request->head += admin_headers;
+	}
 
 	/*
 	<?php if ($weather): ?>
@@ -142,21 +156,21 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 
 		b.div()->cls("right");
 		{
-			/*
-			<?php if ($userlevel > 4): ?>
-			<div class="menu_gm">
-			<a href="<?=site_url($link_gm); ?>">GM</a>
-			</div>
-			<?php endif; ?>
-			*/
+			if (userlevel > 4) {
+				b.div()->cls("menu_gm");
+				{
+					b.a()->href("/gm")->f()->w("GM")->ca();
+				}
+				b.cdiv();
+			}
 
-			/*
-			<?php if ($userlevel > 5): //dev+?>
-			<div class="menu_admin">
-			<a href="<?=site_url($link_admin); ?>">Admin</a>
-			</div>
-			<?php endif; ?>
-			*/
+			if (userlevel > 5) {
+				b.div()->cls("menu_admin");
+				{
+					b.a()->href("/admin")->f()->w("Admin")->ca();
+				}
+				b.cdiv();
+			}
 
 			b.div()->cls("menu_alliance_menu");
 			{
@@ -267,6 +281,11 @@ void MourneApplication::compile_menu() {
 
 	menu_head = bh.result;
 
+	bh.result = "";
+	bh.link()->rel("stylesheet")->type("text/css")->href("/css/admin.css")->f()->f();
+
+	admin_headers = bh.result;
+
 	HTMLBuilder bf;
 
 	bf.cdiv();
@@ -308,5 +327,6 @@ MourneApplication::~MourneApplication() {
 	BuildingInitializer::free_all();
 }
 
-std::string MourneApplication::menu_head = "";
-std::string MourneApplication::footer = "";
+String MourneApplication::menu_head = "";
+String MourneApplication::admin_headers = "";
+String MourneApplication::footer = "";
