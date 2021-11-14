@@ -17,6 +17,8 @@
 #include "modules/users/user.h"
 #include "modules/users/user_controller.h"
 
+#include "village/village_initializer.h"
+
 bool MourneApplication::is_logged_in(Request *request) {
 	if (!request->session) {
 		return false;
@@ -233,6 +235,11 @@ void MourneApplication::setup_middleware() {
 }
 
 void MourneApplication::migrate() {
+	VillageController::get_singleton()->migrate();
+}
+
+void MourneApplication::add_default_data() {
+	VillageController::get_singleton()->add_default_data();
 }
 
 void MourneApplication::compile_menu() {
@@ -263,10 +270,14 @@ void MourneApplication::compile_menu() {
 MourneApplication::MourneApplication() :
 		DWebApplication() {
 
+	VillageInitializer::allocate_all();
+
 	compile_menu();
 }
 
 MourneApplication::~MourneApplication() {
+
+	VillageInitializer::free_all();
 }
 
 std::string MourneApplication::menu_head = "";

@@ -7,8 +7,16 @@
 #include "core/http/request.h"
 #include "core/http/session_manager.h"
 
+#include "village_model.h"
 
 void VillageController::handle_request_default(Request *request) {
+}
+
+void VillageController::migrate() {
+	VillageModel::get_singleton()->migrate();
+}
+void VillageController::add_default_data() {
+	VillageModel::get_singleton()->add_default_data();
 }
 
 VillageController *VillageController::get_singleton() {

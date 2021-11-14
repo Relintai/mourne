@@ -50,6 +50,7 @@ public:
 	virtual void setup_middleware();
 
 	virtual void migrate();
+	virtual void add_default_data();
 
 	void compile_menu();
 

@@ -14,8 +14,6 @@
 
 #include "core/http/session_manager.h"
 
-#define MAIN_CLASS MourneApplication
-
 #include "modules/drogon/web_application.h"
 
 //Backends
@@ -67,7 +65,7 @@ int main(int argc, char **argv, char **envp) {
 
 	create_databases();
 
-	DWebApplication *app = new MAIN_CLASS();
+	MourneApplication *app = new MourneApplication();
 
 	app->load_settings();
 	app->setup_routes();
@@ -95,6 +93,11 @@ int main(int argc, char **argv, char **envp) {
 		}
 
 		app->migrate();
+
+		if (Platform::get_singleton()->arg_parser.has_arg("-d")) {
+			printf("Adding data.\n");
+			app->add_default_data();
+		}
 	}
 
 	delete app;
