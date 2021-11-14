@@ -284,7 +284,13 @@ MourneApplication::MourneApplication() :
 
 	_admin_panel = new AdminPanel();
 	_admin_panel->register_admin_controller("buildings", BuildingController::get_singleton());
-	
+
+	HTMLBuilder b;
+
+	b.link()->rel("stylesheet")->type("text/css")->href("/css/base.css")->f()->f();
+	b.link()->rel("stylesheet")->type("text/css")->href("/css/admin.css")->f()->f();
+
+	_admin_panel->set_default_header(b.result);
 
 	compile_menu();
 }

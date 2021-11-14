@@ -24,10 +24,10 @@ void BuildingController::admin_handle_request_main(Request *request) {
 	request->send_error(404);
 }
 String BuildingController::admin_get_section_name() {
-	return "Building Editor";
+	return "Buildings";
 }
 void BuildingController::admin_add_section_links(Vector<AdminSectionLinkInfo> *links) {
-	links->push_back(AdminSectionLinkInfo("Editor", ""));
+	links->push_back(AdminSectionLinkInfo("- Building Editor", ""));
 }
 bool BuildingController::admin_full_render() {
 	return false;
@@ -40,7 +40,7 @@ void BuildingController::admin_render_building_list(Request *request) {
 
 	b.div()->cls("back")->f()->a()->href(request->get_url_root_parent())->f()->w("<--- Back")->ca()->cdiv();
 	b.br();
-	b.h4()->f()->w("Building Editor")->ch4();
+	b.div()->cls("top_menu")->f()->w("Building Editor")->cdiv();
 	b.br();
 	b.div()->cls("top_menu")->f()->a()->href(request->get_url_root("new"))->f()->w("Create New")->ca()->cdiv();
 	b.br();
