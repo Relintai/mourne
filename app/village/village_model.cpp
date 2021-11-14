@@ -8,35 +8,104 @@
 
 #include "core/hash/sha256.h"
 
-#define VILLAGE_TABLE_NAME "village"
+#define VILLAGE_TABLE_NAME "villages"
+#define VILLAGE_BUILDINGS_TABLE_NAME "village_buildings"
+#define VILLAGE_TECHNOLOGIES_TABLE_NAME "village_technologies"
+#define VILLAGE_UNITS_TABLE_NAME "village_units"
 
 void VillageModel::create_table() {
 	Ref<TableBuilder> tb = DatabaseManager::get_singleton()->ddb->get_table_builder();
 
 	tb->create_table(VILLAGE_TABLE_NAME);
-	tb->integer("id")->auto_increment()->next_row();
-	tb->varchar("username", 60)->not_null()->next_row();
-	tb->varchar("email", 100)->not_null()->next_row();
-	tb->integer("rank")->not_null()->next_row();
-	tb->varchar("pre_salt", 100)->next_row();
-	tb->varchar("post_salt", 100)->next_row();
-	tb->varchar("password_hash", 100)->next_row();
-	tb->integer("banned")->next_row();
-	tb->varchar("password_reset_token", 100)->next_row();
-	tb->integer("locked")->next_row();
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("userid", 11)->not_null()->next_row();
+	tb->varchar("name", 60)->not_null()->next_row();
+	tb->tiny_integer("score", 4)->not_null()->defval("100")->next_row();
+	tb->tiny_integer("selected", 4)->not_null()->next_row();
+	tb->tiny_integer("new_log", 4)->not_null()->defval("0")->next_row();
+	tb->tiny_integer("ai_on", 4)->not_null()->defval("0")->next_row();
+	tb->tiny_integer("ai_flagged", 4)->not_null()->defval("0")->next_row();
+	tb->integer("weather", 11)->not_null()->defval("0")->next_row(); //foreigh key
+	tb->integer("last_weather_change", 11)->not_null()->defval("0")->next_row();
+	tb->integer("weather_change_to", 11)->not_null()->defval("0")->next_row(); //foreigh key
+
 	tb->primary_key("id");
+	tb->foreign_key("userid")->references("users", "id");
 	tb->ccreate_table();
+
 	tb->run_query();
 	//tb->print();
+
+	tb->result = "";
+
+	tb->create_table(VILLAGE_BUILDINGS_TABLE_NAME);
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("villageid", 11)->not_null()->next_row();
+	tb->integer("slotid", 11)->not_null()->next_row();
+	tb->integer("buildingid", 11)->not_null()->next_row(); //foreign key
+
+	tb->primary_key("id");
+	tb->foreign_key("villageid")->references(VILLAGE_TABLE_NAME, "id");
+	tb->ccreate_table();
+
+	tb->run_query();
+	//tb->print();
+
+	tb->result = "";
+
+	tb->create_table(VILLAGE_TECHNOLOGIES_TABLE_NAME);
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("villageid", 11)->not_null()->next_row();
+	tb->integer("slotid", 11)->not_null()->next_row();
+	tb->integer("technologyid", 11)->not_null()->next_row(); //foreign key
+
+	tb->primary_key("id");
+	tb->foreign_key("villageid")->references(VILLAGE_TABLE_NAME, "id");
+
+	//todo
+	//KEY `villageid` (`villageid`,`slotid`,`technologyid`)
+
+	tb->ccreate_table();
+
+	tb->run_query();
+	//tb->print();
+
+	tb->result = "";
+
+	tb->create_table(VILLAGE_UNITS_TABLE_NAME);
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("userid", 11)->not_null()->next_row();
+	tb->integer("villageid", 11)->not_null()->next_row();
+	tb->integer("unitid", 11)->not_null()->next_row();
+	tb->integer("unitcount", 11)->not_null()->next_row();
+
+	tb->primary_key("id");
+	tb->foreign_key("villageid")->references(VILLAGE_TABLE_NAME, "id");
+	tb->foreign_key("userid")->references("users", "id");
+	tb->ccreate_table();
+
+	tb->run_query();
+	//tb->print();
+
+	tb->result = "";
 }
 void VillageModel::drop_table() {
 	Ref<TableBuilder> tb = DatabaseManager::get_singleton()->ddb->get_table_builder();
 
-	tb->drop_table_if_exists(VILLAGE_TABLE_NAME)->run_query();
+	tb->drop_table_if_exists(VILLAGE_UNITS_TABLE_NAME)->cdrop_table();
+	tb->drop_table_if_exists(VILLAGE_TECHNOLOGIES_TABLE_NAME)->cdrop_table();
+	tb->drop_table_if_exists(VILLAGE_BUILDINGS_TABLE_NAME)->cdrop_table();
+	tb->drop_table_if_exists(VILLAGE_TABLE_NAME)->cdrop_table();
+	
+	tb->run_query();
 }
 void VillageModel::migrate() {
 	drop_table();
 	create_table();
+}
+
+void VillageModel::add_default_data() {
+
 }
 
 

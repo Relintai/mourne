@@ -13,6 +13,7 @@ public:
 	virtual void create_table();
 	virtual void drop_table();
 	virtual void migrate();
+	virtual void add_default_data();
 
 	static VillageModel *get_singleton();
 
