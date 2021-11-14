@@ -12,6 +12,236 @@
 
 #define BUILDING_TABLE_NAME "buildings"
 
+#define BUILDING_TABLE_COLUMNS "id, name, description, icon, rank, next_rank, time_to_build, creates, num_creates, score, defense, ability, cost_food, cost_wood, cost_stone, cost_iron, cost_mana, mod_max_food, mod_max_wood, mod_max_stone, mod_max_iron, mod_max_mana, mod_rate_food, mod_rate_wood, mod_rate_stone, mod_rate_iron, mod_rate_mana, mod_percent_food, mod_percent_wood, mod_percent_stone, mod_percent_iron, mod_percent_mana, assignment1, assignment2, assignment3, assignment4, assignment5, req_tech, tech_group, tech_secondary_group"
+#define BUILDING_TABLE_COLUMNS_NOID "name, description, icon, rank, next_rank, time_to_build, creates, num_creates, score, defense, ability, cost_food, cost_wood, cost_stone, cost_iron, cost_mana, mod_max_food, mod_max_wood, mod_max_stone, mod_max_iron, mod_max_mana, mod_rate_food, mod_rate_wood, mod_rate_stone, mod_rate_iron, mod_rate_mana, mod_percent_food, mod_percent_wood, mod_percent_stone, mod_percent_iron, mod_percent_mana, assignment1, assignment2, assignment3, assignment4, assignment5, req_tech, tech_group, tech_secondary_group"
+
+Ref<Building> BuildingModel::get_building(const int id) {
+	if (id == 0) {
+		return Ref<Building>();
+	}
+
+	Ref<QueryBuilder> b = DatabaseManager::get_singleton()->ddb->get_query_builder();
+
+	b->select(BUILDING_TABLE_COLUMNS);
+	b->from(BUILDING_TABLE_NAME);
+
+	b->where()->wp("id", id);
+
+	b->end_command();
+
+	Ref<QueryResult> r = b->run();
+
+	if (!r->next_row()) {
+		return Ref<Building>();
+	}
+
+	Ref<Building> building;
+	building.instance();
+
+	parse_row(r, building);
+
+	return building;
+}
+
+Vector<Ref<Building> > BuildingModel::get_all() {
+	Ref<QueryBuilder> b = DatabaseManager::get_singleton()->ddb->get_query_builder();
+
+	b->select(BUILDING_TABLE_COLUMNS);
+	b->from(BUILDING_TABLE_NAME);
+	b->end_command();
+	//b->print();
+
+	Vector<Ref<Building> > buildings;
+
+	Ref<QueryResult> r = b->run();
+
+	while (r->next_row()) {
+		Ref<Building> building;
+		building.instance();
+
+		parse_row(r, building);
+
+		buildings.push_back(building);
+	}
+
+	return buildings;
+}
+
+void BuildingModel::save_building(Ref<Building> &building) {
+	Ref<QueryBuilder> b = DatabaseManager::get_singleton()->ddb->get_query_builder();
+
+	if (building->id == 0) {
+		b->insert(BUILDING_TABLE_NAME, BUILDING_TABLE_COLUMNS_NOID);
+
+		b->values();
+
+		b->val(building->name);
+		b->val(building->description);
+		b->val(building->icon);
+
+		b->val(building->rank);
+		b->val(building->next_rank);
+		b->val(building->time_to_build);
+		b->val(building->creates);
+		b->val(building->num_creates);
+		b->val(building->score);
+		b->val(building->defense);
+		b->val(building->ability);
+
+		b->val(building->cost_food);
+		b->val(building->cost_wood);
+		b->val(building->cost_stone);
+		b->val(building->cost_iron);
+		b->val(building->cost_mana);
+
+		b->val(building->mod_max_food);
+		b->val(building->mod_max_wood);
+		b->val(building->mod_max_stone);
+		b->val(building->mod_max_iron);
+		b->val(building->mod_max_mana);
+
+		b->vald(building->mod_rate_food);
+		b->vald(building->mod_rate_wood);
+		b->vald(building->mod_rate_stone);
+		b->vald(building->mod_rate_iron);
+		b->vald(building->mod_rate_mana);
+
+		b->val(building->mod_percent_food);
+		b->val(building->mod_percent_wood);
+		b->val(building->mod_percent_stone);
+		b->val(building->mod_percent_iron);
+		b->val(building->mod_percent_mana);
+
+		b->val(building->assignment1);
+		b->val(building->assignment2);
+		b->val(building->assignment3);
+		b->val(building->assignment4);
+		b->val(building->assignment5);
+
+		b->val(building->req_tech);
+		b->val(building->tech_group);
+		b->val(building->tech_secondary_group);
+
+		b->cvalues();
+
+		b->end_command();
+		b->select_last_insert_id();
+
+		Ref<QueryResult> r = b->run();
+
+		building->id = r->get_last_insert_rowid();
+	} else {
+		b->update(BUILDING_TABLE_NAME);
+		b->set();
+
+		b->setp("name", building->name);
+		b->setp("description", building->description);
+		b->setp("icon", building->icon);
+
+		b->setp("userankrname", building->rank);
+		b->setp("next_rank", building->next_rank);
+		b->setp("time_to_build", building->time_to_build);
+		b->setp("creates", building->creates);
+		b->setp("num_creates", building->num_creates);
+		b->setp("score", building->score);
+		b->setp("defense", building->defense);
+		b->setp("ability", building->ability);
+
+		b->setp("cost_food", building->cost_food);
+		b->setp("cost_wood", building->cost_wood);
+		b->setp("cost_stone", building->cost_stone);
+		b->setp("cost_iron", building->cost_iron);
+		b->setp("cost_mana", building->cost_mana);
+
+		b->setp("mod_max_food", building->mod_max_food);
+		b->setp("mod_max_wood", building->mod_max_wood);
+		b->setp("mod_max_stone", building->mod_max_stone);
+		b->setp("mod_max_iron", building->mod_max_iron);
+		b->setp("mod_max_mana", building->mod_max_mana);
+
+		b->setpd("mod_rate_food", building->mod_rate_food);
+		b->setpd("mod_rate_wood", building->mod_rate_wood);
+		b->setpd("mod_rate_stone", building->mod_rate_stone);
+		b->setpd("mod_rate_iron", building->mod_rate_iron);
+		b->setpd("mod_rate_mana", building->mod_rate_mana);
+
+		b->setp("mod_percent_food", building->mod_percent_food);
+		b->setp("mod_percent_wood", building->mod_percent_wood);
+		b->setp("mod_percent_stone", building->mod_percent_stone);
+		b->setp("mod_percent_iron", building->mod_percent_iron);
+		b->setp("mod_percent_mana", building->mod_percent_mana);
+
+		b->setp("assignment1", building->assignment1);
+		b->setp("assignment2", building->assignment2);
+		b->setp("assignment3", building->assignment3);
+		b->setp("assignment4", building->assignment4);
+		b->setp("assignment5", building->assignment5);
+
+		b->setp("req_tech", building->req_tech);
+		b->setp("tech_group", building->tech_group);
+		b->setp("tech_secondary_group", building->tech_secondary_group);
+
+		b->cset();
+		b->where()->wp("id", building->id);
+
+		//b->print();
+
+		b->run_query();
+	}
+}
+
+void BuildingModel::parse_row(Ref<QueryResult> &result, Ref<Building> &building) {
+
+	building->id = result->get_cell_int(0);
+
+	building->name = result->get_cell(1);
+	building->description = result->get_cell(2);
+	building->icon = result->get_cell(3);
+
+	building->rank = result->get_cell_int(4);
+	building->next_rank = result->get_cell_int(5);
+	building->time_to_build = result->get_cell_int(6);
+	building->creates = result->get_cell_int(7);
+	building->num_creates = result->get_cell_int(8);
+	building->score = result->get_cell_int(9);
+	building->defense = result->get_cell_int(10);
+	building->ability = result->get_cell_int(11);
+
+	building->cost_food = result->get_cell_int(12);
+	building->cost_wood = result->get_cell_int(13);
+	building->cost_stone = result->get_cell_int(14);
+	building->cost_iron = result->get_cell_int(15);
+	building->cost_mana = result->get_cell_int(16);
+
+	building->mod_max_food = result->get_cell_int(17);
+	building->mod_max_wood = result->get_cell_int(18);
+	building->mod_max_stone = result->get_cell_int(19);
+	building->mod_max_iron = result->get_cell_int(20);
+	building->mod_max_mana = result->get_cell_int(21);
+
+	building->mod_rate_food = result->get_cell_double(22);
+	building->mod_rate_wood = result->get_cell_double(23);
+	building->mod_rate_stone = result->get_cell_double(24);
+	building->mod_rate_iron = result->get_cell_double(25);
+	building->mod_rate_mana = result->get_cell_double(26);
+
+	building->mod_percent_food = result->get_cell_int(27);
+	building->mod_percent_wood = result->get_cell_int(28);
+	building->mod_percent_stone = result->get_cell_int(29);
+	building->mod_percent_iron = result->get_cell_int(30);
+	building->mod_percent_mana = result->get_cell_int(31);
+
+	building->assignment1 = result->get_cell_int(32);
+	building->assignment2 = result->get_cell_int(33);
+	building->assignment3 = result->get_cell_int(34);
+	building->assignment4 = result->get_cell_int(35);
+	building->assignment5 = result->get_cell_int(36);
+
+	building->req_tech = result->get_cell_int(37);
+	building->tech_group = result->get_cell_int(38);
+	building->tech_secondary_group = result->get_cell_int(39);
+}
+
 void BuildingModel::create_table() {
 	Ref<TableBuilder> tb = DatabaseManager::get_singleton()->ddb->get_table_builder();
 

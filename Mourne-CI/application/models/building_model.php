@@ -85,10 +85,10 @@ class Building_model extends MO_Model
         }
 
         if ($res['food'] < $building['cost_food'] ||
-    $res['wood'] < $building['cost_wood'] ||
-    $res['stone'] < $building['cost_stone'] ||
-    $res['iron'] < $building['cost_iron'] ||
-    $res['mana'] < $building['cost_mana']) {
+            $res['wood'] < $building['cost_wood'] ||
+            $res['stone'] < $building['cost_stone'] ||
+            $res['iron'] < $building['cost_iron'] ||
+            $res['mana'] < $building['cost_mana']) {
             return 2;
         }
 
