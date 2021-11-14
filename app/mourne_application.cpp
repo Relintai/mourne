@@ -292,6 +292,12 @@ MourneApplication::MourneApplication() :
 
 	_admin_panel->set_default_header(b.result);
 
+	b.result = "";
+	b.div()->cls("back")->f()->a()->href("/")->f()->w("<--- Back")->ca()->cdiv();
+	b.br();
+
+	_admin_panel->set_default_body_top(b.result);
+
 	compile_menu();
 }
 
