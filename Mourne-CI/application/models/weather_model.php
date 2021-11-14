@@ -1,56 +1,54 @@
 <?php
 class Weather_model extends MO_Model
 {
-  function __construct()
-  {
-    parent::__construct();
-  }
-
-  function get_weathers_drop_admin()
-  {
-    $sql = "SELECT * FROM weathers";
-    $q = $this->db->query($sql);
-
-    $res = $q->result_array();
-
-    $data[] = 'Nothing';
-
-    foreach ($res as $row)
+    public function __construct()
     {
-      $data[] = $row['name'];
+        parent::__construct();
     }
 
-    return $data;
-  }
+    public function get_weathers_drop_admin()
+    {
+        $sql = "SELECT * FROM weathers";
+        $q = $this->db->query($sql);
 
-  function get_weather_effects_drop_admin()
-  {
-    $data[0] = 'No Effect';
-    $data[1] = 'Fires';
+        $res = $q->result_array();
+
+        $data[] = 'Nothing';
+
+        foreach ($res as $row) {
+            $data[] = $row['name'];
+        }
+
+        return $data;
+    }
+
+    public function get_weather_effects_drop_admin()
+    {
+        $data[0] = 'No Effect';
+        $data[1] = 'Fires';
     
-    return $data;
-  }
+        return $data;
+    }
 
-  function list_weathers_admin()
-  {
-    $sql = "SELECT * FROM weathers";
-    $q = $this->db->query($sql);
+    public function list_weathers_admin()
+    {
+        $sql = "SELECT * FROM weathers";
+        $q = $this->db->query($sql);
 
-    return $q->result_array();
-  }
+        return $q->result_array();
+    }
 
-  function get_weather_admin($id)
-  {
-    $sql = "SELECT * FROM weathers WHERE id='$id'";
-    $q = $this->db->query($sql);
+    public function get_weather_admin($id)
+    {
+        $sql = "SELECT * FROM weathers WHERE id='$id'";
+        $q = $this->db->query($sql);
 
-    return $q->row_array();
-  }
+        return $q->row_array();
+    }
 
-  function edit_weather_admin($data)
-  {
-
-    $sql = "UPDATE weathers
+    public function edit_weather_admin($data)
+    {
+        $sql = "UPDATE weathers
 			SET name='" . $data['name'] . "',
 			description='" . $data['description'] . "',
 			art='" . $data['art'] . "',
@@ -68,14 +66,14 @@ class Weather_model extends MO_Model
 			mod_percent_mana='" . $data['mod_percent_mana'] . "'	
 			WHERE id='" . $data['id'] . "'";
 
-    $this->db->query($sql);
+        $this->db->query($sql);
 
-    $this->_create_sql($sql);
-  }
+        $this->_create_sql($sql);
+    }
 
-  function add_weather_admin($data)
-  {
-    $sql = "INSERT INTO weathers VALUES(default,
+    public function add_weather_admin($data)
+    {
+        $sql = "INSERT INTO weathers VALUES(default,
 			'" . $data['name'] . "',
 			'" . $data['description'] . "',
 			'" . $data['art'] . "',
@@ -92,10 +90,9 @@ class Weather_model extends MO_Model
 			'" . $data['mod_percent_iron'] . "',
 			'" . $data['mod_percent_mana'] . "')";
 
-    $this->db->query($sql);
+        $this->db->query($sql);
 
-    $this->_create_sql($sql);
-  }
-
+        $this->_create_sql($sql);
+    }
 }
 //nowhitesp

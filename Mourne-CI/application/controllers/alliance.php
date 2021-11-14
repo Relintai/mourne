@@ -2,21 +2,20 @@
 
 class Alliance extends MO_Controller
 {
-  function __construct()
-  {
-    parent::__construct();
-  }
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-  function index()
-  {
-  }
+    public function index()
+    {
+    }
 
-  function alliance_menu()
-  {
-    $this->headers('alliance');
+    public function alliance_menu()
+    {
+        $this->headers('alliance');
 
-    $this->footer();
-  }
-
+        $this->footer();
+    }
 }
 //nowhitesp

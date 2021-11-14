@@ -5,41 +5,38 @@ $this->load->helper('form');
 $link_back = 'admin/ai_settings_tool';
 
 $attr_description = array(
-		'name' => 'description',
-		'rows' => '5',
-		'cols' => '50',
-		'class' => 'textarea');
+        'name' => 'description',
+        'rows' => '5',
+        'cols' => '50',
+        'class' => 'textarea');
 
 $attr_setting = array(
-		'name' => 'setting',
-		'class' => 'input');
+        'name' => 'setting',
+        'class' => 'input');
 
 $attr_value = array(
-		'name' => 'value',
-		'class' => 'input');
+        'name' => 'value',
+        'class' => 'input');
 
 $attr_submit = array(
-		'name' => 'submit',
-		'value' => 'Submit',
-		'class' => 'submit');
+        'name' => 'submit',
+        'value' => 'Submit',
+        'class' => 'submit');
 
-if ($new)
-{
-	//set every value with set_value()
-	$link_form = 'admin/ai_settings';
+if ($new) {
+    //set every value with set_value()
+    $link_form = 'admin/ai_settings';
 
-	$attr_setting['value'] = set_value('setting');
-	$attr_value['value'] = set_value('value');
-	$attr_description['value'] = set_value('description');
-}
-else
-{
-	//set every value from data sent
-	$link_form = 'admin/ai_settings/' . $setting['id'];
+    $attr_setting['value'] = set_value('setting');
+    $attr_value['value'] = set_value('value');
+    $attr_description['value'] = set_value('description');
+} else {
+    //set every value from data sent
+    $link_form = 'admin/ai_settings/' . $setting['id'];
 
-	$attr_setting['value'] = $setting['setting'];
-	$attr_value['value'] = $setting['value'];
-	$attr_description['value'] = $setting['description'];
+    $attr_setting['value'] = $setting['setting'];
+    $attr_value['value'] = $setting['value'];
+    $attr_description['value'] = $setting['description'];
 }
 ?>
 <div class="back">

@@ -2,90 +2,96 @@
 
 class Item_model extends MO_Model
 {
-  const MAX_EQUIPMENT = 20; //19, starts with zero
+    const MAX_EQUIPMENT = 20; //19, starts with zero
 
-  function __construct()
-  {
-    parent::__construct();
-  }
-
-  //this will equip too if needed!
-  function swap($d1, $d2, $d3, $d4)
-  {
-    //data validation
-    if (!($d1 == 'iv' || $d1 == 'eq') || !($d3 == 'iv' || $d3 == 'eq') || !is_numeric($d2) ||
-	!is_numeric($d4) || ($d2 < 0 || $d2 > (parent::INVENTORY_MAX - 1)) || 
-	($d4 < 0 || $d4 > (parent::INVENTORY_MAX - 1)))
-      return FALSE;
-
-    //nothing needs to be done (same item twice)
-    if (($d1 == $d3) && ($d2 == $d4))
-      return TRUE;
-
-    //hero has to be set from controller!
-    if (!$this->hero)
-      return 'Internal error';
-
-    //just move in inventory
-    if ($d1 == 'iv' && $d3 == 'iv')
+    public function __construct()
     {
-      $sql = "SELECT * FROM heros_inventory 
+        parent::__construct();
+    }
+
+    //this will equip too if needed!
+    public function swap($d1, $d2, $d3, $d4)
+    {
+        //data validation
+        if (!($d1 == 'iv' || $d1 == 'eq') || !($d3 == 'iv' || $d3 == 'eq') || !is_numeric($d2) ||
+    !is_numeric($d4) || ($d2 < 0 || $d2 > (parent::INVENTORY_MAX - 1)) ||
+    ($d4 < 0 || $d4 > (parent::INVENTORY_MAX - 1))) {
+            return false;
+        }
+
+        //nothing needs to be done (same item twice)
+        if (($d1 == $d3) && ($d2 == $d4)) {
+            return true;
+        }
+
+        //hero has to be set from controller!
+        if (!$this->hero) {
+            return 'Internal error';
+        }
+
+        //just move in inventory
+        if ($d1 == 'iv' && $d3 == 'iv') {
+            $sql = "SELECT * FROM heros_inventory 
 	WHERE container = 1 AND (slot = ? OR slot = ?) AND charid = ?";
 
-      $q = $this->db->query($sql, array($d2, $d4, $this->hero['id']));
+            $q = $this->db->query($sql, array($d2, $d4, $this->hero['id']));
 
-      $num = $q->num_rows();
+            $num = $q->num_rows();
 
-      if (!$num)
-	return FALSE;
+            if (!$num) {
+                return false;
+            }
 
-      $res = $q->result_array();
+            $res = $q->result_array();
 
-      $item1 = $res[0];
+            $item1 = $res[0];
 
-      if ($num == 2)
-	$item2 = $res[1];
-      else
-	$item2 = FALSE;
+            if ($num == 2) {
+                $item2 = $res[1];
+            } else {
+                $item2 = false;
+            }
 
-      if (!$item2)
-      {
-	$sql = "UPDATE heros_inventory
+            if (!$item2) {
+                $sql = "UPDATE heros_inventory
 		SET slot = ?
 		WHERE id = ?";
 
-	if ($item1['slot'] == $d2)
-	  $to = $d4;
-	else
-	  $to = $d2;
+                if ($item1['slot'] == $d2) {
+                    $to = $d4;
+                } else {
+                    $to = $d2;
+                }
 
-	$this->db->query($sql, array($to, $item1['id']));
+                $this->db->query($sql, array($to, $item1['id']));
 
-	return TRUE;
-      }
+                return true;
+            }
 
-      //we only get here it two items needs to be swapped
-      $sql = "UPDATE heros_inventory SET slot = ? WHERE id = ?";
+            //we only get here it two items needs to be swapped
+            $sql = "UPDATE heros_inventory SET slot = ? WHERE id = ?";
 
-      $this->db->query($sql, array($item1['slot'], $item2['id']));
-      $this->db->query($sql, array($item2['slot'], $item1['id']));
+            $this->db->query($sql, array($item1['slot'], $item2['id']));
+            $this->db->query($sql, array($item2['slot'], $item1['id']));
 
-      return TRUE;
-    }
+            return true;
+        }
 
-    //equipping has to be performed (iv/iv case already handled!)
-    if ($d1 == 'iv')
-      $d1 = 1;
-    else
-      $d1 = 2;
+        //equipping has to be performed (iv/iv case already handled!)
+        if ($d1 == 'iv') {
+            $d1 = 1;
+        } else {
+            $d1 = 2;
+        }
 
-    if ($d3 == 'iv')
-      $d3 = 1;
-    else
-      $d3 = 2;
+        if ($d3 == 'iv') {
+            $d3 = 1;
+        } else {
+            $d3 = 2;
+        }
 
 
-    $sql = "SELECT heros_inventory.id AS invid,heros_inventory.is_soulbound,heros_inventory.stack_size,
+        $sql = "SELECT heros_inventory.id AS invid,heros_inventory.is_soulbound,heros_inventory.stack_size,
 		heros_inventory.container,heros_inventory.slot,hero_items.*
 		FROM heros_inventory
 		LEFT JOIN hero_items on heros_inventory.itemid = hero_items.id
@@ -93,398 +99,360 @@ class Item_model extends MO_Model
 		(heros_inventory.container = ? AND heros_inventory.slot = ?)) AND
 		charid = ?";
 
-    $q = $this->db->query($sql, array($d1, $d2, $d3, $d4, $this->hero['id']));
+        $q = $this->db->query($sql, array($d1, $d2, $d3, $d4, $this->hero['id']));
 
-    $swap = FALSE;
+        $swap = false;
 
-    $num = $q->num_rows();
+        $num = $q->num_rows();
     
-    if ($num == 2)
-    {
-      $res = $q->result_array();
+        if ($num == 2) {
+            $res = $q->result_array();
 
-      if ($res[0]['container'] == 1)
-      {
-	//0 is in bag
-	$equip = $res[0];
-	$deequip = $res[1];
-      }
-      elseif ($res[1]['container'] == 1)
-      {
-	//1 is in bag
-	$equip = $res[1];
-	$deequip = $res[0];
-      }
-      else
-      {
-	//swap
-	$equip = $res[0];
-	$deequip = $res[1];
-	$swap = TRUE;
-      }
-    }
-    else
-    {
-      $res = $q->row_array();
+            if ($res[0]['container'] == 1) {
+                //0 is in bag
+                $equip = $res[0];
+                $deequip = $res[1];
+            } elseif ($res[1]['container'] == 1) {
+                //1 is in bag
+                $equip = $res[1];
+                $deequip = $res[0];
+            } else {
+                //swap
+                $equip = $res[0];
+                $deequip = $res[1];
+                $swap = true;
+            }
+        } else {
+            $res = $q->row_array();
 
-      if ($res['container'] == 1)
-      {
-	//not equipped, just equip it
-	$equip = $res;
-	$deequip = FALSE;
+            if ($res['container'] == 1) {
+                //not equipped, just equip it
+                $equip = $res;
+                $deequip = false;
 
-	if ($d1 == 1)
-	  $equipslot = $d4;
-	else
-	  $equipslot = $d2;
-      }
-      else
-      {
-	if ($d1 == 2 && $d3 == 2)
-	{
-	  //switching between 2 equipslots, but one of them is empty
-	  $equip = $res;
-	  $deequip = FALSE;
+                if ($d1 == 1) {
+                    $equipslot = $d4;
+                } else {
+                    $equipslot = $d2;
+                }
+            } else {
+                if ($d1 == 2 && $d3 == 2) {
+                    //switching between 2 equipslots, but one of them is empty
+                    $equip = $res;
+                    $deequip = false;
 
-	  if ($equip['slot'] == $d2)
-	    $equipslot = $d4;
-	  else
-	    $equipslot = $d2;
+                    if ($equip['slot'] == $d2) {
+                        $equipslot = $d4;
+                    } else {
+                        $equipslot = $d2;
+                    }
 
-	  $swap = TRUE;
-	}
-	else
-	{
-	  //equipped, just deequip it
-	  $equip = FALSE;
-	  $deequip = $res;
-	  
-	  if ($d1 == 2)
-	    $deequipslot = $d4;
-	  else
-	    $deequipslot = $d2;
-	}
-      }
-    }
+                    $swap = true;
+                } else {
+                    //equipped, just deequip it
+                    $equip = false;
+                    $deequip = $res;
+      
+                    if ($d1 == 2) {
+                        $deequipslot = $d4;
+                    } else {
+                        $deequipslot = $d2;
+                    }
+                }
+            }
+        }
     
-    $this->load->helper('equipment');
+        $this->load->helper('equipment');
 
-    if ($equip)
-    {
-      //$cbe = can be equipped
-      $cbe = can_be_equipped($equip, $this->hero);
+        if ($equip) {
+            //$cbe = can be equipped
+            $cbe = can_be_equipped($equip, $this->hero);
 
-      if (!isset($cbe))
-	return "Internal error! $cbe is not set!";
+            if (!isset($cbe)) {
+                return "Internal error! $cbe is not set!";
+            }
+        }
+
+        //each of these functions has to return!
+
+        //for switching items from inventory
+        if ($equip && $deequip && !$swap) {
+            if ($cbe['can'] === true) {
+                if ($cbe['allowed_slot1'] == $deequip['slot'] || $cbe['allowed_slot2'] == $deequip['slot']) {
+                    $equipslot = $deequip['slot'];
+                }
+
+                if (!isset($equipslot)) {
+                    return "That item cannot be equipped into that slot.";
+                }
+
+                if ($cbe['two_handed']) {
+                    $eq = $this->prep_two_hand();
+
+                    if ($eq !== true) {
+                        return $eq;
+                    }
+                }
+
+                $this->hero_remove_stats($deequip);
+                $this->hero_add_stats($equip);
+
+                $sql = "UPDATE heros_inventory SET container = ?, slot = ? WHERE id = ?";
+
+                //deequipping
+                $this->db->query($sql, array(1, $equip['slot'], $deequip['invid']));
+
+                //equip
+                $this->db->query($sql, array(2, $equipslot, $equip['invid']));
+
+                $this->calc_hero_stats();
+
+                return true;
+            } else {
+                return $cbe['message'];
+            }
+        }
+
+        //switching between 2 slots
+        if ($equip && $deequip && $swap) {
+            if (!(($cbe['allowed_slot1'] == $equip['slot'] || $cbe['allowed_slot2'] == $equip['slot']) &&
+        ($cbe['allowed_slot1'] == $deequip['slot'] || $cbe['allowed_slot2'] == $deequip['slot']))) {
+                return "Those items cannot be swapped";
+            }
+
+            $sql = "UPDATE heros_inventory SET slot = ? WHERE id = ?";
+
+            $this->db->query($sql, array($equip['slot'], $deequip['invid']));
+            $this->db->query($sql, array($deequip['slot'], $equip['invid']));
+
+            return true;
+        }
+
+        //just deequip
+        if ($deequip && !$swap) {
+            $sql = "UPDATE heros_inventory SET container = 1, slot = ? WHERE id = ?";
+
+            $this->db->query($sql, array($deequipslot, $deequip['invid']));
+
+            $this->hero_remove_stats($deequip);
+            $this->calc_hero_stats();
+
+            return true;
+        }
+
+        //just equip
+        if ($equip && !$swap) {
+            if (!$cbe['can']) {
+                return $cbe['message'];
+            }
+
+            if (!($cbe['allowed_slot1'] == $equipslot || $cbe['allowed_slot2'] == $equipslot)) {
+                return 'That item cannot be equipped into that slot.';
+            }
+
+            if ($cbe['two_handed']) {
+                $eq = $this->prep_two_hand();
+    
+                if ($eq !== true) {
+                    return $eq;
+                }
+            }
+
+            $sql = "UPDATE heros_inventory SET container = 2, slot = ? WHERE id = ?";
+
+            $this->db->query($sql, array($equipslot, $equip['invid']));
+
+            $this->hero_add_stats($equip);
+            $this->calc_hero_stats();
+
+            return true;
+        }
+
+        //switching between two equipslots, when one of the slots is empty
+        if ($swap) {
+            if (!($cbe['allowed_slot1'] == $equipslot || $cbe['allowed_slot2'] == $equipslot)) {
+                return "That item cannot be equipped into that slot";
+            }
+
+            $sql = "UPDATE heros_inventory SET slot = ? WHERE id = ?";
+
+            $this->db->query($sql, array($equipslot, $equip['invid']));
+
+            return true;
+        }
+
+        return false;
     }
 
-    //each of these functions has to return!
-
-    //for switching items from inventory
-    if ($equip && $deequip && !$swap)
+    //unequips the off hand, if the user wants to equip a two-hand wep
+    public function prep_two_hand()
     {
-      if ($cbe['can'] === TRUE)
-      {
-	if ($cbe['allowed_slot1'] == $deequip['slot'] || $cbe['allowed_slot2'] == $deequip['slot'])
-	  $equipslot = $deequip['slot'];
-
-	if (!isset($equipslot))
-	  return "That item cannot be equipped into that slot.";
-
-	if ($cbe['two_handed'])
-	{
-	  $eq = $this->prep_two_hand();
-
-	  if ($eq !== TRUE)
-	    return $eq;
-	}
-
-	$this->hero_remove_stats($deequip);
-	$this->hero_add_stats($equip);
-
-	$sql = "UPDATE heros_inventory SET container = ?, slot = ? WHERE id = ?";
-
-	//deequipping
-	$this->db->query($sql, array(1, $equip['slot'], $deequip['invid']));
-
-	//equip
-	$this->db->query($sql, array(2, $equipslot, $equip['invid']));
-
-	$this->calc_hero_stats();
-
-	return TRUE;
-      }
-      else
-      {
-	return $cbe['message'];
-      }
-    }
-
-    //switching between 2 slots
-    if ($equip && $deequip && $swap)
-    {
-      if (!(($cbe['allowed_slot1'] == $equip['slot'] || $cbe['allowed_slot2'] == $equip['slot']) && 
-	    ($cbe['allowed_slot1'] == $deequip['slot'] || $cbe['allowed_slot2'] == $deequip['slot'])))
-	return "Those items cannot be swapped";
-
-      $sql = "UPDATE heros_inventory SET slot = ? WHERE id = ?";
-
-      $this->db->query($sql, array($equip['slot'], $deequip['invid']));
-      $this->db->query($sql, array($deequip['slot'], $equip['invid']));
-
-      return TRUE;
-    }
-
-    //just deequip
-    if ($deequip && !$swap)
-    {
-      $sql = "UPDATE heros_inventory SET container = 1, slot = ? WHERE id = ?";
-
-      $this->db->query($sql, array($deequipslot, $deequip['invid']));
-
-      $this->hero_remove_stats($deequip);
-      $this->calc_hero_stats();
-
-      return TRUE;
-    }
-
-    //just equip
-    if ($equip && !$swap)
-    {
-      if (!$cbe['can'])
-	return $cbe['message'];
-
-      if (!($cbe['allowed_slot1'] == $equipslot || $cbe['allowed_slot2'] == $equipslot))
-	return 'That item cannot be equipped into that slot.';
-
-      if ($cbe['two_handed'])
-      {
-	$eq = $this->prep_two_hand();
-	
-	if ($eq !== TRUE)
-	  return $eq;
-      }
-
-      $sql = "UPDATE heros_inventory SET container = 2, slot = ? WHERE id = ?";
-
-      $this->db->query($sql, array($equipslot, $equip['invid']));
-
-      $this->hero_add_stats($equip);
-      $this->calc_hero_stats();
-
-      return TRUE;
-    }
-
-    //switching between two equipslots, when one of the slots is empty
-    if ($swap)
-    {
-      if (!($cbe['allowed_slot1'] == $equipslot || $cbe['allowed_slot2'] == $equipslot))
-	return "That item cannot be equipped into that slot";
-
-      $sql = "UPDATE heros_inventory SET slot = ? WHERE id = ?";
-
-      $this->db->query($sql, array($equipslot, $equip['invid']));
-
-      return TRUE;
-    }
-
-    return FALSE;
-  }
-
-  //unequips the off hand, if the user wants to equip a two-hand wep
-  function prep_two_hand()
-  {
-    $sql = "SELECT heros_inventory.id AS invid,heros_inventory.is_soulbound,heros_inventory.stack_size,
+        $sql = "SELECT heros_inventory.id AS invid,heros_inventory.is_soulbound,heros_inventory.stack_size,
 	heros_inventory.container,heros_inventory.slot,hero_items.*
 	FROM heros_inventory
 	LEFT JOIN hero_items on heros_inventory.itemid = hero_items.id
 	WHERE (heros_inventory.container = 2 AND heros_inventory.slot = 17) AND
 	charid = ?";
 
-    $q = $this->db->query($sql, array($this->hero['id']));
+        $q = $this->db->query($sql, array($this->hero['id']));
 
-    if (!$q->num_rows())
-      return TRUE;
+        if (!$q->num_rows()) {
+            return true;
+        }
 
-    $res = $q->row_array();
+        $res = $q->row_array();
 
-    //find an empty place
-    $sql = "SELECT * FROM heros_inventory WHERE container = 1 AND charid = ?";
+        //find an empty place
+        $sql = "SELECT * FROM heros_inventory WHERE container = 1 AND charid = ?";
 
-    $q = $this->db->query($sql, array($this->hero['id']));
+        $q = $this->db->query($sql, array($this->hero['id']));
 
-    $slot = FALSE;
+        $slot = false;
 
-    if ($q->num_rows())
-    {
-      $inv = $q->result_array();
+        if ($q->num_rows()) {
+            $inv = $q->result_array();
 
-      for ($i = 0; $i < parent::INVENTORY_MAX; $i++)
-      {
-	$found = FALSE;
+            for ($i = 0; $i < parent::INVENTORY_MAX; $i++) {
+                $found = false;
 
-	foreach ($inv as $row)
-	{
-	  if ($row['slot'] == $i)
-	  {
-	    $found = TRUE;
-	    break;
-	  }
-	}
+                foreach ($inv as $row) {
+                    if ($row['slot'] == $i) {
+                        $found = true;
+                        break;
+                    }
+                }
 
-	if (!$found)
-	{
-	  $slot = $i;
-	  break;
-	}
-      }
+                if (!$found) {
+                    $slot = $i;
+                    break;
+                }
+            }
+        } else {
+            $slot = 0;
+        }
+
+        if ($slot === false) {
+            return "You don't have any space in your inventory, to unequip the off hand.";
+        }
+
+        $this->hero_remove_stats($res);
+
+        $sql = "UPDATE heros_inventory SET slot = ?, container = 1 WHERE id = ?";
+
+        $this->db->query($sql, array($slot, $res['invid']));
+
+        return true;
     }
-    else
+
+    //returns ['equipment'], ['money'], ['inventory']
+    public function get_inventory($charid)
     {
-      $slot = 0;
-    }
-
-    if ($slot === FALSE)
-      return "You don't have any space in your inventory, to unequip the off hand.";
-
-    $this->hero_remove_stats($res);
-
-    $sql = "UPDATE heros_inventory SET slot = ?, container = 1 WHERE id = ?";
-
-    $this->db->query($sql, array($slot, $res['invid']));
-
-    return TRUE;
-
-  }
-
-  //returns ['equipment'], ['money'], ['inventory']
-  function get_inventory($charid)
-  {
-    $sql = "SELECT heros_inventory.is_soulbound,heros_inventory.stack_size,heros_inventory.container,
+        $sql = "SELECT heros_inventory.is_soulbound,heros_inventory.stack_size,heros_inventory.container,
 		heros_inventory.slot,hero_items.* 
 		FROM heros_inventory 
 		LEFT JOIN hero_items ON heros_inventory.itemid=hero_items.id
 		WHERE charid = ?";
 
-    $q = $this->db->query($sql, array($charid));
+        $q = $this->db->query($sql, array($charid));
 
-    if ($q->num_rows())
-      $res = $q->result_array();
-    else
-      $res = FALSE;
+        if ($q->num_rows()) {
+            $res = $q->result_array();
+        } else {
+            $res = false;
+        }
 
-    $found = FALSE;
-    for ($i = 0; $i < parent::INVENTORY_MAX; $i++)
-    {
-      if ($res)
-      {
-	foreach ($res as $row)
-	{
-	  if ($row['container'] == 1 && $row['slot'] == $i)
-	  {
-	    $data[] = $row;
-	    $found = TRUE;
-	    break;
-	  }
-	}
+        $found = false;
+        for ($i = 0; $i < parent::INVENTORY_MAX; $i++) {
+            if ($res) {
+                foreach ($res as $row) {
+                    if ($row['container'] == 1 && $row['slot'] == $i) {
+                        $data[] = $row;
+                        $found = true;
+                        break;
+                    }
+                }
 
-	if (!$found)
-	{
-	  $data[] = FALSE;
-	}
+                if (!$found) {
+                    $data[] = false;
+                }
 
-	$found = FALSE;
-      }
-      else
-      {
-	$data[] = FALSE;
-      }
-    }
+                $found = false;
+            } else {
+                $data[] = false;
+            }
+        }
 
-    //sort it
+        //sort it
 
-    $r['inventory'] = $data;
+        $r['inventory'] = $data;
 
-    if ($res)
-    {
-      foreach ($res as $row)
-      {
-	if ($row['container'] == 0)
-	{
-	  $money = $row;
-	  break;
-	}
-      }
-    }
+        if ($res) {
+            foreach ($res as $row) {
+                if ($row['container'] == 0) {
+                    $money = $row;
+                    break;
+                }
+            }
+        }
 
-    if (isset($money))
-      $r['money'] = $money;
-    else
-      $r['money'] = 0;
+        if (isset($money)) {
+            $r['money'] = $money;
+        } else {
+            $r['money'] = 0;
+        }
 
-    //equipment
-    $found = FALSE;
-    for ($i = 0; $i < self::MAX_EQUIPMENT; $i++)
-    {
-      if ($res)
-      {
-	foreach ($res as $row)
-	{
-	  if ($row['container'] == 2 && $row['slot'] == $i)
-	  {
-	    $eq[] = $row;
-	    $found = TRUE;
-	    break;
-	  }
-	}
+        //equipment
+        $found = false;
+        for ($i = 0; $i < self::MAX_EQUIPMENT; $i++) {
+            if ($res) {
+                foreach ($res as $row) {
+                    if ($row['container'] == 2 && $row['slot'] == $i) {
+                        $eq[] = $row;
+                        $found = true;
+                        break;
+                    }
+                }
 
-	if (!$found)
-	{
-	  $eq[] = FALSE;
-	}
+                if (!$found) {
+                    $eq[] = false;
+                }
 
-	$found = FALSE;
-      }
-      else
-	$eq[] = FALSE;
-    }
+                $found = false;
+            } else {
+                $eq[] = false;
+            }
+        }
 
-    $r['equipment'] = $eq;
+        $r['equipment'] = $eq;
 
-    //sort it, if needed
-    $found = FALSE;
-    if ($res)
-    {
-      for ($i = 0; $i < self::MAX_EQUIPMENT; $i++)
-      {
-	foreach ($eq as $row)
-	{
-	  if ($row && $row['slot'] == $i)
-	  {
-	    $seq[] = $row;
-	    $found = TRUE;
-	    break;
-	  }
-	}
+        //sort it, if needed
+        $found = false;
+        if ($res) {
+            for ($i = 0; $i < self::MAX_EQUIPMENT; $i++) {
+                foreach ($eq as $row) {
+                    if ($row && $row['slot'] == $i) {
+                        $seq[] = $row;
+                        $found = true;
+                        break;
+                    }
+                }
       
-	if (!$found)
-	{
-	  $seq[] = FALSE;
-	}
+                if (!$found) {
+                    $seq[] = false;
+                }
 
-	$found = FALSE;
-      }
+                $found = false;
+            }
 
-      $r['equipment'] = $seq;
+            $r['equipment'] = $seq;
+        }
+
+        return $r;
     }
 
-    return $r;
-
-  }
-
-  function add_item_admin($data)
-  {
-    $sql = "INSERT INTO hero_items 
+    public function add_item_admin($data)
+    {
+        $sql = "INSERT INTO hero_items 
 	VALUES(default,
 	" . $this->db->escape($data['name']) . ",
 	" . $this->db->escape($data['icon']) . ",
@@ -543,14 +511,14 @@ class Item_model extends MO_Model
 	'" . $data['data1'] . "',
 	'" . $data['data2'] . "')";
 
-    $this->db->query($sql);
+        $this->db->query($sql);
 
-    $this->_create_sql($sql);
-  }
+        $this->_create_sql($sql);
+    }
 
-  function edit_item_admin($data)
-  {
-    $sql = "UPDATE hero_items
+    public function edit_item_admin($data)
+    {
+        $sql = "UPDATE hero_items
 	SET name = " . $this->db->escape($data['name']) . ",
 	icon = " . $this->db->escape($data['icon']) . ",
 	quality = '" . $data['quality'] . "',
@@ -609,68 +577,71 @@ class Item_model extends MO_Model
 	data2 = '" . $data['data2'] . "'
 	WHERE id = '" . $data['id'] . "'";
 
-    $this->db->query($sql);
+        $this->db->query($sql);
 
-    $this->_create_sql($sql);
-  }
-
-  function get_item_admin($id)
-  {
-    $sql = "SELECT * FROM hero_items WHERE id = ?";
-
-    $q = $this->db->query($sql, array($id));
-
-    if ($q->num_rows())
-      return $q->row_array();
-
-    return FALSE;
-  }
-
-  function all_items_admin()
-  {
-    $sql = "SELECT * FROM hero_items";
-
-    $q = $this->db->query($sql);
-
-    if ($q->num_rows())
-      return $q->result_array();
-
-    return FALSE;
-  }
-
-  function all_items_drop_admin()
-  {
-    $sql = "SELECT * FROM hero_items";
-
-    $q = $this->db->query($sql);
-
-    if (!$q->num_rows())
-      return FALSE;          
-
-    $res = $q->result_array();
-
-    foreach ($res as $row)
-    {
-      $data[$row['id']] = $row['name'];
+        $this->_create_sql($sql);
     }
 
-    if (!isset($data))
-      return FALSE;
+    public function get_item_admin($id)
+    {
+        $sql = "SELECT * FROM hero_items WHERE id = ?";
 
-    return $data;
-  }
+        $q = $this->db->query($sql, array($id));
 
-  function get_class_item_templates($classid)
-  {
-    $sql = "SELECT * FROM hero_inventory_templates WHERE classid = ?";
+        if ($q->num_rows()) {
+            return $q->row_array();
+        }
+
+        return false;
+    }
+
+    public function all_items_admin()
+    {
+        $sql = "SELECT * FROM hero_items";
+
+        $q = $this->db->query($sql);
+
+        if ($q->num_rows()) {
+            return $q->result_array();
+        }
+
+        return false;
+    }
+
+    public function all_items_drop_admin()
+    {
+        $sql = "SELECT * FROM hero_items";
+
+        $q = $this->db->query($sql);
+
+        if (!$q->num_rows()) {
+            return false;
+        }
+
+        $res = $q->result_array();
+
+        foreach ($res as $row) {
+            $data[$row['id']] = $row['name'];
+        }
+
+        if (!isset($data)) {
+            return false;
+        }
+
+        return $data;
+    }
+
+    public function get_class_item_templates($classid)
+    {
+        $sql = "SELECT * FROM hero_inventory_templates WHERE classid = ?";
     
-    $q = $this->db->query($sql, array($classid));
+        $q = $this->db->query($sql, array($classid));
 
-    if ($q->num_rows())
-      return $q->result_array();
+        if ($q->num_rows()) {
+            return $q->result_array();
+        }
 
-    return FALSE;
-  }
-
+        return false;
+    }
 }
 //nowhitesp

@@ -1,173 +1,162 @@
 <?php
 class Building_model extends MO_Model
 {
-  function __construct()
-  {
-    parent::__construct();
-  }	
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-  function get_building($buildingid)
-  {
-    $sql = "SELECT * FROM buildings WHERE id='$buildingid'";
-    $q = $this->db->query($sql);
+    public function get_building($buildingid)
+    {
+        $sql = "SELECT * FROM buildings WHERE id='$buildingid'";
+        $q = $this->db->query($sql);
 
-    if ($q->num_rows())
-      return $q->row_array();
+        if ($q->num_rows()) {
+            return $q->row_array();
+        }
 
-    return FALSE;
-  }
+        return false;
+    }
 
-  function set_build_in_progress($slotid, $villageid)
-  {
-    $sql = "INSERT INTO village_buildings 
+    public function set_build_in_progress($slotid, $villageid)
+    {
+        $sql = "INSERT INTO village_buildings 
 			VALUES(default, '$villageid', '$slotid', '2')";
-    $this->db->query($sql);
-  }
+        $this->db->query($sql);
+    }
 
-  function building_list($villageid)
-  {
-    $sql = "SELECT * FROM buildings
+    public function building_list($villageid)
+    {
+        $sql = "SELECT * FROM buildings
 			WHERE rank='1'";
 
-    $q = $this->db->query($sql);
-    $res = $q->result_array();
+        $q = $this->db->query($sql);
+        $res = $q->result_array();
 
-    $sql = "SELECT * FROM village_buildings WHERE villageid='$villageid'";
-    $q = $this->db->query($sql);
-    $vb = $q->result_array();
+        $sql = "SELECT * FROM village_buildings WHERE villageid='$villageid'";
+        $q = $this->db->query($sql);
+        $vb = $q->result_array();
 
-    //checking requirements
-    foreach ($res as $row)
-    {
-      if ($this->can_build($villageid, $row, $vb, FALSE))
-      {
-	$build[] = $row;
-      }
+        //checking requirements
+        foreach ($res as $row) {
+            if ($this->can_build($villageid, $row, $vb, false)) {
+                $build[] = $row;
+            }
+        }
+
+        //requirements are met
+        $tech = $this->get_village_technologies($villageid);
+
+        foreach ($build as $row) {
+            if ($row['req_tech']) {
+                foreach ($tech as $trow) {
+                    if ($row['req_tech'] == $trow['technologyid']) {
+                        $data[] = $row;
+                        break;
+                    }
+                }
+            } else {
+                $data[] = $row;
+            }
+        }
+
+        return $data;
     }
 
-    //requirements are met
-    $tech = $this->get_village_technologies($villageid);
-
-    foreach ($build as $row)
+    //returns 0 if upgrade in progress
+    //returns 1 if technology requirement not met
+    //returns 2 if not enough resources
+    //returns 3 if can be built
+    public function can_be_upgraded($event, $res, $building, $villageid, $query = false)
     {
-      if ($row['req_tech'])
-      {
-	foreach ($tech as $trow)
-	{
-	  if ($row['req_tech'] == $trow['technologyid'])
-	  {
-	    $data[] = $row;
-	    break;
-	  }
-	}
-      }
-      else
-      {
-	$data[] = $row;
-      }
-    }
-
-    return $data;
-  }
-
-  //returns 0 if upgrade in progress
-  //returns 1 if technology requirement not met
-  //returns 2 if not enough resources
-  //returns 3 if can be built
-  function can_be_upgraded($event, $res, $building, $villageid, $query = FALSE)
-  {
-    if ($query)
-    {
-      //this means we have to get building from the db, 
+        if ($query) {
+            //this means we have to get building from the db,
       //and $building is only the id
+        }
+
+        //check if upgrade in progress
+        //we can just do this, since event is filtered to update events
+        if ($event) {
+            return 0;
+        }
+
+        if (!$this->has_req_tech($building['req_tech'], $villageid)) {
+            return 1;
+        }
+
+        if ($res['food'] < $building['cost_food'] ||
+    $res['wood'] < $building['cost_wood'] ||
+    $res['stone'] < $building['cost_stone'] ||
+    $res['iron'] < $building['cost_iron'] ||
+    $res['mana'] < $building['cost_mana']) {
+            return 2;
+        }
+
+        //can be built
+        return 3;
     }
 
-    //check if upgrade in progress
-    //we can just do this, since event is filtered to update events
-    if ($event)
+    public function can_build($villageid, $buildingid, $data = 0, $is_buildingid = true)
     {
-	  return 0;
+        //STUB requirements aren't implemented
+        return true;
     }
 
-    if (!$this->has_req_tech($building['req_tech'], $villageid))
-      return 1;
-
-    if ($res['food'] < $building['cost_food'] ||
-	$res['wood'] < $building['cost_wood'] ||
-	$res['stone'] < $building['cost_stone'] ||
-	$res['iron'] < $building['cost_iron'] ||
-	$res['mana'] < $building['cost_mana'])
+    public function is_valid_slot($slotid, $villageid)
     {
-      return 2;
-    }
+        if ($slotid > parent::TOTAL_BUILDINGS) {
+            return false;
+        }
 
-    //can be built
-    return 3;
-  }
-
-  function can_build($villageid, $buildingid, $data = 0, $is_buildingid = TRUE)
-  {
-    //STUB requirements aren't implemented
-    return TRUE;
-  }
-
-  function is_valid_slot($slotid, $villageid)
-  {
-    if ($slotid > parent::TOTAL_BUILDINGS)
-      return FALSE;
-
-    $sql = "SELECT id FROM village_buildings 
+        $sql = "SELECT id FROM village_buildings 
 		WHERE villageid='$villageid' AND slotid='$slotid'";
-    $q = $this->db->query($sql);
+        $q = $this->db->query($sql);
 
-    if ($q->num_rows())
-      return FALSE;
+        if ($q->num_rows()) {
+            return false;
+        }
 
-    return TRUE;
-  }
-
-  function get_building_ranks_admin()
-  {
-    $sql = "SELECT * FROM buildings WHERE id > 2";
-    $q = $this->db->query($sql);
-
-    $res = $q->result_array();
-
-    $data[0] = 'Nothing';
-
-    foreach ($res as $row)
-    {
-      if (!$row['next_rank'])
-      {
-	$name = $row['name'] . ' R: ' . $row['rank'];
-	$data[$row['id']] = $name;
-      }
-			
+        return true;
     }
 
-    return $data;
-  }
+    public function get_building_ranks_admin()
+    {
+        $sql = "SELECT * FROM buildings WHERE id > 2";
+        $q = $this->db->query($sql);
 
-  function list_buildings_admin()
-  {
-    $sql = "SELECT * FROM buildings";
-    $q = $this->db->query($sql);
+        $res = $q->result_array();
 
-    return $q->result_array();
-  }
+        $data[0] = 'Nothing';
 
-  function get_building_admin($id)
-  {
-    $sql = "SELECT * FROM buildings WHERE id='$id'";
-    $q = $this->db->query($sql);
+        foreach ($res as $row) {
+            if (!$row['next_rank']) {
+                $name = $row['name'] . ' R: ' . $row['rank'];
+                $data[$row['id']] = $name;
+            }
+        }
 
-    return $q->row_array();
-  }
+        return $data;
+    }
 
-  function edit_building_admin($data)
-  {
+    public function list_buildings_admin()
+    {
+        $sql = "SELECT * FROM buildings";
+        $q = $this->db->query($sql);
 
-    $sql = "UPDATE buildings
+        return $q->result_array();
+    }
+
+    public function get_building_admin($id)
+    {
+        $sql = "SELECT * FROM buildings WHERE id='$id'";
+        $q = $this->db->query($sql);
+
+        return $q->row_array();
+    }
+
+    public function edit_building_admin($data)
+    {
+        $sql = "UPDATE buildings
 			SET name='" . $data['name'] . "',
 			description='" . $data['description'] . "',
 			icon='" . $data['icon'] . "',
@@ -209,14 +198,14 @@ class Building_model extends MO_Model
 			tech_secondary_group='" . $data['tech_secondary_group'] . "'
 			WHERE id='" . $data['id'] . "'";
 
-    $this->db->query($sql);
+        $this->db->query($sql);
 
-    $this->_create_sql($sql);
-  }
+        $this->_create_sql($sql);
+    }
 
-  function add_building_admin($data)
-  {
-    $sql = "INSERT INTO buildings VALUES(default,
+    public function add_building_admin($data)
+    {
+        $sql = "INSERT INTO buildings VALUES(default,
 			'" . $data['name'] . "',
 			'" . $data['description'] . "',
 			'" . $data['icon'] . "',
@@ -257,9 +246,9 @@ class Building_model extends MO_Model
 			'" . $data['tech_group'] . "',
 			'" . $data['tech_secondary_group'] . "')";
 
-    $this->db->query($sql);
+        $this->db->query($sql);
 
-    $this->_create_sql($sql);
-  }
+        $this->_create_sql($sql);
+    }
 }
 //nowhitesp

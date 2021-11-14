@@ -2,86 +2,88 @@
 
 class MO_Model extends CI_Model
 {
-  const EVENT_BUILD = 0;
-  const EVENT_UPGRADE = 1;
-  const EVENT_CREATE = 2;
-  const EVENT_SPELL_END = 3;
-  const EVENT_RESEARCH_END = 4;
-  const EVENT_ATTACK = 5;
+    const EVENT_BUILD = 0;
+    const EVENT_UPGRADE = 1;
+    const EVENT_CREATE = 2;
+    const EVENT_SPELL_END = 3;
+    const EVENT_RESEARCH_END = 4;
+    const EVENT_ATTACK = 5;
 
-  const ATTACK_UP = 1;
-  const ATTACK_LEFT = 2;
-  const ATTACK_RIGHT = 3;
-  const ATTACK_DOWN = 4;
+    const ATTACK_UP = 1;
+    const ATTACK_LEFT = 2;
+    const ATTACK_RIGHT = 3;
+    const ATTACK_DOWN = 4;
 
-  const TOTAL_BUILDINGS = 209;
-  const BUILDING_CULOMN = 19;
-  const BUILDING_ROW = 11;
+    const TOTAL_BUILDINGS = 209;
+    const BUILDING_CULOMN = 19;
+    const BUILDING_ROW = 11;
 
-  //hero
-  const INVENTORY_MAX = 100; //0-99!
+    //hero
+    const INVENTORY_MAX = 100; //0-99!
 
   //Resource manipulations
-  public $resources;
-  public $resources_changed;
-  public $modifiers_changed;
-  public $score;
+    public $resources;
+    public $resources_changed;
+    public $modifiers_changed;
+    public $score;
 
-  //unit manipulations
-  public $unitq_initialized;
-  public $unitq_village_units; //stores units which are in the db
-  public $unitq_changes; //the changes
-  public $unitq_units; //the changed units data
+    //unit manipulations
+    public $unitq_initialized;
+    public $unitq_village_units; //stores units which are in the db
+    public $unitq_changes; //the changes
+    public $unitq_units; //the changed units data
 
-  public $villageid;
-  public $userid;
+    public $villageid;
+    public $userid;
 
-  //hero
-  public $hero;
-  public $hero_stat_changed;
-  public $hero_exp_changed;
-  public $hero_hpmp_changed;
+    //hero
+    public $hero;
+    public $hero_stat_changed;
+    public $hero_exp_changed;
+    public $hero_hpmp_changed;
 
-  function __construct()
-  {
-    parent::__construct();
-    $this->resources = FALSE;
-    $this->resources_changed = FALSE;
-    $this->modifiers_changed = FALSE;
-    $this->score = 0;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->resources = false;
+        $this->resources_changed = false;
+        $this->modifiers_changed = false;
+        $this->score = 0;
 
-    $this->unitq_initialized = FALSE;
-    $this->unitq_village_units = FALSE;
-    $this->unitq_changes = FALSE;
-    $this->unitq_units = FALSE;
+        $this->unitq_initialized = false;
+        $this->unitq_village_units = false;
+        $this->unitq_changes = false;
+        $this->unitq_units = false;
 
-    $this->villageid = FALSE;
-    $this->userid = FALSE;
+        $this->villageid = false;
+        $this->userid = false;
 
-    $this->hero = FALSE;
-    $this->hero_stat_changed = FALSE;
-    $this->hero_exp_changed = FALSE;
-    $this->hero_hpmp_changed = FALSE;
-  }
+        $this->hero = false;
+        $this->hero_stat_changed = false;
+        $this->hero_exp_changed = false;
+        $this->hero_hpmp_changed = false;
+    }
 
-/*
-  This doesn't work with codeigniter, gives a bunch of errors.
-  function __destruct() 
-  {
-    $this->write_resources();
-  }
-*/
-  //event
-  function add_event($data)
-  {
-    if (!isset($data['data1']))
-      $data['data1'] = 0;
-    if (!isset($data['data2']))
-      $data['data2'] = 0;
+    /*
+      This doesn't work with codeigniter, gives a bunch of errors.
+      function __destruct()
+      {
+        $this->write_resources();
+      }
+    */
+    //event
+    public function add_event($data)
+    {
+        if (!isset($data['data1'])) {
+            $data['data1'] = 0;
+        }
+        if (!isset($data['data2'])) {
+            $data['data2'] = 0;
+        }
 
-    $end = (time() + $data['time']);
+        $end = (time() + $data['time']);
 
-    $sql = "INSERT INTO events
+        $sql = "INSERT INTO events
 			VALUES(default, 
 			'" . $data['villageid'] . "',
 			'" . $data['slotid'] . "',
@@ -90,407 +92,425 @@ class MO_Model extends CI_Model
 			'" . $data['data1'] . "',
 			'" . $data['data2'] . "')";
 
-    $this->db->query($sql);
-  }
-
-  //event end
-
-  //resources
-  function check_resources($res, $data)
-  {
-    if ($res['food'] >= $data['cost_food'] &&
-	$res['wood'] >= $data['cost_wood'] &&
-	$res['stone'] >= $data['cost_stone'] &&
-	$res['iron'] >= $data['cost_iron'] &&
-	$res['mana'] >= $data['cost_mana'])
-      return TRUE;
-
-    return FALSE;
-  }
-
-  function set_resources($res)
-  {
-    $this->resources = $res;
-  }
-
-  //adds modifiers from the building
-  function add_modifiers($id, $villageid, $type = 'building', $num = 1, $noquery = FALSE)
-  {
-    if (!$this->resources)
-      $this->get_resources($villageid);
-
-    if (!$noquery)
-    {
-      if ($type == 'building')
-	$sql = "SELECT * FROM buildings WHERE id='$id'";
-
-      if ($type == 'unit')
-	$sql = "SELECT * FROM units WHERE id='$id'";
-
-      if ($type == 'assignment')
-	$sql = "SELECT * FROM assignments WHERE id='$id'";
-
-      if ($type == 'spell')
-	$sql = "SELECT * FROM spells WHERE id='$id'";
-
-      if ($type == 'technology')
-	$sql = "SELECT * FROM technologies WHERE id='$id'";
-
-      if ($type == 'weather')
-	$sql = "SELECT * FROM weathers WHERE id='$id'";
-
-      $q = $this->db->query($sql);
-      $data = $q->row_array();
-    }
-    else
-    {
-      $data = $id;
+        $this->db->query($sql);
     }
 
-    //if everything is 0 don't do anything
-    if ($type == 'building' || $type == 'assignment' || $type == 'spell' ||
-	$type == 'technology')
-      if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
-	    $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_rate_food'] || 
-	    $data['mod_rate_wood'] || $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
-	    $data['mod_rate_mana'] || $data['mod_percent_food'] || $data['mod_percent_wood'] ||
-	    $data['mod_percent_stone'] || $data['mod_percent_iron'] || $data['mod_percent_mana']))
-	return;
+    //event end
 
-    if ($type == 'weather')
-      if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
-	    $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_percent_food'] || 
-	    $data['mod_percent_wood'] || $data['mod_percent_stone'] || $data['mod_percent_iron'] || 
-	    $data['mod_percent_mana']))
-	return;
-
-    if ($type == 'unit')
-      if (!($data['mod_rate_food'] || $data['mod_rate_wood'] ||
-	    $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
-	    $data['mod_rate_mana']))
-	return;
-
-    //this is sure at this point
-    $this->modifiers_changed = TRUE;
-    $res = $this->resources;
-
-
-    if ($type == 'building' || $type == 'assignment' || $type == 'spell' || $type == 'technology')
+    //resources
+    public function check_resources($res, $data)
     {
-      $res['max_food'] += ($data['mod_max_food'] * $num);
-      $res['max_wood'] += ($data['mod_max_wood'] * $num);
-      $res['max_stone'] += ($data['mod_max_stone'] * $num);
-      $res['max_iron'] += ($data['mod_max_iron'] * $num);
-      $res['max_mana'] += ($data['mod_max_mana'] * $num);
+        if ($res['food'] >= $data['cost_food'] &&
+    $res['wood'] >= $data['cost_wood'] &&
+    $res['stone'] >= $data['cost_stone'] &&
+    $res['iron'] >= $data['cost_iron'] &&
+    $res['mana'] >= $data['cost_mana']) {
+            return true;
+        }
 
-      $res['rate_nm_food'] += ($data['mod_rate_food'] * $num);
-      $res['rate_nm_wood'] += ($data['mod_rate_wood'] * $num);
-      $res['rate_nm_stone'] += ($data['mod_rate_stone'] * $num);
-      $res['rate_nm_iron'] += ($data['mod_rate_iron'] * $num);
-      $res['rate_nm_mana'] += ($data['mod_rate_mana'] * $num);
-
-      $res['percent_food'] += ($data['mod_percent_food'] * $num);
-      $res['percent_wood'] += ($data['mod_percent_wood'] * $num);
-      $res['percent_stone'] += ($data['mod_percent_stone'] * $num);
-      $res['percent_iron'] += ($data['mod_percent_iron'] * $num);
-      $res['percent_mana'] += ($data['mod_percent_mana'] * $num);
+        return false;
     }
 
-    if ($type == 'unit')
+    public function set_resources($res)
     {
-      $res['rate_nm_food'] += ($data['mod_rate_food'] * $num);
-      $res['rate_nm_wood'] += ($data['mod_rate_wood'] * $num);
-      $res['rate_nm_stone'] += ($data['mod_rate_stone'] * $num);
-      $res['rate_nm_iron'] += ($data['mod_rate_iron'] * $num);
-      $res['rate_nm_mana'] += ($data['mod_rate_mana'] * $num);
+        $this->resources = $res;
     }
 
-    //has to be done this way, because this doesn't have flat rate modifiers
-    //so adding it to spells (etc) above could error out
-    if ($type == 'weather')
+    //adds modifiers from the building
+    public function add_modifiers($id, $villageid, $type = 'building', $num = 1, $noquery = false)
     {
-	$res['max_food'] += ($data['mod_max_food'] * $num);
-	$res['max_wood'] += ($data['mod_max_wood'] * $num);
-	$res['max_stone'] += ($data['mod_max_stone'] * $num);
-	$res['max_iron'] += ($data['mod_max_iron'] * $num);
-	$res['max_mana'] += ($data['mod_max_mana'] * $num);
+        if (!$this->resources) {
+            $this->get_resources($villageid);
+        }
 
-	$res['percent_food'] += ($data['mod_percent_food'] * $num);
-	$res['percent_wood'] += ($data['mod_percent_wood'] * $num);
-	$res['percent_stone'] += ($data['mod_percent_stone'] * $num);
-	$res['percent_iron'] += ($data['mod_percent_iron'] * $num);
-	$res['percent_mana'] += ($data['mod_percent_mana'] * $num);
+        if (!$noquery) {
+            if ($type == 'building') {
+                $sql = "SELECT * FROM buildings WHERE id='$id'";
+            }
+
+            if ($type == 'unit') {
+                $sql = "SELECT * FROM units WHERE id='$id'";
+            }
+
+            if ($type == 'assignment') {
+                $sql = "SELECT * FROM assignments WHERE id='$id'";
+            }
+
+            if ($type == 'spell') {
+                $sql = "SELECT * FROM spells WHERE id='$id'";
+            }
+
+            if ($type == 'technology') {
+                $sql = "SELECT * FROM technologies WHERE id='$id'";
+            }
+
+            if ($type == 'weather') {
+                $sql = "SELECT * FROM weathers WHERE id='$id'";
+            }
+
+            $q = $this->db->query($sql);
+            $data = $q->row_array();
+        } else {
+            $data = $id;
+        }
+
+        //if everything is 0 don't do anything
+        if ($type == 'building' || $type == 'assignment' || $type == 'spell' ||
+    $type == 'technology') {
+            if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
+        $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_rate_food'] ||
+        $data['mod_rate_wood'] || $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
+        $data['mod_rate_mana'] || $data['mod_percent_food'] || $data['mod_percent_wood'] ||
+        $data['mod_percent_stone'] || $data['mod_percent_iron'] || $data['mod_percent_mana'])) {
+                return;
+            }
+        }
+
+        if ($type == 'weather') {
+            if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
+        $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_percent_food'] ||
+        $data['mod_percent_wood'] || $data['mod_percent_stone'] || $data['mod_percent_iron'] ||
+        $data['mod_percent_mana'])) {
+                return;
+            }
+        }
+
+        if ($type == 'unit') {
+            if (!($data['mod_rate_food'] || $data['mod_rate_wood'] ||
+        $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
+        $data['mod_rate_mana'])) {
+                return;
+            }
+        }
+
+        //this is sure at this point
+        $this->modifiers_changed = true;
+        $res = $this->resources;
+
+
+        if ($type == 'building' || $type == 'assignment' || $type == 'spell' || $type == 'technology') {
+            $res['max_food'] += ($data['mod_max_food'] * $num);
+            $res['max_wood'] += ($data['mod_max_wood'] * $num);
+            $res['max_stone'] += ($data['mod_max_stone'] * $num);
+            $res['max_iron'] += ($data['mod_max_iron'] * $num);
+            $res['max_mana'] += ($data['mod_max_mana'] * $num);
+
+            $res['rate_nm_food'] += ($data['mod_rate_food'] * $num);
+            $res['rate_nm_wood'] += ($data['mod_rate_wood'] * $num);
+            $res['rate_nm_stone'] += ($data['mod_rate_stone'] * $num);
+            $res['rate_nm_iron'] += ($data['mod_rate_iron'] * $num);
+            $res['rate_nm_mana'] += ($data['mod_rate_mana'] * $num);
+
+            $res['percent_food'] += ($data['mod_percent_food'] * $num);
+            $res['percent_wood'] += ($data['mod_percent_wood'] * $num);
+            $res['percent_stone'] += ($data['mod_percent_stone'] * $num);
+            $res['percent_iron'] += ($data['mod_percent_iron'] * $num);
+            $res['percent_mana'] += ($data['mod_percent_mana'] * $num);
+        }
+
+        if ($type == 'unit') {
+            $res['rate_nm_food'] += ($data['mod_rate_food'] * $num);
+            $res['rate_nm_wood'] += ($data['mod_rate_wood'] * $num);
+            $res['rate_nm_stone'] += ($data['mod_rate_stone'] * $num);
+            $res['rate_nm_iron'] += ($data['mod_rate_iron'] * $num);
+            $res['rate_nm_mana'] += ($data['mod_rate_mana'] * $num);
+        }
+
+        //has to be done this way, because this doesn't have flat rate modifiers
+        //so adding it to spells (etc) above could error out
+        if ($type == 'weather') {
+            $res['max_food'] += ($data['mod_max_food'] * $num);
+            $res['max_wood'] += ($data['mod_max_wood'] * $num);
+            $res['max_stone'] += ($data['mod_max_stone'] * $num);
+            $res['max_iron'] += ($data['mod_max_iron'] * $num);
+            $res['max_mana'] += ($data['mod_max_mana'] * $num);
+
+            $res['percent_food'] += ($data['mod_percent_food'] * $num);
+            $res['percent_wood'] += ($data['mod_percent_wood'] * $num);
+            $res['percent_stone'] += ($data['mod_percent_stone'] * $num);
+            $res['percent_iron'] += ($data['mod_percent_iron'] * $num);
+            $res['percent_mana'] += ($data['mod_percent_mana'] * $num);
+        }
+
+        $res['rate_food'] = ($res['rate_nm_food'] * ($res['percent_food'] / 100));
+        $res['rate_wood'] = ($res['rate_nm_wood'] * ($res['percent_wood'] / 100));
+        $res['rate_stone'] = ($res['rate_nm_stone'] * ($res['percent_stone'] / 100));
+        $res['rate_iron'] = ($res['rate_nm_iron'] * ($res['percent_iron'] / 100));
+        $res['rate_mana'] = ($res['rate_nm_mana'] * ($res['percent_mana'] / 100));
+
+        $this->resources = $res;
+
+        //add score
+        if ($type == 'building' || $type == 'unit' || $type == 'technology') {
+            $this->score += ($data['score'] * $num);
+        }
     }
 
-    $res['rate_food'] = ($res['rate_nm_food'] * ($res['percent_food'] / 100));
-    $res['rate_wood'] = ($res['rate_nm_wood'] * ($res['percent_wood'] / 100));
-    $res['rate_stone'] = ($res['rate_nm_stone'] * ($res['percent_stone'] / 100));
-    $res['rate_iron'] = ($res['rate_nm_iron'] * ($res['percent_iron'] / 100));
-    $res['rate_mana'] = ($res['rate_nm_mana'] * ($res['percent_mana'] / 100));
-
-    $this->resources = $res;
-
-    //add score
-    if ($type == 'building' || $type == 'unit' || $type == 'technology')
+    public function substract_modifiers($id, $villageid, $type = 'building', $num = 1, $noquery = false)
     {
-      $this->score += ($data['score'] * $num);
-    }
-  }
+        if (!$this->resources) {
+            $this->get_resources($villageid);
+        }
 
-  function substract_modifiers($id, $villageid, $type = 'building', $num = 1, $noquery = FALSE)
-  {
-    if (!$this->resources)
-      $this->get_resources($villageid);
+        if (!$noquery) {
+            if ($type == 'building') {
+                $sql = "SELECT * FROM buildings WHERE id='$id'";
+            }
 
-    if (!$noquery)
-    {
-      if ($type == 'building')
-	$sql = "SELECT * FROM buildings WHERE id='$id'";
+            if ($type == 'unit') {
+                $sql = "SELECT * FROM units WHERE id='$id'";
+            }
 
-      if ($type == 'unit')
-	$sql = "SELECT * FROM units WHERE id='$id'";
+            if ($type == 'assignment') {
+                $sql = "SELECT * FROM assignments WHERE id='$id'";
+            }
 
-      if ($type == 'assignment')
-	$sql = "SELECT * FROM assignments WHERE id='$id'";
+            if ($type == 'spell') {
+                $sql = "SELECT * FROM spells WHERE id='$id'";
+            }
 
-      if ($type == 'spell')
-	$sql = "SELECT * FROM spells WHERE id='$id'";
+            if ($type == 'technology') {
+                $sql = "SELECT * FROM technologies WHERE id='$id'";
+            }
 
-      if ($type == 'technology')
-	$sql = "SELECT * FROM technologies WHERE id='$id'";
+            if ($type == 'weather') {
+                $sql = "SELECT * FROM weathers WHERE id='$id'";
+            }
 
-      if ($type == 'weather')
-	$sql = "SELECT * FROM weathers WHERE id='$id'";
+            $q = $this->db->query($sql);
+            $data = $q->row_array();
+        } else {
+            $data = $id;
+        }
 
-      $q = $this->db->query($sql);
-      $data = $q->row_array();
-    }
-    else
-    {
-      $data = $id;
-    }
+        //if everything is 0 don't do anything
+        if ($type == 'building' || $type == 'assignment' || $type == 'spell' ||
+    $type == 'technology') {
+            if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
+        $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_rate_food'] ||
+        $data['mod_rate_wood'] || $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
+        $data['mod_rate_mana'] || $data['mod_percent_food'] || $data['mod_percent_wood'] ||
+        $data['mod_percent_stone'] || $data['mod_percent_iron'] || $data['mod_percent_mana'])) {
+                return;
+            }
+        }
 
-    //if everything is 0 don't do anything
-    if ($type == 'building' || $type == 'assignment' || $type == 'spell' ||
-	$type == 'technology')
-      if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
-	    $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_rate_food'] || 
-	    $data['mod_rate_wood'] || $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
-	    $data['mod_rate_mana'] || $data['mod_percent_food'] || $data['mod_percent_wood'] ||
-	    $data['mod_percent_stone'] || $data['mod_percent_iron'] || $data['mod_percent_mana']))
-	return;
+        if ($type == 'weather') {
+            if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
+        $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_percent_food'] ||
+        $data['mod_percent_wood'] || $data['mod_percent_stone'] || $data['mod_percent_iron'] ||
+        $data['mod_percent_mana'])) {
+                return;
+            }
+        }
 
-    if ($type == 'weather')
-      if (!($data['mod_max_food'] || $data['mod_max_wood'] || $data['mod_max_stone'] ||
-	    $data['mod_max_iron'] || $data['mod_max_mana'] || $data['mod_percent_food'] || 
-	    $data['mod_percent_wood'] || $data['mod_percent_stone'] || $data['mod_percent_iron'] || 
-	    $data['mod_percent_mana']))
-	return;
+        if ($type == 'unit') {
+            if (!($data['mod_rate_food'] || $data['mod_rate_wood'] ||
+        $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
+        $data['mod_rate_mana'])) {
+                return;
+            }
+        }
 
-    if ($type == 'unit')
-      if (!($data['mod_rate_food'] || $data['mod_rate_wood'] ||
-	    $data['mod_rate_stone'] || $data['mod_rate_iron'] ||
-	    $data['mod_rate_mana']))
-	return;
+        //this is sure at this point
+        $this->modifiers_changed = true;
+        $res = $this->resources;
 
-    //this is sure at this point
-    $this->modifiers_changed = TRUE;
-    $res = $this->resources;
+        if ($type == 'building' || $type == 'assignment' || $type == 'spell' || $type == 'technology') {
+            $res['max_food'] -= ($data['mod_max_food'] * $num);
+            $res['max_wood'] -= ($data['mod_max_wood'] * $num);
+            $res['max_stone'] -= ($data['mod_max_stone'] * $num);
+            $res['max_iron'] -= ($data['mod_max_iron'] * $num);
+            $res['max_mana'] -= ($data['mod_max_mana'] * $num);
 
-    if ($type == 'building' || $type == 'assignment' || $type == 'spell' || $type == 'technology')
-    {
-      $res['max_food'] -= ($data['mod_max_food'] * $num);
-      $res['max_wood'] -= ($data['mod_max_wood'] * $num);
-      $res['max_stone'] -= ($data['mod_max_stone'] * $num);
-      $res['max_iron'] -= ($data['mod_max_iron'] * $num);
-      $res['max_mana'] -= ($data['mod_max_mana'] * $num);
+            $res['rate_nm_food'] -= ($data['mod_rate_food'] * $num);
+            $res['rate_nm_wood'] -= ($data['mod_rate_wood'] * $num);
+            $res['rate_nm_stone'] -= ($data['mod_rate_stone'] * $num);
+            $res['rate_nm_iron'] -= ($data['mod_rate_iron'] * $num);
+            $res['rate_nm_mana'] -= ($data['mod_rate_mana'] * $num);
 
-      $res['rate_nm_food'] -= ($data['mod_rate_food'] * $num);
-      $res['rate_nm_wood'] -= ($data['mod_rate_wood'] * $num);
-      $res['rate_nm_stone'] -= ($data['mod_rate_stone'] * $num);
-      $res['rate_nm_iron'] -= ($data['mod_rate_iron'] * $num);
-      $res['rate_nm_mana'] -= ($data['mod_rate_mana'] * $num);
+            $res['percent_food'] -= ($data['mod_percent_food'] * $num);
+            $res['percent_wood'] -= ($data['mod_percent_wood'] * $num);
+            $res['percent_stone'] -= ($data['mod_percent_stone'] * $num);
+            $res['percent_iron'] -= ($data['mod_percent_iron'] * $num);
+            $res['percent_mana'] -= ($data['mod_percent_mana'] * $num);
+        }
 
-      $res['percent_food'] -= ($data['mod_percent_food'] * $num);
-      $res['percent_wood'] -= ($data['mod_percent_wood'] * $num);
-      $res['percent_stone'] -= ($data['mod_percent_stone'] * $num);
-      $res['percent_iron'] -= ($data['mod_percent_iron'] * $num);
-      $res['percent_mana'] -= ($data['mod_percent_mana'] * $num);
-    }
+        if ($type == 'unit') {
+            $res['rate_nm_food'] -= ($data['mod_rate_food'] * $num);
+            $res['rate_nm_wood'] -= ($data['mod_rate_wood'] * $num);
+            $res['rate_nm_stone'] -= ($data['mod_rate_stone'] * $num);
+            $res['rate_nm_iron'] -= ($data['mod_rate_iron'] * $num);
+            $res['rate_nm_mana'] -= ($data['mod_rate_mana'] * $num);
+        }
 
-    if ($type == 'unit')
-    {
-      $res['rate_nm_food'] -= ($data['mod_rate_food'] * $num);
-      $res['rate_nm_wood'] -= ($data['mod_rate_wood'] * $num);
-      $res['rate_nm_stone'] -= ($data['mod_rate_stone'] * $num);
-      $res['rate_nm_iron'] -= ($data['mod_rate_iron'] * $num);
-      $res['rate_nm_mana'] -= ($data['mod_rate_mana'] * $num);
-    }
+        //has to be done this way, because this doesn't have flat rate modifiers
+        //so adding it to spells (etc) above could error out
+        if ($type == 'weather') {
+            $res['max_food'] -= ($data['mod_max_food'] * $num);
+            $res['max_wood'] -= ($data['mod_max_wood'] * $num);
+            $res['max_stone'] -= ($data['mod_max_stone'] * $num);
+            $res['max_iron'] -= ($data['mod_max_iron'] * $num);
+            $res['max_mana'] -= ($data['mod_max_mana'] * $num);
 
-    //has to be done this way, because this doesn't have flat rate modifiers
-    //so adding it to spells (etc) above could error out
-    if ($type == 'weather')
-    {
-	$res['max_food'] -= ($data['mod_max_food'] * $num);
-	$res['max_wood'] -= ($data['mod_max_wood'] * $num);
-	$res['max_stone'] -= ($data['mod_max_stone'] * $num);
-	$res['max_iron'] -= ($data['mod_max_iron'] * $num);
-	$res['max_mana'] -= ($data['mod_max_mana'] * $num);
+            $res['percent_food'] -= ($data['mod_percent_food'] * $num);
+            $res['percent_wood'] -= ($data['mod_percent_wood'] * $num);
+            $res['percent_stone'] -= ($data['mod_percent_stone'] * $num);
+            $res['percent_iron'] -= ($data['mod_percent_iron'] * $num);
+            $res['percent_mana'] -= ($data['mod_percent_mana'] * $num);
+        }
 
-	$res['percent_food'] -= ($data['mod_percent_food'] * $num);
-	$res['percent_wood'] -= ($data['mod_percent_wood'] * $num);
-	$res['percent_stone'] -= ($data['mod_percent_stone'] * $num);
-	$res['percent_iron'] -= ($data['mod_percent_iron'] * $num);
-	$res['percent_mana'] -= ($data['mod_percent_mana'] * $num);
-    }
+        $res['rate_food'] = ($res['rate_nm_food'] * ($res['percent_food'] / 100));
+        $res['rate_wood'] = ($res['rate_nm_wood'] * ($res['percent_wood'] / 100));
+        $res['rate_stone'] = ($res['rate_nm_stone'] * ($res['percent_stone'] / 100));
+        $res['rate_iron'] = ($res['rate_nm_iron'] * ($res['percent_iron'] / 100));
+        $res['rate_mana'] = ($res['rate_nm_mana'] * ($res['percent_mana'] / 100));
 
-    $res['rate_food'] = ($res['rate_nm_food'] * ($res['percent_food'] / 100));
-    $res['rate_wood'] = ($res['rate_nm_wood'] * ($res['percent_wood'] / 100));
-    $res['rate_stone'] = ($res['rate_nm_stone'] * ($res['percent_stone'] / 100));
-    $res['rate_iron'] = ($res['rate_nm_iron'] * ($res['percent_iron'] / 100));
-    $res['rate_mana'] = ($res['rate_nm_mana'] * ($res['percent_mana'] / 100));
+        $this->resources = $res;
 
-    $this->resources = $res;
-
-    //add score
-    if ($type == 'building' || $type == 'unit' || $type == 'technology')
-    {
-      $this->score -= ($data['score'] * $num);
-    }
-  }
-
-  //substractes resources, $data has to have cost_* fields!
-  function substract_resources($data, $villageid = 0, $num = 1)
-  {
-    //can only happen if not called from events, but shouldn't
-    if (!$this->resources)
-    {
-      $this->get_resources($villageid);
-      $this->update_resources();
-      //$this->_create_sql_debug('sub_resources got called wo $this->resources!');
+        //add score
+        if ($type == 'building' || $type == 'unit' || $type == 'technology') {
+            $this->score -= ($data['score'] * $num);
+        }
     }
 
-    $res = $this->resources;
-
-    $res['food'] -= ($data['cost_food'] * $num);
-    $res['wood'] -= ($data['cost_wood'] * $num);
-    $res['stone'] -= ($data['cost_stone'] * $num);
-    $res['iron'] -= ($data['cost_iron'] * $num);
-    $res['mana'] -= ($data['cost_mana'] * $num);
-
-    if ($res['food'] < 0 || $res['wood'] < 0 || $res['stone'] < 0 || 
-	$res['iron'] < 0 || $res['mana'] < 0)
-      return FALSE;
-
-    $this->resources = $res;
-    $this->resources_changed = TRUE;
-
-    return TRUE;
-  }
-
-/*
-  //probably nothing uses it TODO remove
-  function set_resources($data, $villageid)
-  {
-    $sql = "UPDATE resources
-		SET food='" . $data['food'] . "',
-		wood='" . $data['wood'] . "',
-		stone='" . $data['stone'] . "',
-		iron='" . $data['iron'] . "',
-		mana='" . $data['mana'] . "'
-		WHERE villageid='$villageid'";
-
-    $this->db->query($sql);
-  }
-*/
-  //despite the name it updates the resources first, then returns them.
-  function get_resources($vid)
-  {
-    //to not break existing functionality TODO remove returning
-    if ($this->resources)
-      return $this->resources;
-
-    //getting resources
-    $sql = "SELECT * FROM resources WHERE villageid='$vid'";
-    $q = $this->db->query($sql);
-
-    $this->resources = $q->row_array();
-
-    //to not break existing functions, should be removed
-    return $this->resources; 
-  }
-
-  function update_resources($time = FALSE)
-  {
-    if ($time === FALSE)
-      $time = time();
-
-    $res = $this->resources;
-
-    //if already at maximum
-    //we still have to update last_time, because it will screw up things.
-    if (($res['food'] == $res['max_food']) &&
-	($res['wood'] == $res['max_wood']) &&
-	($res['stone'] == $res['max_stone']) &&
-	($res['iron'] == $res['max_iron']) &&
-	($res['mana'] == $res['max_mana']))
+    //substractes resources, $data has to have cost_* fields!
+    public function substract_resources($data, $villageid = 0, $num = 1)
     {
-      //do not set $this->resources_changed here, so write only updates the time in the db
-      $this->resources['last_updated'] = $time;
-      return;
+        //can only happen if not called from events, but shouldn't
+        if (!$this->resources) {
+            $this->get_resources($villageid);
+            $this->update_resources();
+            //$this->_create_sql_debug('sub_resources got called wo $this->resources!');
+        }
+
+        $res = $this->resources;
+
+        $res['food'] -= ($data['cost_food'] * $num);
+        $res['wood'] -= ($data['cost_wood'] * $num);
+        $res['stone'] -= ($data['cost_stone'] * $num);
+        $res['iron'] -= ($data['cost_iron'] * $num);
+        $res['mana'] -= ($data['cost_mana'] * $num);
+
+        if ($res['food'] < 0 || $res['wood'] < 0 || $res['stone'] < 0 ||
+    $res['iron'] < 0 || $res['mana'] < 0) {
+            return false;
+        }
+
+        $this->resources = $res;
+        $this->resources_changed = true;
+
+        return true;
     }
 
-    $ticks = ($time - $res['last_updated']);
+    /*
+      //probably nothing uses it TODO remove
+      function set_resources($data, $villageid)
+      {
+        $sql = "UPDATE resources
+            SET food='" . $data['food'] . "',
+            wood='" . $data['wood'] . "',
+            stone='" . $data['stone'] . "',
+            iron='" . $data['iron'] . "',
+            mana='" . $data['mana'] . "'
+            WHERE villageid='$villageid'";
 
-    //if more than one event end at the same time this could happen
-    if (!$ticks)
-      return;
-
-    $res['food'] += ($res['rate_food'] * $ticks);
-    $res['wood'] += ($res['rate_wood'] * $ticks);
-    $res['stone'] += ($res['rate_stone'] * $ticks);
-    $res['iron'] += ($res['rate_iron'] * $ticks);
-    $res['mana'] += ($res['rate_mana'] * $ticks);
-
-    //check if over the limit
-    if ($res['food'] > $res['max_food'])
-      $res['food'] = $res['max_food'];
-    if ($res['wood'] > $res['max_wood'])
-      $res['wood'] = $res['max_wood'];
-    if ($res['stone'] > $res['max_stone'])
-      $res['stone'] = $res['max_stone'];
-    if ($res['iron'] > $res['max_iron'])
-      $res['iron'] = $res['max_iron'];
-    if ($res['mana'] > $res['max_mana'])
-      $res['mana'] = $res['max_mana'];
-
-    $res['last_updated'] = $time;
-
-    //update the db
-    $this->resources_changed = TRUE;
-    $this->resources = $res;
-  }
-
-  function write_resources()
-  {
-    //we only have to update last_time
-    if (!$this->resources_changed && !$this->modifiers_changed)
+        $this->db->query($sql);
+      }
+    */
+    //despite the name it updates the resources first, then returns them.
+    public function get_resources($vid)
     {
-      $time = time();
-      $sql = "UPDATE resources 
+        //to not break existing functionality TODO remove returning
+        if ($this->resources) {
+            return $this->resources;
+        }
+
+        //getting resources
+        $sql = "SELECT * FROM resources WHERE villageid='$vid'";
+        $q = $this->db->query($sql);
+
+        $this->resources = $q->row_array();
+
+        //to not break existing functions, should be removed
+        return $this->resources;
+    }
+
+    public function update_resources($time = false)
+    {
+        if ($time === false) {
+            $time = time();
+        }
+
+        $res = $this->resources;
+
+        //if already at maximum
+        //we still have to update last_time, because it will screw up things.
+        if (($res['food'] == $res['max_food']) &&
+    ($res['wood'] == $res['max_wood']) &&
+    ($res['stone'] == $res['max_stone']) &&
+    ($res['iron'] == $res['max_iron']) &&
+    ($res['mana'] == $res['max_mana'])) {
+            //do not set $this->resources_changed here, so write only updates the time in the db
+            $this->resources['last_updated'] = $time;
+            return;
+        }
+
+        $ticks = ($time - $res['last_updated']);
+
+        //if more than one event end at the same time this could happen
+        if (!$ticks) {
+            return;
+        }
+
+        $res['food'] += ($res['rate_food'] * $ticks);
+        $res['wood'] += ($res['rate_wood'] * $ticks);
+        $res['stone'] += ($res['rate_stone'] * $ticks);
+        $res['iron'] += ($res['rate_iron'] * $ticks);
+        $res['mana'] += ($res['rate_mana'] * $ticks);
+
+        //check if over the limit
+        if ($res['food'] > $res['max_food']) {
+            $res['food'] = $res['max_food'];
+        }
+        if ($res['wood'] > $res['max_wood']) {
+            $res['wood'] = $res['max_wood'];
+        }
+        if ($res['stone'] > $res['max_stone']) {
+            $res['stone'] = $res['max_stone'];
+        }
+        if ($res['iron'] > $res['max_iron']) {
+            $res['iron'] = $res['max_iron'];
+        }
+        if ($res['mana'] > $res['max_mana']) {
+            $res['mana'] = $res['max_mana'];
+        }
+
+        $res['last_updated'] = $time;
+
+        //update the db
+        $this->resources_changed = true;
+        $this->resources = $res;
+    }
+
+    public function write_resources()
+    {
+        //we only have to update last_time
+        if (!$this->resources_changed && !$this->modifiers_changed) {
+            $time = time();
+            $sql = "UPDATE resources 
 		SET last_updated='" . $this->resources['last_updated'] . "'
 		WHERE villageid='" . $this->resources['villageid'] . "'";
 
-      $this->db->query($sql);
+            $this->db->query($sql);
 
-      return;
-    }
+            return;
+        }
 
-    $res = $this->resources;
+        $res = $this->resources;
 
-    if ($this->modifiers_changed)
-    {
-	$sql = "UPDATE resources 
+        if ($this->modifiers_changed) {
+            $sql = "UPDATE resources 
 		SET food='" . $res['food'] . "',
 		wood='" . $res['wood'] . "',
 		stone='" . $res['stone'] . "',
@@ -519,13 +539,12 @@ class MO_Model extends CI_Model
 		percent_mana = '" . $res['percent_mana'] . "'
 		WHERE villageid='" . $res['villageid'] . "'";
 
-	$this->db->query($sql);
-    }
+            $this->db->query($sql);
+        }
 
-    if ($this->resources_changed && !$this->modifiers_changed)
-    {
-      //update the db
-      $sql = "UPDATE resources
+        if ($this->resources_changed && !$this->modifiers_changed) {
+            //update the db
+            $sql = "UPDATE resources
 		SET food='" . $res['food'] . "',
 		wood='" . $res['wood'] . "',
 		stone='" . $res['stone'] . "',
@@ -534,428 +553,406 @@ class MO_Model extends CI_Model
 		last_updated='" . $res['last_updated'] . "'
 		WHERE villageid='" . $res['villageid'] . "'";
 
-      $this->db->query($sql);
-    }
+            $this->db->query($sql);
+        }
 
-    if ($this->score)
-    {
-      $sql = "UPDATE villages 
+        if ($this->score) {
+            $sql = "UPDATE villages 
 		SET score = score + '" . $this->score . "'
 		WHERE id='" . $this->resources['villageid'] . "'";
 
-      $this->db->query($sql);
+            $this->db->query($sql);
+        }
     }
-  }
 
-  //resources end
+    //resources end
 
-  //unit functions
+    //unit functions
 
-  //Resource system have to be initialized!
+    //Resource system have to be initialized!
 
-  function unitq_initialize($villageid, $userid = FALSE, $data = FALSE)
-  {
-    if ($this->unitq_initialized)
-      return;
-
-    $this->villageid = $villageid;
-
-    //if we don't know it query it
-    if (!$userid)
+    public function unitq_initialize($villageid, $userid = false, $data = false)
     {
-      $sql = "SELECT userid FROM villages WHERE id='$villageid'";
+        if ($this->unitq_initialized) {
+            return;
+        }
 
-      $q = $this->db->query($sql);
+        $this->villageid = $villageid;
 
-      $res = $q->row_array();
+        //if we don't know it query it
+        if (!$userid) {
+            $sql = "SELECT userid FROM villages WHERE id='$villageid'";
 
-      $this->userid = $res['userid'];
+            $q = $this->db->query($sql);
+
+            $res = $q->row_array();
+
+            $this->userid = $res['userid'];
+        } else {
+            $this->userid = $userid;
+        }
+
+        //if we had to query units for some reason don't query it again
+        if (!$data) {
+            $sql = "SELECT * FROM village_units WHERE villageid='$villageid'";
+
+            $q = $this->db->query($sql);
+
+            $this->unitq_village_units = $q->result_array();
+        } else {
+            $this->unitq_village_units = $q->result_array();
+        }
+
+        //getting unitdata
+        $sql = "SELECT * FROM units";
+
+        $q = $this->db->query($sql);
+
+        $this->unitq_units = $q->result_array();
+
+        $this->unitq_initialized = true;
     }
-    else
-      $this->userid = $userid;
 
-    //if we had to query units for some reason don't query it again
-    if (!$data)
+    public function unitq_change($action, $unitid, $num, $nomod = false)
     {
-      $sql = "SELECT * FROM village_units WHERE villageid='$villageid'";
+        if (!$this->unitq_initialized) {
+            return;
+        }
 
-      $q = $this->db->query($sql);
+        //getting unitdata
+        foreach ($this->unitq_units as $row) {
+            if ($row['id'] == $unitid) {
+                $unitd = $row;
+                break;
+            }
+        }
 
-      $this->unitq_village_units = $q->result_array();
+        //error
+        if (!$unitd) {
+            return;
+        }
+
+        $index = false;
+
+        //finding if that type of unit is in the village
+        if ($this->unitq_village_units) {
+            for ($i = 0; $i < sizeof($this->unitq_village_units); $i++) {
+                if ($this->unitq_village_units[$i]['unitid'] == $unitid) {
+                    $index = $i;
+                    break;
+                }
+            }
+        }
+
+        $data['id'] = $unitid;
+
+        if ($action == '+') {
+            if ($index !== false) {
+                $data['unitcount'] = ($this->unitq_village_units[$index]['unitcount'] + $num);
+            } else {
+                $data['unitcount'] = $num;
+            }
+
+            if (!$nomod) {
+                $this->substract_modifiers($unitd, $this->villageid, 'unit', $num, true);
+            }
+        }
+
+        if ($action == '-') {
+            //this expression doesn't have any mean if we don't have that type of unit
+            if ($index !== false) {
+                $data['unitcount'] = ($this->unitq_village_units[$index]['unitcount'] - $num);
+
+                if ($data['unitcount'] < 0) {
+                    //adding -1 means substracting it
+                    $num += $data['unitcount'];
+                    $data['unitcount'] = 0;
+                }
+
+                if (!$nomod) {
+                    $this->add_modifiers($unitd, $this->villageid, 'unit', $num, true);
+                }
+            }
+        }
+
+        if ($action == '+-') {
+            if ($index !== false) {
+                $data['unitcount'] = ($this->unitq_village_units[$index]['unitcount'] + $num);
+            } else {
+                $data['unitcount'] = $num;
+            }
+
+            if ($num > 0) {
+                if (!$nomod) {
+                    $this->substract_modifiers($unitd, $this->villageid, 'unit', $num, true);
+                }
+            } else {
+                if (!$nomod) {
+                    $this->add_modifiers($unitd, $this->villageid, 'unit', $num, true);
+                }
+            }
+        }
+
+        if ($action == '=') {
+            if ($index !== false) {
+                $data['unitcount'] = $num;
+            }
+
+            $number = $this->unitq_village_units[$index]['unitcount'] - $num;
+
+            if ($num > 0) {
+                if (!$nomod) {
+                    $this->add_modifiers($unitd, $this->villageid, 'unit', $num, true);
+                }
+            } else {
+                if (!$nomod) {
+                    $this->substract_modifiers($unitd, $this->villageid, 'unit', $num, true);
+                }
+            }
+        }
+
+        //error
+        if (!isset($data['unitcount'])) {
+            return;
+        }
+
+        $indexc = false;
+
+        //finding the index which contains our unit
+        if ($this->unitq_changes) {
+            for ($i = 0; $i < sizeof($this->unitq_changes); $i++) {
+                if ($this->unitq_changes[$i]['id'] == $unitid) {
+                    $indexc = $i;
+                    break;
+                }
+            }
+        }
+
+        if ($indexc !== false) {
+            $this->unitq_changes[$indexc]['unitcount'] = $data['unitcount'];
+        } else {
+            $this->unitq_changes[] = array('id' => $data['id'], 'unitcount' => $data['unitcount']);
+        }
     }
-    else
-      $this->unitq_village_units = $q->result_array();
 
-    //getting unitdata
-    $sql = "SELECT * FROM units";
-
-    $q = $this->db->query($sql);
-
-    $this->unitq_units = $q->result_array();
-
-    $this->unitq_initialized = TRUE;
-  }
-
-  function unitq_change($action, $unitid, $num, $nomod = FALSE)
-  {
-    if (!$this->unitq_initialized)
-      return;
-
-    //getting unitdata
-    foreach ($this->unitq_units as $row)
+    public function unitq_get_units()
     {
-      if ($row['id'] == $unitid)
-      {
-	$unitd = $row;
-	break;
-      }
+        return $this->unitq_units;
     }
-
-    //error
-    if (!$unitd)
-      return;
-
-    $index = FALSE;
-
-    //finding if that type of unit is in the village
-    if ($this->unitq_village_units)
-    {
-      for ($i = 0; $i < sizeof($this->unitq_village_units); $i++)
-      {
-	if ($this->unitq_village_units[$i]['unitid'] == $unitid)
-	{
-	  $index = $i;
-	  break;
-	}
-      }
-    }
-
-    $data['id'] = $unitid;
-
-    if ($action == '+')
-    {
-      if ($index !== FALSE)
-	$data['unitcount'] = ($this->unitq_village_units[$index]['unitcount'] + $num);
-      else
-	$data['unitcount'] = $num;
-
-      if (!$nomod)
-	$this->substract_modifiers($unitd, $this->villageid, 'unit', $num, TRUE);
-    }
-
-    if ($action == '-')
-    {
-      //this expression doesn't have any mean if we don't have that type of unit
-      if ($index !== FALSE)
-      {
-	$data['unitcount'] = ($this->unitq_village_units[$index]['unitcount'] - $num);
-
-	if ($data['unitcount'] < 0)
-	{
-	  //adding -1 means substracting it
-	  $num += $data['unitcount'];
-	  $data['unitcount'] = 0;
-	}
-
-	if (!$nomod)		
-	  $this->add_modifiers($unitd, $this->villageid, 'unit', $num, TRUE);
-      }
-    }
-
-    if ($action == '+-')
-    {
-      if ($index !== FALSE)
-	$data['unitcount'] = ($this->unitq_village_units[$index]['unitcount'] + $num);
-      else
-	$data['unitcount'] = $num;
-
-      if ($num > 0)
-      {
-	if (!$nomod)
-	  $this->substract_modifiers($unitd, $this->villageid, 'unit', $num, TRUE);
-      }
-      else
-      {
-	if (!$nomod)
-	  $this->add_modifiers($unitd, $this->villageid, 'unit', $num, TRUE);
-      }
-    }
-
-    if ($action == '=')
-    {
-      if ($index !== FALSE)
-	$data['unitcount'] = $num;
-
-      $number = $this->unitq_village_units[$index]['unitcount'] - $num;
-
-      if ($num > 0)
-      {
-	if (!$nomod)
-	  $this->add_modifiers($unitd, $this->villageid, 'unit', $num, TRUE);
-      }
-      else
-      {
-	if (!$nomod)
-	  $this->substract_modifiers($unitd, $this->villageid, 'unit', $num, TRUE);
-      }
-    }
-
-    //error
-    if (!isset($data['unitcount']))
-      return;
-
-    $indexc = FALSE;
-
-    //finding the index which contains our unit
-    if ($this->unitq_changes)
-    {
-      for ($i = 0; $i < sizeof($this->unitq_changes); $i++)
-      {
-	if ($this->unitq_changes[$i]['id'] == $unitid)
-	{
-	  $indexc = $i;
-	  break;
-	}
-      }
-    }
-
-    if ($indexc !== FALSE)
-      $this->unitq_changes[$indexc]['unitcount'] = $data['unitcount'];
-    else
-      $this->unitq_changes[] = array('id' => $data['id'], 'unitcount' => $data['unitcount']);
-    
-  }
-
-  function unitq_get_units()
-  {
-    return $this->unitq_units;
-  }
   
-  function unitq_get_village_units()
-  {
-    $data = $this->unitq_village_units;
-
-    if ($this->unitq_changes)
+    public function unitq_get_village_units()
     {
-      foreach ($this->unitq_changes as $row)
-      {
-	for ($i = 0; $i < sizeof($data); $i++)
-	{
-	  if ($row['id'] == $data[$i]['unitid'])
-	    $data[$i]['unitcount'] = $row['unitcount'];
-	}
-      }
+        $data = $this->unitq_village_units;
+
+        if ($this->unitq_changes) {
+            foreach ($this->unitq_changes as $row) {
+                for ($i = 0; $i < sizeof($data); $i++) {
+                    if ($row['id'] == $data[$i]['unitid']) {
+                        $data[$i]['unitcount'] = $row['unitcount'];
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 
-    return $data;
-  }
-
-  //write changes to db
-  function unitq_write()
-  {
-    if (!$this->unitq_initialized)
-      return;
-
-    if (!$this->unitq_changes)
-      return;
-
-    foreach ($this->unitq_changes as $row)
+    //write changes to db
+    public function unitq_write()
     {
-      $vu = FALSE;
+        if (!$this->unitq_initialized) {
+            return;
+        }
 
-      //searching for village_units's row
-      foreach ($this->unitq_village_units as $vurow)
-      {
-	if ($row['id'] == $vurow['unitid'])
-	{
-	  $vu = $vurow;
-	  break;
-	}
-      }
+        if (!$this->unitq_changes) {
+            return;
+        }
 
-      //its <= just in case
-      //nothing to do here
-      if (!$vu && $row['unitcount'] <= 0)
-	continue;
+        foreach ($this->unitq_changes as $row) {
+            $vu = false;
 
-      //nothing to do here
-      if ($vu)
-	if ($row['unitcount'] == $vu['unitcount'])
-	  continue;
+            //searching for village_units's row
+            foreach ($this->unitq_village_units as $vurow) {
+                if ($row['id'] == $vurow['unitid']) {
+                    $vu = $vurow;
+                    break;
+                }
+            }
 
-      //DELETING row
-      if ($vu && $row['unitcount'] <= 0)
-      {
-	$sql = "DELETE FROM village_units WHERE id='" . $vu['id'] . "'";
-	$this->db->query($sql);
-	continue;
-      }
+            //its <= just in case
+            //nothing to do here
+            if (!$vu && $row['unitcount'] <= 0) {
+                continue;
+            }
 
-      //other cases handled at this point, we only need to check for vu
-      if ($vu)
-      {
-	$sql = "UPDATE village_units
+            //nothing to do here
+            if ($vu) {
+                if ($row['unitcount'] == $vu['unitcount']) {
+                    continue;
+                }
+            }
+
+            //DELETING row
+            if ($vu && $row['unitcount'] <= 0) {
+                $sql = "DELETE FROM village_units WHERE id='" . $vu['id'] . "'";
+                $this->db->query($sql);
+                continue;
+            }
+
+            //other cases handled at this point, we only need to check for vu
+            if ($vu) {
+                $sql = "UPDATE village_units
 		SET unitcount='" . $row['unitcount'] . "'
 		WHERE id='" . $vu['id'] . "'";
-      }
-      else
-      {
-	$sql = "INSERT INTO village_units
+            } else {
+                $sql = "INSERT INTO village_units
 		VALUES(default, '" . $this->userid . "', '" . $this->villageid . "', 
 		'" . $row['id'] . "', '" . $row['unitcount'] . "')";
-      }
+            }
 
-      $this->db->query($sql);
+            $this->db->query($sql);
+        }
     }
-  }
 
-  //unit functions end
+    //unit functions end
 
-  //building
-  function get_slot_building($slotid, $villageid)
-  {
-    $sql = "SELECT buildings.* FROM village_buildings 
+    //building
+    public function get_slot_building($slotid, $villageid)
+    {
+        $sql = "SELECT buildings.* FROM village_buildings 
 		INNER JOIN buildings ON village_buildings.buildingid=buildings.id 
 		WHERE village_buildings.villageid='$villageid' 
 		AND village_buildings.slotid='$slotid'";
-    $q = $this->db->query($sql);
+        $q = $this->db->query($sql);
 
-    if ($q->num_rows())
-      return $q->row_array();
+        if ($q->num_rows()) {
+            return $q->row_array();
+        }
 
-    $sql = "SELECT * FROM buildings WHERE id='1'";
-    $q = $this->db->query($sql);
+        $sql = "SELECT * FROM buildings WHERE id='1'";
+        $q = $this->db->query($sql);
 
-    return $q->row_array();
-  }
-  //building end
+        return $q->row_array();
+    }
+    //building end
 
-  //technologies
-  function add_technology($techid, $group, $tech, $slotid, $villageid)
-  {
-    //group == 0 primary, group == 1 secondary
-    if (!$group)
+    //technologies
+    public function add_technology($techid, $group, $tech, $slotid, $villageid)
     {
-      $sql = "INSERT INTO village_technologies
+        //group == 0 primary, group == 1 secondary
+        if (!$group) {
+            $sql = "INSERT INTO village_technologies
 		VALUES(default, '$villageid', '0', '$techid')";
-    }
-    else
-    {
-      $sql = "INSERT INTO village_technologies
+        } else {
+            $sql = "INSERT INTO village_technologies
 		VALUES(default, '$villageid', '$slotid', '$techid')";
+        }
+
+        $this->db->query($sql);
+
+        if ($tech['flag_ai']) {
+            $sql = "UPDATE villages SET ai_flagged='1' WHERE id='$villageid'";
+
+            $this->db->query($sql);
+        }
     }
 
-    $this->db->query($sql);
-
-    if ($tech['flag_ai'])
+    public function get_village_technologies($villageid, $slotid = 0)
     {
-      $sql = "UPDATE villages SET ai_flagged='1' WHERE id='$villageid'";
-
-      $this->db->query($sql);
-    }
-  }
-
-  function get_village_technologies($villageid, $slotid = 0)
-  {
-    if ($slotid)
-    {
-      $sql = "SELECT * FROM village_technologies 
+        if ($slotid) {
+            $sql = "SELECT * FROM village_technologies 
 		WHERE villageid='$villageid'
 		AND (slotid='0' OR slotid='$slotid')";
-    }
-    else
-    {
-      $sql = "SELECT * FROM village_technologies
+        } else {
+            $sql = "SELECT * FROM village_technologies
 		WHERE villageid='$villageid'
 		AND slotid='0'";
+        }
+
+        $q = $this->db->query($sql);
+
+        return $q->result_array();
     }
 
-    $q = $this->db->query($sql);
-
-    return $q->result_array();
-  }
-
-  //data is tecnology data
-  function have_technology($data, $techid)
-  {
-    if (!$techid)
-      return TRUE;
-
-    foreach ($data as $row)
+    //data is tecnology data
+    public function have_technology($data, $techid)
     {
-      if ($row['technologyid'] == $techid)
-	return TRUE;
+        if (!$techid) {
+            return true;
+        }
+
+        foreach ($data as $row) {
+            if ($row['technologyid'] == $techid) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    return FALSE;
-  }
-
-  function has_req_tech($techid, $villageid, $slotid = 0)
-  {
-    if (!$techid)
-      return TRUE;
-
-    $tech = $this->get_village_technologies($villageid, $slotid);
-
-    foreach ($tech as $row)
+    public function has_req_tech($techid, $villageid, $slotid = 0)
     {
-      if ($row['technologyid'] == $techid)
-	return TRUE;
+        if (!$techid) {
+            return true;
+        }
+
+        $tech = $this->get_village_technologies($villageid, $slotid);
+
+        foreach ($tech as $row) {
+            if ($row['technologyid'] == $techid) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    return FALSE;
-  }
+    //technologies end
 
-  //technologies end
-
-  //combat log
-  function add_combat_log($log, $villageid)
-  {
-    $sql = "INSERT INTO combat_logs
+    //combat log
+    public function add_combat_log($log, $villageid)
+    {
+        $sql = "INSERT INTO combat_logs
 		VALUES(default, '$villageid', '" . time() . "', '1', '$log')";
 
-    $this->db->query($sql);
+        $this->db->query($sql);
 
-    $sql = "UPDATE villages SET new_log='1' WHERE id='$villageid'";
+        $sql = "UPDATE villages SET new_log='1' WHERE id='$villageid'";
     
-    $this->db->query($sql);
-  }
-
-  //combat log end
-
-  //Hero Functions
-
-  //set hero
-  function set_hero($data)
-  {
-    $this->hero = $data;
-  }
-
-  //to be used with controllers after like equipping, and stat recalculations, combat etc
-  function get_hero()
-  {
-    return $this->hero;
-  }
-
-  //Hero db update function
-  function hero_write()
-  {
-    //if more than on flag set unset the not needed ones
-    if ($this->hero_stat_changed)
-    {
-      $this->hero_hpmp_changed = FALSE;
-      $this->hero_exp_changed = FALSE;
-    }
-    elseif ($this->hero_exp_changed)
-    {
-      $this->hero_hpmp_changed = FALSE;
+        $this->db->query($sql);
     }
 
-    if ($this->hero_stat_changed)
-    {
-      $d = $this->hero;
+    //combat log end
 
-      $sql = "UPDATE heroes
+    //Hero Functions
+
+    //set hero
+    public function set_hero($data)
+    {
+        $this->hero = $data;
+    }
+
+    //to be used with controllers after like equipping, and stat recalculations, combat etc
+    public function get_hero()
+    {
+        return $this->hero;
+    }
+
+    //Hero db update function
+    public function hero_write()
+    {
+        //if more than on flag set unset the not needed ones
+        if ($this->hero_stat_changed) {
+            $this->hero_hpmp_changed = false;
+            $this->hero_exp_changed = false;
+        } elseif ($this->hero_exp_changed) {
+            $this->hero_hpmp_changed = false;
+        }
+
+        if ($this->hero_stat_changed) {
+            $d = $this->hero;
+
+            $sql = "UPDATE heroes
 		SET level = '" . $d['level'] . "',
 		experience = '" . $d['experience'] . "',
 		health = '" . $d['health'] . "',
@@ -1022,502 +1019,461 @@ class MO_Model extends CI_Model
 		mana_leech = '" . $d['mana_leech'] . "'
 		WHERE id = '" . $d['id'] . "'";
 
-      $this->db->query($sql);
+            $this->db->query($sql);
 
-      return TRUE;
-    }
+            return true;
+        }
 
-    //exp, hp, mp
-    if ($this->hero_exp_changed)
-    {
-      $d = $this->hero;
+        //exp, hp, mp
+        if ($this->hero_exp_changed) {
+            $d = $this->hero;
 
-      $sql = "UPDATE heroes
+            $sql = "UPDATE heroes
 		SET health='" . $d['health'] . "', 
 		mana='" . $d['mana'] . "', 
 		experience='" . $d['experience'] . "'
 		WHERE id = '" . $d['id'] . "'";
 
-      $this->db->query($sql);
+            $this->db->query($sql);
 
-      return TRUE;
-    }
+            return true;
+        }
 
-    if ($this->hero_hpmp_changed)
-    {
-      $d = $this->hero;
+        if ($this->hero_hpmp_changed) {
+            $d = $this->hero;
 
-      $sql = "UPDATE heroes
+            $sql = "UPDATE heroes
 		SET health='" . $d['health'] . "', 
 		mana='" . $d['mana'] . "', 
 		WHERE id = '" . $d['id'] . "'";
 
-      $this->db->query($sql);
+            $this->db->query($sql);
 
-      return TRUE;
+            return true;
+        }
+
+        return false;
     }
 
-    return FALSE;
-  }
+    //Hero stat calc functions
 
-  //Hero stat calc functions
+    //thins calculates every char stats (like when equipping)
+    public function calc_hero_stats()
+    {
+        $d = $this->hero;
+        $c = $this->hero['class'];
 
-  //thins calculates every char stats (like when equipping)
-  function calc_hero_stats()
-  {
-    $d = $this->hero;
-    $c = $this->hero['class'];
+        //base stats
+        $d['agility'] = floor(($d['nomod_agility'] / 100) * $d['percent_agility']);
+        $d['strength'] = floor(($d['nomod_strength'] / 100) * $d['percent_strength']);
+        $d['stamina'] = floor(($d['nomod_stamina'] / 100) * $d['percent_stamina']);
+        $d['intellect'] = floor(($d['nomod_intellect'] / 100) * $d['percent_intellect']);
+        $d['spirit'] = floor(($d['nomod_spirit'] / 100) * $d['percent_spirit']);
 
-    //base stats
-    $d['agility'] = floor(($d['nomod_agility'] / 100) * $d['percent_agility']);
-    $d['strength'] = floor(($d['nomod_strength'] / 100) * $d['percent_strength']);
-    $d['stamina'] = floor(($d['nomod_stamina'] / 100) * $d['percent_stamina']);
-    $d['intellect'] = floor(($d['nomod_intellect'] / 100) * $d['percent_intellect']);
-    $d['spirit'] = floor(($d['nomod_spirit'] / 100) * $d['percent_spirit']);
+        //health, mana
+        $d['max_health'] = $this->hero_stat($c, 'max_health', $d);
+        $d['max_mana'] = $this->hero_stat($c, 'max_mana', $d);
 
-    //health, mana
-    $d['max_health'] = $this->hero_stat($c, 'max_health', $d);
-    $d['max_mana'] = $this->hero_stat($c, 'max_mana', $d);
-
-    $d['max_health'] = floor(($d['max_health'] / 100) * $d['percent_max_health']);
-    $d['max_mana'] = floor(($d['max_mana'] / 100) * $d['percent_max_mana']);
+        $d['max_health'] = floor(($d['max_health'] / 100) * $d['percent_max_health']);
+        $d['max_mana'] = floor(($d['max_mana'] / 100) * $d['percent_max_mana']);
     
-    $d['health'] = $d['max_health'];
-    $d['mana'] = $d['max_mana'];
+        $d['health'] = $d['max_health'];
+        $d['mana'] = $d['max_mana'];
     
-    //ap
-    $d['attackpower'] = $this->hero_stat($c, 'attackpower', $d);
-    $d['attackpower'] = floor(($d['attackpower'] / 100) * $d['percent_attackpower']);
+        //ap
+        $d['attackpower'] = $this->hero_stat($c, 'attackpower', $d);
+        $d['attackpower'] = floor(($d['attackpower'] / 100) * $d['percent_attackpower']);
 
-    //% stats
-    $d['dodge'] = $this->hero_stat($c, 'dodge', $d);
-    $d['parry'] = $this->hero_stat($c, 'parry', $d);
-    $d['crit'] = $this->hero_stat($c, 'crit', $d);
+        //% stats
+        $d['dodge'] = $this->hero_stat($c, 'dodge', $d);
+        $d['parry'] = $this->hero_stat($c, 'parry', $d);
+        $d['crit'] = $this->hero_stat($c, 'crit', $d);
 
-    //damage
-    $d['damage_min'] = $this->hero_stat($c, 'damage_min', $d);
-    $d['damage_min'] = floor(($d['damage_min'] / 100) * $d['percent_damage_min']);
-    $d['damage_max'] = $this->hero_stat($c, 'damage_max', $d);
-    $d['damage_max'] = floor(($d['damage_max'] / 100) * $d['percent_damage_max']);
+        //damage
+        $d['damage_min'] = $this->hero_stat($c, 'damage_min', $d);
+        $d['damage_min'] = floor(($d['damage_min'] / 100) * $d['percent_damage_min']);
+        $d['damage_max'] = $this->hero_stat($c, 'damage_max', $d);
+        $d['damage_max'] = floor(($d['damage_max'] / 100) * $d['percent_damage_max']);
 
-    //ranged damage
-    $d['ranged_damage_min'] = $this->hero_stat($c, 'ranged_damage_min', $d);
-    $d['ranged_damage_min'] = floor(($d['ranged_damage_min'] / 100) * $d['percent_ranged_damage_min']);
-    $d['ranged_damage_max'] = $this->hero_stat($c, 'ranged_damage_max', $d);
-    $d['ranged_damage_max'] = floor(($d['ranged_damage_max'] / 100) * $d['percent_ranged_damage_max']);
+        //ranged damage
+        $d['ranged_damage_min'] = $this->hero_stat($c, 'ranged_damage_min', $d);
+        $d['ranged_damage_min'] = floor(($d['ranged_damage_min'] / 100) * $d['percent_ranged_damage_min']);
+        $d['ranged_damage_max'] = $this->hero_stat($c, 'ranged_damage_max', $d);
+        $d['ranged_damage_max'] = floor(($d['ranged_damage_max'] / 100) * $d['percent_ranged_damage_max']);
 
-    //heal
-    $d['heal_min'] = $this->hero_stat($c, 'heal_min', $d);
-    $d['heal_min'] = floor(($d['heal_min'] / 100) * $d['percent_heal_min']);
-    $d['heal_max'] = $this->hero_stat($c, 'heal_max', $d);
-    $d['heal_max'] = floor(($d['heal_max'] / 100) * $d['percent_heal_max']);
+        //heal
+        $d['heal_min'] = $this->hero_stat($c, 'heal_min', $d);
+        $d['heal_min'] = floor(($d['heal_min'] / 100) * $d['percent_heal_min']);
+        $d['heal_max'] = $this->hero_stat($c, 'heal_max', $d);
+        $d['heal_max'] = floor(($d['heal_max'] / 100) * $d['percent_heal_max']);
 
-    //armor
-    $d['armor'] = floor(($d['nomod_armor'] / 100) * $d['percent_armor']);
+        //armor
+        $d['armor'] = floor(($d['nomod_armor'] / 100) * $d['percent_armor']);
 
-    $this->hero = $d;
-    $this->hero_stat_changed = TRUE;
+        $this->hero = $d;
+        $this->hero_stat_changed = true;
 
-    $this->hero_write();
-  }
-
-  //the function which has all the class formulas
-  //class can be string or id
-  function hero_stat($class, $type, $data = FALSE)
-  {
-    if (!$data)
-      $data = $this->hero;
-
-    if ($class == 1 || $class == 'Warrior')
-    {
-      if ($type == 'attackpower')
-      {
-	$ATTACKPOWER_BASE = 0;
-	$ATTACKPOWER_FACTOR_STR = 20;
-	$ATTACKPOWER_FACTOR_AGI = 10;
-
-	$c = $ATTACKPOWER_BASE;
-	$c += ($data['strength'] * $ATTACKPOWER_FACTOR_STR);
-	$c += ($data['agility'] * $ATTACKPOWER_FACTOR_AGI);
-	$c += $data['nomod_attackpower'];
-      }
-      elseif ($type == 'crit')
-      {
-	$CRIT_BASE = 0;
-	//how much of these stats give 1% crit
-	$CRIT_FACTOR_AGI = 40;
-	$CRIT_FACTOR_STR = 30;
-	$CRIT_FACTOR_INT = 60;
-
-	$c = $CRIT_BASE;
-	$c += ($data['agility'] / $CRIT_FACTOR_AGI);
-	$c += ($data['strength'] / $CRIT_FACTOR_STR);
-	$c += ($data['intellect'] / $CRIT_FACTOR_INT);
-	$c += $data['nomod_crit'];
-      }
-    }
-    elseif ($class == 2 || $class == 'Rogue')
-    {
-      if ($type == 'attackpower')
-      {
-	$ATTACKPOWER_BASE = 0;
-	$ATTACKPOWER_FACTOR_STR = 5;
-	$ATTACKPOWER_FACTOR_AGI = 25;
-
-	$c = $ATTACKPOWER_BASE;
-	$c += ($data['strength'] * $ATTACKPOWER_FACTOR_STR);
-	$c += ($data['agility'] * $ATTACKPOWER_FACTOR_AGI);
-	$c += $data['nomod_attackpower'];
-      }
-      elseif ($type == 'crit')
-      {
-	$CRIT_BASE = 0;
-	//how much of these stats give 1% crit
-	$CRIT_FACTOR_AGI = 25;
-	$CRIT_FACTOR_STR = 50;
-	$CRIT_FACTOR_INT = 60;
-
-	$c = $CRIT_BASE;
-	$c += ($data['agility'] / $CRIT_FACTOR_AGI);
-	$c += ($data['strength'] / $CRIT_FACTOR_STR);
-	$c += ($data['intellect'] / $CRIT_FACTOR_INT);
-	$c += $data['nomod_crit'];
-      }
-    }
-    elseif ($class == 3 || $class == 'Archer')
-    {
-      if ($type == 'attackpower')
-      {
-	$ATTACKPOWER_BASE = 0;
-	$ATTACKPOWER_FACTOR_STR = 10;
-	$ATTACKPOWER_FACTOR_AGI = 20;
-
-	$c = $ATTACKPOWER_BASE;
-	$c += ($data['strength'] * $ATTACKPOWER_FACTOR_STR);
-	$c += ($data['agility'] * $ATTACKPOWER_FACTOR_AGI);
-	$c += $data['nomod_attackpower'];
-      }
-      elseif ($type == 'crit')
-      {
-	$CRIT_BASE = 0;
-	//how much of these stats give 1% crit
-	$CRIT_FACTOR_AGI = 30;
-	$CRIT_FACTOR_STR = 60;
-	$CRIT_FACTOR_INT = 40;
-
-	$c = $CRIT_BASE;
-	$c += ($data['agility'] / $CRIT_FACTOR_AGI);
-	$c += ($data['strength'] / $CRIT_FACTOR_STR);
-	$c += ($data['intellect'] / $CRIT_FACTOR_INT);
-	$c += $data['nomod_crit'];
-      }
+        $this->hero_write();
     }
 
-    if ($type == 'max_health')
+    //the function which has all the class formulas
+    //class can be string or id
+    public function hero_stat($class, $type, $data = false)
     {
-      $HEALTH_FACTOR = 10;
+        if (!$data) {
+            $data = $this->hero;
+        }
 
-      $c = $data['stamina'] * $HEALTH_FACTOR;
-      $c += $data['nomod_max_health'];
-    }
-    elseif ($type == 'max_mana')
-    {
-      $MANA_FACTOR = 10;
+        if ($class == 1 || $class == 'Warrior') {
+            if ($type == 'attackpower') {
+                $ATTACKPOWER_BASE = 0;
+                $ATTACKPOWER_FACTOR_STR = 20;
+                $ATTACKPOWER_FACTOR_AGI = 10;
 
-      $c = $data['intellect'] * $MANA_FACTOR;
-      $c += $data['nomod_max_mana'];
-    }
-    elseif ($type == 'dodge')
-    {
-      $DODGE_BASE = 0;
-      //how much agi gives 1% dodge
-      $DODGE_FACTOR_AGI = 30;
+                $c = $ATTACKPOWER_BASE;
+                $c += ($data['strength'] * $ATTACKPOWER_FACTOR_STR);
+                $c += ($data['agility'] * $ATTACKPOWER_FACTOR_AGI);
+                $c += $data['nomod_attackpower'];
+            } elseif ($type == 'crit') {
+                $CRIT_BASE = 0;
+                //how much of these stats give 1% crit
+                $CRIT_FACTOR_AGI = 40;
+                $CRIT_FACTOR_STR = 30;
+                $CRIT_FACTOR_INT = 60;
 
-      $c = $DODGE_BASE;
-      $c += ($data['agility'] / $DODGE_FACTOR_AGI);
-      $c += $data['nomod_dodge'];
-    }
-    elseif ($type == 'parry')
-    {
-      $PARRY_BASE = 0;
-      //how much str gives 1% parry
-      $PARRY_FACTOR_STR = 30;
+                $c = $CRIT_BASE;
+                $c += ($data['agility'] / $CRIT_FACTOR_AGI);
+                $c += ($data['strength'] / $CRIT_FACTOR_STR);
+                $c += ($data['intellect'] / $CRIT_FACTOR_INT);
+                $c += $data['nomod_crit'];
+            }
+        } elseif ($class == 2 || $class == 'Rogue') {
+            if ($type == 'attackpower') {
+                $ATTACKPOWER_BASE = 0;
+                $ATTACKPOWER_FACTOR_STR = 5;
+                $ATTACKPOWER_FACTOR_AGI = 25;
 
-      $c = $PARRY_BASE;
-      $c += ($data['strength'] / $PARRY_FACTOR_STR);
-      $c += $data['nomod_parry'];
-    }
-    elseif ($type == 'damage_min')
-    {
-      $DAMAGE_BASE = 0;
-      //how much ap gives 1 dmg increase
-      $DAMAGE_FACTOR = 100;
+                $c = $ATTACKPOWER_BASE;
+                $c += ($data['strength'] * $ATTACKPOWER_FACTOR_STR);
+                $c += ($data['agility'] * $ATTACKPOWER_FACTOR_AGI);
+                $c += $data['nomod_attackpower'];
+            } elseif ($type == 'crit') {
+                $CRIT_BASE = 0;
+                //how much of these stats give 1% crit
+                $CRIT_FACTOR_AGI = 25;
+                $CRIT_FACTOR_STR = 50;
+                $CRIT_FACTOR_INT = 60;
 
-      $c = $DAMAGE_BASE;
-      $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
-      $c += $data['nomod_damage_min'];
-    }
-    elseif ($type == 'damage_max')
-    {
-      $DAMAGE_BASE = 0;
-      //how much ap gives 1 dmg increase
-      $DAMAGE_FACTOR = 100;
+                $c = $CRIT_BASE;
+                $c += ($data['agility'] / $CRIT_FACTOR_AGI);
+                $c += ($data['strength'] / $CRIT_FACTOR_STR);
+                $c += ($data['intellect'] / $CRIT_FACTOR_INT);
+                $c += $data['nomod_crit'];
+            }
+        } elseif ($class == 3 || $class == 'Archer') {
+            if ($type == 'attackpower') {
+                $ATTACKPOWER_BASE = 0;
+                $ATTACKPOWER_FACTOR_STR = 10;
+                $ATTACKPOWER_FACTOR_AGI = 20;
 
-      $c = $DAMAGE_BASE;
-      $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
-      $c += $data['nomod_damage_max'];
-    }
-    elseif ($type == 'ranged_damage_min')
-    {
-      $DAMAGE_BASE = 0;
-      //how much ap gives 1 dmg increase
-      $DAMAGE_FACTOR = 100;
+                $c = $ATTACKPOWER_BASE;
+                $c += ($data['strength'] * $ATTACKPOWER_FACTOR_STR);
+                $c += ($data['agility'] * $ATTACKPOWER_FACTOR_AGI);
+                $c += $data['nomod_attackpower'];
+            } elseif ($type == 'crit') {
+                $CRIT_BASE = 0;
+                //how much of these stats give 1% crit
+                $CRIT_FACTOR_AGI = 30;
+                $CRIT_FACTOR_STR = 60;
+                $CRIT_FACTOR_INT = 40;
 
-      $c = $DAMAGE_BASE;
-      $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
-      $c += $data['nomod_ranged_damage_min'];
-    }
-    elseif ($type == 'ranged_damage_max')
-    {
-      $DAMAGE_BASE = 0;
-      //how much ap gives 1 dmg increase
-      $DAMAGE_FACTOR = 100;
+                $c = $CRIT_BASE;
+                $c += ($data['agility'] / $CRIT_FACTOR_AGI);
+                $c += ($data['strength'] / $CRIT_FACTOR_STR);
+                $c += ($data['intellect'] / $CRIT_FACTOR_INT);
+                $c += $data['nomod_crit'];
+            }
+        }
 
-      $c = $DAMAGE_BASE;
-      $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
-      $c += $data['nomod_ranged_damage_max'];
-    }
-    elseif ($type == 'heal_min')
-    {
-      $c = 0;
-    }
-    elseif ($type == 'heal_max')
-    {
-      $c = 0;
-    }
+        if ($type == 'max_health') {
+            $HEALTH_FACTOR = 10;
 
-    if (isset($c))
-      return $c;
+            $c = $data['stamina'] * $HEALTH_FACTOR;
+            $c += $data['nomod_max_health'];
+        } elseif ($type == 'max_mana') {
+            $MANA_FACTOR = 10;
 
-    return FALSE;
-  }
+            $c = $data['intellect'] * $MANA_FACTOR;
+            $c += $data['nomod_max_mana'];
+        } elseif ($type == 'dodge') {
+            $DODGE_BASE = 0;
+            //how much agi gives 1% dodge
+            $DODGE_FACTOR_AGI = 30;
 
-  function hero_add_stats($data)
-  {
-    $d = $this->hero;
+            $c = $DODGE_BASE;
+            $c += ($data['agility'] / $DODGE_FACTOR_AGI);
+            $c += $data['nomod_dodge'];
+        } elseif ($type == 'parry') {
+            $PARRY_BASE = 0;
+            //how much str gives 1% parry
+            $PARRY_FACTOR_STR = 30;
 
-    if (isset($data['level_modifier']))
-    {
-      $lvlmax = $data['level_modifier_max'];
+            $c = $PARRY_BASE;
+            $c += ($data['strength'] / $PARRY_FACTOR_STR);
+            $c += $data['nomod_parry'];
+        } elseif ($type == 'damage_min') {
+            $DAMAGE_BASE = 0;
+            //how much ap gives 1 dmg increase
+            $DAMAGE_FACTOR = 100;
 
-      //this means no limit
-      if (!$lvlmax)
-	$lvlmax = $this->hero['level'];
+            $c = $DAMAGE_BASE;
+            $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
+            $c += $data['nomod_damage_min'];
+        } elseif ($type == 'damage_max') {
+            $DAMAGE_BASE = 0;
+            //how much ap gives 1 dmg increase
+            $DAMAGE_FACTOR = 100;
 
-      if ($lvlmax < $this->hero['level'])
-	$lvlmod = $lvlmax;
-      else
-	$lvlmod = $this->hero['level'];
+            $c = $DAMAGE_BASE;
+            $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
+            $c += $data['nomod_damage_max'];
+        } elseif ($type == 'ranged_damage_min') {
+            $DAMAGE_BASE = 0;
+            //how much ap gives 1 dmg increase
+            $DAMAGE_FACTOR = 100;
 
-      $lvlmod *= $data['level_modifier'];
-    }
-    else
-    {
-      $lvlmod = 0;
-    }
+            $c = $DAMAGE_BASE;
+            $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
+            $c += $data['nomod_ranged_damage_min'];
+        } elseif ($type == 'ranged_damage_max') {
+            $DAMAGE_BASE = 0;
+            //how much ap gives 1 dmg increase
+            $DAMAGE_FACTOR = 100;
 
-    $d['percent_max_health'] += $data['percent_max_health'];
-    $d['percent_max_mana'] += $data['percent_max_mana'];
+            $c = $DAMAGE_BASE;
+            $c += floor($data['attackpower'] / $DAMAGE_FACTOR);
+            $c += $data['nomod_ranged_damage_max'];
+        } elseif ($type == 'heal_min') {
+            $c = 0;
+        } elseif ($type == 'heal_max') {
+            $c = 0;
+        }
 
-    $d['nomod_max_health'] += $data['nomod_max_health'];
-    $d['nomod_max_mana'] += $data['nomod_max_mana'];
+        if (isset($c)) {
+            return $c;
+        }
 
-    $d['percent_agility'] += $data['percent_agility'];
-    $d['percent_strength'] += $data['percent_strength'];
-    $d['percent_stamina'] += $data['percent_stamina'];
-    $d['percent_intellect'] += $data['percent_intellect'];
-    $d['percent_spirit'] += $data['percent_spirit'];
-
-    $d['nomod_agility'] += $data['nomod_agility'] + $lvlmod;
-    $d['nomod_strength'] += $data['nomod_strength'] + $lvlmod;
-    $d['nomod_stamina'] += $data['nomod_stamina'] + $lvlmod;
-    $d['nomod_intellect'] += $data['nomod_intellect'] + $lvlmod;
-    $d['nomod_spirit'] += $data['nomod_spirit'] + $lvlmod;
-
-    $d['percent_attackpower'] += $data['percent_attackpower'];
-    $d['nomod_attackpower'] += $data['nomod_attackpower'];
-
-    $d['percent_armor'] += $data['percent_armor'];
-    $d['nomod_armor'] += $data['nomod_armor'];
-
-    $d['nomod_dodge'] += $data['nomod_dodge'];
-    $d['nomod_parry'] += $data['nomod_parry'];
-    $d['hit'] += $data['hit'];
-    $d['nomod_crit'] += $data['nomod_crit'];
-
-    $d['percent_damage_min'] += $data['percent_damage_min'];
-    $d['percent_damage_max'] += $data['percent_damage_max'];
-    $d['nomod_damage_min'] += $data['nomod_damage_min'];
-    $d['nomod_damage_max'] += $data['nomod_damage_max'];
-
-    $d['percent_ranged_damage_min'] += $data['percent_ranged_damage_min'];
-    $d['percent_ranged_damage_max'] += $data['percent_ranged_damage_max'];
-    $d['nomod_ranged_damage_min'] += $data['nomod_ranged_damage_min'];
-    $d['nomod_ranged_damage_max'] += $data['nomod_ranged_damage_max'];
-
-    $d['percent_heal_min'] += $data['percent_heal_min'];
-    $d['percent_heal_max'] += $data['percent_heal_max'];
-
-    $d['nomod_heal_min'] += $data['nomod_heal_min'];
-    $d['nomod_heal_max'] += $data['nomod_heal_max'];
-
-    $d['life_leech'] += $data['life_leech'];
-    $d['mana_leech'] += $data['mana_leech'];
-
-    $this->hero = $d;
-  }
-
-  function hero_remove_stats($data)
-  {
-    $d = $this->hero;
-
-    if (isset($data['level_modifier']))
-    {
-      $lvlmax = $data['level_modifier_max'];
-
-      //this means no limit
-      if (!$lvlmax)
-	$lvlmax = $this->hero['level'];
-
-      if ($lvlmax < $this->hero['level'])
-	$lvlmod = $lvlmax;
-      else
-	$lvlmod = $this->hero['level'];
-
-      $lvlmod *= $data['level_modifier'];
-    }
-    else
-    {
-      $lvlmod = 0;
+        return false;
     }
 
-    $d['percent_max_health'] -= $data['percent_max_health'];
-    $d['percent_max_mana'] -= $data['percent_max_mana'];
-
-    $d['nomod_max_health'] -= $data['nomod_max_health'];
-    $d['nomod_max_mana'] -= $data['nomod_max_mana'];
-
-    $d['percent_agility'] -= $data['percent_agility'];
-    $d['percent_strength'] -= $data['percent_strength'];
-    $d['percent_stamina'] -= $data['percent_stamina'];
-    $d['percent_intellect'] -= $data['percent_intellect'];
-    $d['percent_spirit'] -= $data['percent_spirit'];
-
-    $d['nomod_agility'] -= $data['nomod_agility'] + $lvlmod;
-    $d['nomod_strength'] -= $data['nomod_strength'] + $lvlmod;
-    $d['nomod_stamina'] -= $data['nomod_stamina'] + $lvlmod;
-    $d['nomod_intellect'] -= $data['nomod_intellect'] + $lvlmod;
-    $d['nomod_spirit'] -= $data['nomod_spirit'] + $lvlmod;
-
-    $d['percent_attackpower'] -= $data['percent_attackpower'];
-    $d['nomod_attackpower'] -= $data['nomod_attackpower'];
-
-    $d['percent_armor'] -= $data['percent_armor'];
-    $d['nomod_armor'] -= $data['nomod_armor'];
-
-    $d['nomod_dodge'] -= $data['nomod_dodge'];
-    $d['nomod_parry'] -= $data['nomod_parry'];
-    $d['hit'] -= $data['hit'];
-    $d['nomod_crit'] -= $data['nomod_crit'];
-
-    $d['percent_damage_min'] -= $data['percent_damage_min'];
-    $d['percent_damage_max'] -= $data['percent_damage_max'];
-    $d['nomod_damage_min'] -= $data['nomod_damage_min'];
-    $d['nomod_damage_max'] -= $data['nomod_damage_max'];
-
-    $d['percent_ranged_damage_min'] -= $data['percent_ranged_damage_min'];
-    $d['percent_ranged_damage_max'] -= $data['percent_ranged_damage_max'];
-    $d['nomod_ranged_damage_min'] -= $data['nomod_ranged_damage_min'];
-    $d['nomod_ranged_damage_max'] -= $data['nomod_ranged_damage_max'];
-
-    $d['percent_heal_min'] -= $data['percent_heal_min'];
-    $d['percent_heal_max'] -= $data['percent_heal_max'];
-    $d['nomod_heal_min'] -= $data['nomod_heal_min'];
-    $d['nomod_heal_max'] -= $data['nomod_heal_max'];
-
-    $d['life_leech'] -= $data['life_leech'];
-    $d['mana_leech'] -= $data['mana_leech'];
-
-    $this->hero = $d;
-  }
-
-  //Hero stat calc functions end
-
-  function hero_find_empty_bagspace($data, $key = 'id')
-  {
-    if (!$data)
-      return 0;
-
-    $found = FALSE;
-    for ($i = 0; $i < self::INVENTORY_MAX; $i++)
+    public function hero_add_stats($data)
     {
-      foreach ($data as $row)
-      {
-	if ($row[$key] == $i)
-	{
-	  $found = TRUE;
-	  break;
-	}
-      }
+        $d = $this->hero;
 
-      if ($found)
-      {
-	$found = FALSE;
-      }
-      else
-      {
-	return $i;
-      }
+        if (isset($data['level_modifier'])) {
+            $lvlmax = $data['level_modifier_max'];
+
+            //this means no limit
+            if (!$lvlmax) {
+                $lvlmax = $this->hero['level'];
+            }
+
+            if ($lvlmax < $this->hero['level']) {
+                $lvlmod = $lvlmax;
+            } else {
+                $lvlmod = $this->hero['level'];
+            }
+
+            $lvlmod *= $data['level_modifier'];
+        } else {
+            $lvlmod = 0;
+        }
+
+        $d['percent_max_health'] += $data['percent_max_health'];
+        $d['percent_max_mana'] += $data['percent_max_mana'];
+
+        $d['nomod_max_health'] += $data['nomod_max_health'];
+        $d['nomod_max_mana'] += $data['nomod_max_mana'];
+
+        $d['percent_agility'] += $data['percent_agility'];
+        $d['percent_strength'] += $data['percent_strength'];
+        $d['percent_stamina'] += $data['percent_stamina'];
+        $d['percent_intellect'] += $data['percent_intellect'];
+        $d['percent_spirit'] += $data['percent_spirit'];
+
+        $d['nomod_agility'] += $data['nomod_agility'] + $lvlmod;
+        $d['nomod_strength'] += $data['nomod_strength'] + $lvlmod;
+        $d['nomod_stamina'] += $data['nomod_stamina'] + $lvlmod;
+        $d['nomod_intellect'] += $data['nomod_intellect'] + $lvlmod;
+        $d['nomod_spirit'] += $data['nomod_spirit'] + $lvlmod;
+
+        $d['percent_attackpower'] += $data['percent_attackpower'];
+        $d['nomod_attackpower'] += $data['nomod_attackpower'];
+
+        $d['percent_armor'] += $data['percent_armor'];
+        $d['nomod_armor'] += $data['nomod_armor'];
+
+        $d['nomod_dodge'] += $data['nomod_dodge'];
+        $d['nomod_parry'] += $data['nomod_parry'];
+        $d['hit'] += $data['hit'];
+        $d['nomod_crit'] += $data['nomod_crit'];
+
+        $d['percent_damage_min'] += $data['percent_damage_min'];
+        $d['percent_damage_max'] += $data['percent_damage_max'];
+        $d['nomod_damage_min'] += $data['nomod_damage_min'];
+        $d['nomod_damage_max'] += $data['nomod_damage_max'];
+
+        $d['percent_ranged_damage_min'] += $data['percent_ranged_damage_min'];
+        $d['percent_ranged_damage_max'] += $data['percent_ranged_damage_max'];
+        $d['nomod_ranged_damage_min'] += $data['nomod_ranged_damage_min'];
+        $d['nomod_ranged_damage_max'] += $data['nomod_ranged_damage_max'];
+
+        $d['percent_heal_min'] += $data['percent_heal_min'];
+        $d['percent_heal_max'] += $data['percent_heal_max'];
+
+        $d['nomod_heal_min'] += $data['nomod_heal_min'];
+        $d['nomod_heal_max'] += $data['nomod_heal_max'];
+
+        $d['life_leech'] += $data['life_leech'];
+        $d['mana_leech'] += $data['mana_leech'];
+
+        $this->hero = $d;
     }
 
-    return FALSE;
-  }
+    public function hero_remove_stats($data)
+    {
+        $d = $this->hero;
 
-  //Hero Functions end
+        if (isset($data['level_modifier'])) {
+            $lvlmax = $data['level_modifier_max'];
 
-  //admin sql functions
-  function _create_sql($sql)
-  {
-    $this->load->helper('file');
+            //this means no limit
+            if (!$lvlmax) {
+                $lvlmax = $this->hero['level'];
+            }
 
-    $time = time();
+            if ($lvlmax < $this->hero['level']) {
+                $lvlmod = $lvlmax;
+            } else {
+                $lvlmod = $this->hero['level'];
+            }
 
-    $file = './sql/' .$time . '.sql';
+            $lvlmod *= $data['level_modifier'];
+        } else {
+            $lvlmod = 0;
+        }
 
-    write_file($file, $sql);
+        $d['percent_max_health'] -= $data['percent_max_health'];
+        $d['percent_max_mana'] -= $data['percent_max_mana'];
 
-    $this->_update_db_version($time);
-  }
+        $d['nomod_max_health'] -= $data['nomod_max_health'];
+        $d['nomod_max_mana'] -= $data['nomod_max_mana'];
 
-  function _update_db_version($time)
-  {
-    $sql = "UPDATE db_version SET version='$time' WHERE id='1'";
+        $d['percent_agility'] -= $data['percent_agility'];
+        $d['percent_strength'] -= $data['percent_strength'];
+        $d['percent_stamina'] -= $data['percent_stamina'];
+        $d['percent_intellect'] -= $data['percent_intellect'];
+        $d['percent_spirit'] -= $data['percent_spirit'];
 
-    $this->db->query($sql);
-  }
+        $d['nomod_agility'] -= $data['nomod_agility'] + $lvlmod;
+        $d['nomod_strength'] -= $data['nomod_strength'] + $lvlmod;
+        $d['nomod_stamina'] -= $data['nomod_stamina'] + $lvlmod;
+        $d['nomod_intellect'] -= $data['nomod_intellect'] + $lvlmod;
+        $d['nomod_spirit'] -= $data['nomod_spirit'] + $lvlmod;
 
-  function _create_sql_debug($sql)
-  {
-    $this->load->helper('file');
+        $d['percent_attackpower'] -= $data['percent_attackpower'];
+        $d['nomod_attackpower'] -= $data['nomod_attackpower'];
 
-    $time = time();
+        $d['percent_armor'] -= $data['percent_armor'];
+        $d['nomod_armor'] -= $data['nomod_armor'];
 
-    $file = './sql/debug_' .$time . '.sql';
+        $d['nomod_dodge'] -= $data['nomod_dodge'];
+        $d['nomod_parry'] -= $data['nomod_parry'];
+        $d['hit'] -= $data['hit'];
+        $d['nomod_crit'] -= $data['nomod_crit'];
 
-    write_file($file, $sql);
-  }
+        $d['percent_damage_min'] -= $data['percent_damage_min'];
+        $d['percent_damage_max'] -= $data['percent_damage_max'];
+        $d['nomod_damage_min'] -= $data['nomod_damage_min'];
+        $d['nomod_damage_max'] -= $data['nomod_damage_max'];
 
-  //admin sql functions end
+        $d['percent_ranged_damage_min'] -= $data['percent_ranged_damage_min'];
+        $d['percent_ranged_damage_max'] -= $data['percent_ranged_damage_max'];
+        $d['nomod_ranged_damage_min'] -= $data['nomod_ranged_damage_min'];
+        $d['nomod_ranged_damage_max'] -= $data['nomod_ranged_damage_max'];
 
+        $d['percent_heal_min'] -= $data['percent_heal_min'];
+        $d['percent_heal_max'] -= $data['percent_heal_max'];
+        $d['nomod_heal_min'] -= $data['nomod_heal_min'];
+        $d['nomod_heal_max'] -= $data['nomod_heal_max'];
+
+        $d['life_leech'] -= $data['life_leech'];
+        $d['mana_leech'] -= $data['mana_leech'];
+
+        $this->hero = $d;
+    }
+
+    //Hero stat calc functions end
+
+    public function hero_find_empty_bagspace($data, $key = 'id')
+    {
+        if (!$data) {
+            return 0;
+        }
+
+        $found = false;
+        for ($i = 0; $i < self::INVENTORY_MAX; $i++) {
+            foreach ($data as $row) {
+                if ($row[$key] == $i) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if ($found) {
+                $found = false;
+            } else {
+                return $i;
+            }
+        }
+
+        return false;
+    }
+
+    //Hero Functions end
+
+    //admin sql functions
+    public function _create_sql($sql)
+    {
+        $this->load->helper('file');
+
+        $time = time();
+
+        $file = './sql/' .$time . '.sql';
+
+        write_file($file, $sql);
+
+        $this->_update_db_version($time);
+    }
+
+    public function _update_db_version($time)
+    {
+        $sql = "UPDATE db_version SET version='$time' WHERE id='1'";
+
+        $this->db->query($sql);
+    }
+
+    public function _create_sql_debug($sql)
+    {
+        $this->load->helper('file');
+
+        $time = time();
+
+        $file = './sql/debug_' .$time . '.sql';
+
+        write_file($file, $sql);
+    }
+
+    //admin sql functions end
 }
 //nowhitesp

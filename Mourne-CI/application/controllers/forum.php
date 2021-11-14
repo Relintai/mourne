@@ -2,19 +2,18 @@
 
 class Forum extends MO_Controller
 {
-  function __construct()
-  {
-    parent::__construct();
-  }
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-  function index()
-  {
-    $this->headers('forum');
+    public function index()
+    {
+        $this->headers('forum');
 
-    $this->load->view('forum/notimpl');
+        $this->load->view('forum/notimpl');
 
-    $this->footer();
-  }
-
+        $this->footer();
+    }
 }
 //nowhitesp
