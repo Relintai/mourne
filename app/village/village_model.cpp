@@ -141,6 +141,7 @@ void VillageModel::drop_table() {
 	tb->drop_table_if_exists(VILLAGE_UNITS_TABLE_NAME)->cdrop_table();
 	tb->drop_table_if_exists(VILLAGE_TECHNOLOGIES_TABLE_NAME)->cdrop_table();
 	tb->drop_table_if_exists(VILLAGE_BUILDINGS_TABLE_NAME)->cdrop_table();
+	tb->drop_table_if_exists(VILLAGE_RESOURCES_TABLE_NAME)->cdrop_table();
 	tb->drop_table_if_exists(VILLAGE_TABLE_NAME)->cdrop_table();
 	
 	tb->run_query();
