@@ -22,6 +22,7 @@ TestRWTextures
 _build/*
 _binaries/*
 game/android/build/*
+.cache/*
 
 *.blend1
 .dir-locals.el
