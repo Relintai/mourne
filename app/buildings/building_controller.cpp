@@ -19,6 +19,11 @@ void BuildingController::admin_handle_request_main(Request *request) {
 		admin_render_building_list(request);
 		return;
 	} else if (seg == "new") {
+		request->push_path();
+		admin_render_building(request, Ref<Building>());
+		return;
+	} else if (seg == "edit") {
+		request->push_path();
 		admin_render_building(request, Ref<Building>());
 		return;
 	}
@@ -40,14 +45,14 @@ void BuildingController::admin_render_building_list(Request *request) {
 
 	HTMLBuilder b;
 
-	b.div()->cls("back")->f()->a()->href(request->get_url_root_parent())->f()->w("<--- Back")->ca()->cdiv();
+	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
-	b.div()->cls("top_menu")->f()->w("Building Editor")->cdiv();
+	b.fdiv("Building Editor", "top_menu");
 	b.br();
-	b.div()->cls("top_menu")->f()->a()->href(request->get_url_root("new"))->f()->w("Create New")->ca()->cdiv();
+	b.div("top_menu")->f()->fa(request->get_url_root("new"), "Create New")->cdiv();
 	b.br();
 
-	b.div()->cls("list_container");
+	b.div("list_container");
 
 	for (int i = 0; i < buildings.size(); ++i) {
 		Ref<Building> building = buildings[i];
@@ -57,16 +62,17 @@ void BuildingController::admin_render_building_list(Request *request) {
 		}
 
 		if (i % 2 == 0) {
-			b.div()->cls("row");
+			b.div("row");
 		} else {
-			b.div()->cls("row second");
+			b.div("row second");
 		}
 		{
-			b.div()->cls("attr_box")->f()->w(String::num(building->id))->cdiv();
-			b.div()->cls("attr_box")->f()->w(String::num(building->rank))->cdiv();
-			b.div()->cls("attr_box")->f()->w(String::num(building->next_rank))->cdiv();
-			b.div()->cls("name")->f()->w(building->name)->cdiv();
-			b.div()->cls("actionbox")->f()->a()->href(request->get_url_root("edit/" + String::num(building->id)))->f()->w("Edit")->ca()->cdiv();
+			b.fdiv(String::num(building->id), "attr_box");
+			b.fdiv(String::num(building->rank), "attr_box");
+			b.fdiv(String::num(building->next_rank), "attr_box");
+			b.fdiv(building->name, "name");
+
+			b.div("actionbox")->f()->fa(request->get_url_root("edit/" + String::num(building->id)), "Edit")->cdiv();
 		}
 		b.cdiv();
 	}
@@ -83,10 +89,10 @@ void BuildingController::admin_render_building(Request *request, Ref<Building> b
 
 	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
-	b.fdiv("top_menu", "Building Editor");
+	b.fdiv("Building Editor", "top_menu");
 	b.br();
-	b.div("top_menu")->f()->fa(request->get_url_root("new"), "Create New")->cdiv();
-	b.br();
+
+	request->body += b.result;
 }
 
 void BuildingController::migrate() {
