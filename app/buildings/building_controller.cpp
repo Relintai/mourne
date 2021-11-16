@@ -8,7 +8,6 @@
 #include "core/http/session_manager.h"
 
 #include "building_model.h"
-#include "building_model.h"
 
 void BuildingController::handle_request_default(Request *request) {
 }
@@ -18,6 +17,9 @@ void BuildingController::admin_handle_request_main(Request *request) {
 
 	if (seg == "") {
 		admin_render_building_list(request);
+		return;
+	} else if (seg == "new") {
+		admin_render_building(request, Ref<Building>());
 		return;
 	}
 
@@ -72,6 +74,19 @@ void BuildingController::admin_render_building_list(Request *request) {
 	b.cdiv();
 
 	request->body += b.result;
+}
+
+void BuildingController::admin_render_building(Request *request, Ref<Building> building) {
+	Vector<Ref<Building> > buildings = BuildingModel::get_singleton()->get_all();
+
+	HTMLBuilder b;
+
+	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
+	b.br();
+	b.fdiv("top_menu", "Building Editor");
+	b.br();
+	b.div("top_menu")->f()->fa(request->get_url_root("new"), "Create New")->cdiv();
+	b.br();
 }
 
 void BuildingController::migrate() {

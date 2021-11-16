@@ -23,6 +23,7 @@ public:
 	bool admin_full_render();
 
 	void admin_render_building_list(Request *request);
+	void admin_render_building(Request *request, Ref<Building> building);
 
 	void migrate();
 	virtual void add_default_data();
