@@ -21,6 +21,7 @@
 #include "buildings/building_initializer.h"
 #include "village/village_initializer.h"
 #include "assignments/assignment_initializer.h"
+#include "weather/weather_initializer.h"
 
 bool MourneApplication::is_logged_in(Request *request) {
 	if (!request->session) {
@@ -260,12 +261,14 @@ void MourneApplication::migrate() {
 	BuildingController::get_singleton()->migrate();
 	VillageController::get_singleton()->migrate();
 	AssignmentController::get_singleton()->migrate();
+	WeatherController::get_singleton()->migrate();
 }
 
 void MourneApplication::add_default_data() {
 	BuildingController::get_singleton()->add_default_data();
 	VillageController::get_singleton()->add_default_data();
 	AssignmentController::get_singleton()->add_default_data();
+	WeatherController::get_singleton()->add_default_data();
 }
 
 void MourneApplication::compile_menu() {
@@ -304,10 +307,12 @@ MourneApplication::MourneApplication() :
 	BuildingInitializer::allocate_all();
 	VillageInitializer::allocate_all();
 	AssignmentInitializer::allocate_all();
+	WeatherInitializer::allocate_all();
 
 	_admin_panel = new AdminPanel();
 	_admin_panel->register_admin_controller("buildings", BuildingController::get_singleton());
 	_admin_panel->register_admin_controller("assignments", AssignmentController::get_singleton());
+	_admin_panel->register_admin_controller("weather", WeatherController::get_singleton());
 
 	HTMLBuilder b;
 
@@ -331,6 +336,7 @@ MourneApplication::~MourneApplication() {
 	VillageInitializer::free_all();
 	BuildingInitializer::free_all();
 	AssignmentInitializer::free_all();
+	WeatherInitializer::free_all();
 }
 
 String MourneApplication::menu_head = "";
