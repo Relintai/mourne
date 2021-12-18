@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS `attacks` (
 -- Table structure for table `buildings`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `buildings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
@@ -683,6 +684,7 @@ CREATE TABLE IF NOT EXISTS `news` (
 -- Table structure for table `resources`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `resources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -725,6 +727,7 @@ CREATE TABLE IF NOT EXISTS `resources` (
 -- Table structure for table `sessions`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `sessions` (
   `session_id` varchar(40) NOT NULL DEFAULT '0',
   `ip_address` varchar(45) NOT NULL DEFAULT '0',
@@ -976,6 +979,7 @@ INSERT INTO `units` (`id`, `type`, `name`, `icon`, `score`, `can_defend`, `defen
 -- Table structure for table `users`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
@@ -996,6 +1000,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Table structure for table `villages`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `villages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,
@@ -1021,6 +1026,7 @@ CREATE TABLE IF NOT EXISTS `villages` (
 -- Table structure for table `village_buildings`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `village_buildings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -1040,6 +1046,7 @@ CREATE TABLE IF NOT EXISTS `village_buildings` (
 -- Table structure for table `village_technologies`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `village_technologies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -1060,6 +1067,7 @@ CREATE TABLE IF NOT EXISTS `village_technologies` (
 -- Table structure for table `village_units`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `village_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,

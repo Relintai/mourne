@@ -35,6 +35,7 @@ folders = [
     'app',
     'app/buildings',
     'app/village',
+    'app/assignments',
 ]
 
 module_folders = [
