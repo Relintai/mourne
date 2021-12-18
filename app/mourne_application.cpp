@@ -20,6 +20,7 @@
 
 #include "buildings/building_initializer.h"
 #include "village/village_initializer.h"
+#include "assignments/assignment_initializer.h"
 
 bool MourneApplication::is_logged_in(Request *request) {
 	if (!request->session) {
@@ -300,6 +301,7 @@ MourneApplication::MourneApplication() :
 
 	BuildingInitializer::allocate_all();
 	VillageInitializer::allocate_all();
+	AssignmentInitializer::allocate_all();
 
 	_admin_panel = new AdminPanel();
 	_admin_panel->register_admin_controller("buildings", BuildingController::get_singleton());
@@ -325,6 +327,7 @@ MourneApplication::~MourneApplication() {
 
 	VillageInitializer::free_all();
 	BuildingInitializer::free_all();
+	AssignmentInitializer::free_all();
 }
 
 String MourneApplication::menu_head = "";
