@@ -91,9 +91,7 @@ void AssignmentController::admin_render_assignment_list(Request *request) {
 		}
 		{
 			b.fdiv(String::num(assignment->id), "attr_box");
-			b.fdiv(String::num(assignment->rank), "attr_box");
-			b.fdiv(String::num(assignment->next_rank), "attr_box");
-			b.fdiv(assignment->name, "name");
+			b.fdiv(assignment->description, "name");
 
 			b.div("actionbox")->f()->fa(request->get_url_root("edit/" + String::num(assignment->id)), "Edit")->cdiv();
 		}
@@ -125,102 +123,13 @@ void AssignmentController::admin_render_assignment(Request *request, Ref<Assignm
 
 	bool show_post = false; //request->get_method() == HTTP_METHOD_POST && validation errors;
 
-	ADMIN_EDIT_INPUT_TEXT("Name:", "name", show_post, assignment->name, request->get_parameter("name"));
-	ADMIN_EDIT_INPUT_TEXTAREA("Description:", "description", show_post, assignment->description, request->get_parameter("description"));
-
-	b.div("row_edit");
-	b.fdiv("Icon:", "edit_name");
-	//todo I'm not sure yet how this worked originally
-	//b.div("edit_input")->f()->input_image("icon", assignment->icon)->f()->cdiv();
-	b.div("edit_input")->f()->w("TODO")->cdiv();
-	b.cdiv();
-
-	ADMIN_EDIT_INPUT_TEXT("Rank:", "rank", show_post, String::num(assignment->rank), request->get_parameter("rank"));
-
-	Vector<Ref<Assignment> > nrbs = AssignmentModel::get_singleton()->get_all();
-	b.div("row_edit");
-	b.fdiv("Next Rank:", "edit_name");
-	b.div("edit_input");
-	{
-		b.select("next_rank", "drop");
-		{
-			int current_id = assignment->id;
-			int current_nr = assignment->next_rank;
-
-			b.foption(String::num(0), "- None -", current_nr == 0);
-
-			for (int i = 0; i < nrbs.size(); ++i) {
-				Ref<Assignment> build = nrbs[i];
-
-				int id = build->id;
-
-				if (id == current_id) {
-					continue;
-				}
-
-				b.foption(String::num(id), build->name + " R" + String::num(build->rank), current_nr == id);
-			}
-		}
-		b.cselect();
-	}
-	b.cdiv();
-	b.cdiv();
-
-	ADMIN_EDIT_INPUT_TEXT("Time to Build:", "time_to_build", show_post, String::num(assignment->time_to_build), request->get_parameter("time_to_build"));
-
-	ADMIN_EDIT_LINE_SPACER();
-
-	ADMIN_EDIT_INPUT_TEXT("Score:", "score", show_post, String::num(assignment->score), request->get_parameter("score"));
-	ADMIN_EDIT_INPUT_TEXT("Defense:", "defense", show_post, String::num(assignment->defense), request->get_parameter("defense"));
-
-	//TODO
-	/*
-		int ability;
-
-		<div class="row_edit">
-		<div class="edit_name">
-		Ability:
-		</div>
-		<div class="edit_input">
-		<?=form_dropdown('ability', $opt_ability, $sability, $attr_drop); ?>
-		</div>
-		</div>
-	*/
-
-	b.div("row_edit");
-	b.fdiv("Ability:", "edit_name");
-	b.div("edit_input")->f()->w("TODO")->cdiv();
-	b.cdiv();
-
-	ADMIN_EDIT_LINE_SPACER();
-
-	ADMIN_EDIT_INPUT_TEXT("Cost Food:", "cost_food", show_post, String::num(assignment->cost_food), request->get_parameter("cost_food"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Wood:", "cost_wood", show_post, String::num(assignment->cost_wood), request->get_parameter("cost_wood"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Stone:", "cost_stone", show_post, String::num(assignment->cost_stone), request->get_parameter("cost_stone"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Iron:", "cost_iron", show_post, String::num(assignment->cost_iron), request->get_parameter("cost_iron"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Mana:", "cost_mana", show_post, String::num(assignment->cost_food), request->get_parameter("cost_mana"));
-
-	ADMIN_EDIT_LINE_SPACER();
-
-/*
-	int creates;
-	int num_creates;
-
-	<div class="row_edit">
-	<div class="edit_name">
-	Creates:
-	</div>
-	<div class="edit_input">
-	<?=form_dropdown($name_creates, $optcre, $screate, $attr_creates); ?>
-	X (max) <?=form_input($attr_num_creates); ?>
-	</div>
-	</div>
-*/
-
-	b.div("row_edit");
-	b.fdiv("Creates:", "edit_name");
-	b.div("edit_input")->f()->w("TODO")->cdiv();
-	b.cdiv();
+	//Todo make it a dropdown
+	ADMIN_EDIT_INPUT_TEXT("Unitid:", "unitid", show_post, String::num(assignment->unitid), request->get_parameter("unitid"));
+	ADMIN_EDIT_INPUT_TEXT("max:", "max", show_post, String::num(assignment->max), request->get_parameter("max"));
+	ADMIN_EDIT_INPUT_TEXT("bonus_per_assigned:", "bonus_per_assigned", show_post, String::num(assignment->bonus_per_assigned), request->get_parameter("bonus_per_assigned"));
+	ADMIN_EDIT_INPUT_TEXT("spellid:", "spellid", show_post, String::num(assignment->spellid), request->get_parameter("spellid"));
+	//Todo make it a dropdown
+	ADMIN_EDIT_INPUT_TEXT("req_tech:", "req_tech", show_post, String::num(assignment->req_tech), request->get_parameter("req_tech"));
 
 	ADMIN_EDIT_LINE_SPACER();
 
@@ -248,24 +157,7 @@ void AssignmentController::admin_render_assignment(Request *request, Ref<Assignm
 
 	ADMIN_EDIT_LINE_SPACER();
 
-	//TODO <?=form_dropdown($name_assign1, $optass, $assign1, $attr_assign); ?>
-
-	ADMIN_EDIT_INPUT_TEXT("Assignment 1:", "assignment1", show_post, String::num(assignment->assignment1), request->get_parameter("assignment1"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 2:", "assignment2", show_post, String::num(assignment->assignment2), request->get_parameter("assignment2"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 3:", "assignment3", show_post, String::num(assignment->assignment3), request->get_parameter("assignment3"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 4:", "assignment4", show_post, String::num(assignment->assignment4), request->get_parameter("assignment4"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 5:", "assignment5", show_post, String::num(assignment->assignment5), request->get_parameter("assignment5"));
-
-	ADMIN_EDIT_LINE_SPACER();
-
-	//TODO <?=form_dropdown($name_req_tech, $optreqtech, $selreqtech, $attr_req_tech); ?>
-	ADMIN_EDIT_INPUT_TEXT("Required Technology:", "req_tech", show_post, String::num(assignment->req_tech), request->get_parameter("req_tech"));
-	ADMIN_EDIT_LINE_SPACER();
-	//TODO <?=form_dropdown($name_tech_group, $opttechgroup, $seltechgroup, $attr_assign);?>
-	ADMIN_EDIT_INPUT_TEXT("Technology Group:", "tech_group", show_post, String::num(assignment->tech_group), request->get_parameter("tech_group"));
-	ADMIN_EDIT_LINE_SPACER();
-	//TODO <?=form_dropdown($name_tech_secondary_group, $opttechgroup, $seltechsecgroup, $attr_tech_secondary_group); ?>
-	ADMIN_EDIT_INPUT_TEXT("Secondary Technology Group:", "tech_secondary_group", show_post, String::num(assignment->tech_secondary_group), request->get_parameter("tech_secondary_group"));
+	ADMIN_EDIT_INPUT_TEXTAREA("Description:", "description", show_post, assignment->description, request->get_parameter("description"));
 
 	b.div("edit_submit")->f()->input_submit("Save", "submit")->f()->cdiv();
 

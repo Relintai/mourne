@@ -80,6 +80,7 @@ INSERT INTO `ai_units` (`id`, `name`, `icon`, `ability`, `can_carry`, `attack`, 
 -- Table structure for table `assignments`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `assignments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `unitid` int(11) NOT NULL,

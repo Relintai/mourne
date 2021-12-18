@@ -259,11 +259,13 @@ void MourneApplication::setup_middleware() {
 void MourneApplication::migrate() {
 	BuildingController::get_singleton()->migrate();
 	VillageController::get_singleton()->migrate();
+	AssignmentController::get_singleton()->migrate();
 }
 
 void MourneApplication::add_default_data() {
 	BuildingController::get_singleton()->add_default_data();
 	VillageController::get_singleton()->add_default_data();
+	AssignmentController::get_singleton()->add_default_data();
 }
 
 void MourneApplication::compile_menu() {
@@ -305,6 +307,7 @@ MourneApplication::MourneApplication() :
 
 	_admin_panel = new AdminPanel();
 	_admin_panel->register_admin_controller("buildings", BuildingController::get_singleton());
+	_admin_panel->register_admin_controller("assignments", AssignmentController::get_singleton());
 
 	HTMLBuilder b;
 
