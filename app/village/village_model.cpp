@@ -13,6 +13,10 @@
 #define VILLAGE_BUILDINGS_TABLE_NAME "village_buildings"
 #define VILLAGE_TECHNOLOGIES_TABLE_NAME "village_technologies"
 #define VILLAGE_UNITS_TABLE_NAME "village_units"
+#define VILLAGE_BUILDING_ASSIGNMENTS_TABLE_NAME "village_building_assignments"
+#define VILLAGE_BUILDING_SPELLS_TABLE_NAME "village_building_spells"
+#define VILLAGE_BUILDING_SPELL_COOLDOWNS_TABLE_NAME "village_building_spell_cooldowns"
+
 
 void VillageModel::create_table() {
 	Ref<TableBuilder> tb = DatabaseManager::get_singleton()->ddb->get_table_builder();
@@ -134,10 +138,68 @@ void VillageModel::create_table() {
 	//tb->print();
 
 	tb->result = "";
+
+	tb->create_table(VILLAGE_BUILDING_ASSIGNMENTS_TABLE_NAME);
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("villageid", 11)->not_null()->next_row();
+	tb->integer("slotid", 11)->not_null()->next_row();
+	tb->integer("unitid", 11)->not_null()->next_row();
+
+	tb->integer("num_unit", 11)->not_null()->next_row();
+	tb->integer("assignmentid", 11)->not_null()->next_row(); //foregign key
+	tb->integer("num_bonus", 11)->not_null()->next_row();
+
+	tb->primary_key("id");
+	tb->foreign_key("villageid")->references(VILLAGE_TABLE_NAME, "id");
+	tb->ccreate_table();
+
+	tb->run_query();
+	//tb->print();
+
+	tb->result = "";
+
+	tb->create_table(VILLAGE_BUILDING_SPELLS_TABLE_NAME);
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("villageid", 11)->not_null()->next_row();
+	tb->integer("slotid", 11)->not_null()->next_row();
+	tb->integer("assignmentid", 11)->not_null()->next_row(); //foregign key
+	tb->integer("spellid", 11)->not_null()->next_row();//foregign key
+	
+	tb->primary_key("id");
+	tb->foreign_key("villageid")->references(VILLAGE_TABLE_NAME, "id");
+	tb->ccreate_table();
+
+	tb->run_query();
+	//tb->print();
+
+	tb->result = "";
+
+	tb->create_table(VILLAGE_BUILDING_SPELL_COOLDOWNS_TABLE_NAME);
+	tb->integer("id", 11)->auto_increment()->next_row();
+	tb->integer("villageid", 11)->not_null()->next_row();
+	tb->integer("slotid", 11)->not_null()->next_row();
+	tb->integer("spellid", 11)->not_null()->next_row();//foregign key
+	tb->integer("cooldown_end", 11)->not_null()->next_row();
+	
+	tb->primary_key("id");
+	tb->foreign_key("villageid")->references(VILLAGE_TABLE_NAME, "id");
+	tb->ccreate_table();
+
+	tb->run_query();
+	//tb->print();
+
+	tb->result = "";
 }
+
+#define VILLAGE_BUILDING_SPELLS_TABLE_NAME "village_building_spells"
+#define VILLAGE_BUILDING_SPELL_COOLDOWNS_TABLE_NAME "village_building_spell_cooldowns"
+
 void VillageModel::drop_table() {
 	Ref<TableBuilder> tb = DatabaseManager::get_singleton()->ddb->get_table_builder();
 
+	tb->drop_table_if_exists(VILLAGE_BUILDING_ASSIGNMENTS_TABLE_NAME)->cdrop_table();
+	tb->drop_table_if_exists(VILLAGE_BUILDING_SPELLS_TABLE_NAME)->cdrop_table();
+	tb->drop_table_if_exists(VILLAGE_BUILDING_SPELL_COOLDOWNS_TABLE_NAME)->cdrop_table();
 	tb->drop_table_if_exists(VILLAGE_UNITS_TABLE_NAME)->cdrop_table();
 	tb->drop_table_if_exists(VILLAGE_TECHNOLOGIES_TABLE_NAME)->cdrop_table();
 	tb->drop_table_if_exists(VILLAGE_BUILDINGS_TABLE_NAME)->cdrop_table();

@@ -206,6 +206,7 @@ INSERT INTO `buildings` (`id`, `name`, `description`, `icon`, `rank`, `next_rank
 -- Table structure for table `building_assignments`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `building_assignments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -227,6 +228,7 @@ CREATE TABLE IF NOT EXISTS `building_assignments` (
 -- Table structure for table `building_spells`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `building_spells` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -248,6 +250,7 @@ CREATE TABLE IF NOT EXISTS `building_spells` (
 -- Table structure for table `building_spell_cooldowns`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `building_spell_cooldowns` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
