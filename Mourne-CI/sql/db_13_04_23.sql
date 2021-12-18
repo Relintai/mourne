@@ -1084,6 +1084,7 @@ CREATE TABLE IF NOT EXISTS `village_units` (
 -- Table structure for table `weathers`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `weathers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
