@@ -91,8 +91,6 @@ void WeatherController::admin_render_weather_list(Request *request) {
 		}
 		{
 			b.fdiv(String::num(weather->id), "attr_box");
-			b.fdiv(String::num(weather->rank), "attr_box");
-			b.fdiv(String::num(weather->next_rank), "attr_box");
 			b.fdiv(weather->name, "name");
 
 			b.div("actionbox")->f()->fa(request->get_url_root("edit/" + String::num(weather->id)), "Edit")->cdiv();
@@ -127,100 +125,13 @@ void WeatherController::admin_render_weather(Request *request, Ref<Weather> weat
 
 	ADMIN_EDIT_INPUT_TEXT("Name:", "name", show_post, weather->name, request->get_parameter("name"));
 	ADMIN_EDIT_INPUT_TEXTAREA("Description:", "description", show_post, weather->description, request->get_parameter("description"));
-
-	b.div("row_edit");
-	b.fdiv("Icon:", "edit_name");
-	//todo I'm not sure yet how this worked originally
-	//b.div("edit_input")->f()->input_image("icon", weather->icon)->f()->cdiv();
-	b.div("edit_input")->f()->w("TODO")->cdiv();
-	b.cdiv();
-
-	ADMIN_EDIT_INPUT_TEXT("Rank:", "rank", show_post, String::num(weather->rank), request->get_parameter("rank"));
-
-	Vector<Ref<Weather> > nrbs = WeatherModel::get_singleton()->get_all();
-	b.div("row_edit");
-	b.fdiv("Next Rank:", "edit_name");
-	b.div("edit_input");
-	{
-		b.select("next_rank", "drop");
-		{
-			int current_id = weather->id;
-			int current_nr = weather->next_rank;
-
-			b.foption(String::num(0), "- None -", current_nr == 0);
-
-			for (int i = 0; i < nrbs.size(); ++i) {
-				Ref<Weather> build = nrbs[i];
-
-				int id = build->id;
-
-				if (id == current_id) {
-					continue;
-				}
-
-				b.foption(String::num(id), build->name + " R" + String::num(build->rank), current_nr == id);
-			}
-		}
-		b.cselect();
-	}
-	b.cdiv();
-	b.cdiv();
-
-	ADMIN_EDIT_INPUT_TEXT("Time to Build:", "time_to_build", show_post, String::num(weather->time_to_build), request->get_parameter("time_to_build"));
+	//I think this was supposed to be an icon
+	ADMIN_EDIT_INPUT_TEXT("Art:", "art", show_post, weather->art, request->get_parameter("art"));
+	ADMIN_EDIT_INPUT_TEXT("CSS:", "css", show_post, weather->css, request->get_parameter("css"));
 
 	ADMIN_EDIT_LINE_SPACER();
 
-	ADMIN_EDIT_INPUT_TEXT("Score:", "score", show_post, String::num(weather->score), request->get_parameter("score"));
-	ADMIN_EDIT_INPUT_TEXT("Defense:", "defense", show_post, String::num(weather->defense), request->get_parameter("defense"));
-
-	//TODO
-	/*
-		int ability;
-
-		<div class="row_edit">
-		<div class="edit_name">
-		Ability:
-		</div>
-		<div class="edit_input">
-		<?=form_dropdown('ability', $opt_ability, $sability, $attr_drop); ?>
-		</div>
-		</div>
-	*/
-
-	b.div("row_edit");
-	b.fdiv("Ability:", "edit_name");
-	b.div("edit_input")->f()->w("TODO")->cdiv();
-	b.cdiv();
-
-	ADMIN_EDIT_LINE_SPACER();
-
-	ADMIN_EDIT_INPUT_TEXT("Cost Food:", "cost_food", show_post, String::num(weather->cost_food), request->get_parameter("cost_food"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Wood:", "cost_wood", show_post, String::num(weather->cost_wood), request->get_parameter("cost_wood"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Stone:", "cost_stone", show_post, String::num(weather->cost_stone), request->get_parameter("cost_stone"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Iron:", "cost_iron", show_post, String::num(weather->cost_iron), request->get_parameter("cost_iron"));
-	ADMIN_EDIT_INPUT_TEXT("Cost Mana:", "cost_mana", show_post, String::num(weather->cost_food), request->get_parameter("cost_mana"));
-
-	ADMIN_EDIT_LINE_SPACER();
-
-/*
-	int creates;
-	int num_creates;
-
-	<div class="row_edit">
-	<div class="edit_name">
-	Creates:
-	</div>
-	<div class="edit_input">
-	<?=form_dropdown($name_creates, $optcre, $screate, $attr_creates); ?>
-	X (max) <?=form_input($attr_num_creates); ?>
-	</div>
-	</div>
-*/
-
-	b.div("row_edit");
-	b.fdiv("Creates:", "edit_name");
-	b.div("edit_input")->f()->w("TODO")->cdiv();
-	b.cdiv();
+	ADMIN_EDIT_INPUT_TEXT("Effect:", "effect", show_post, String::num(weather->effect), request->get_parameter("effect"));
 
 	ADMIN_EDIT_LINE_SPACER();
 
@@ -232,40 +143,11 @@ void WeatherController::admin_render_weather(Request *request, Ref<Weather> weat
 
 	ADMIN_EDIT_LINE_SPACER();
 
-	ADMIN_EDIT_INPUT_TEXT("Mod Rate Food:", "mod_rate_food", show_post, String::num(weather->mod_rate_food), request->get_parameter("mod_rate_food"));
-	ADMIN_EDIT_INPUT_TEXT("Mod Rate Wood:", "mod_rate_wood", show_post, String::num(weather->mod_rate_wood), request->get_parameter("mod_rate_wood"));
-	ADMIN_EDIT_INPUT_TEXT("Mod Rate Stone:", "mod_rate_stone", show_post, String::num(weather->mod_rate_stone), request->get_parameter("mod_rate_stone"));
-	ADMIN_EDIT_INPUT_TEXT("Mod Rate Iron:", "mod_rate_iron", show_post, String::num(weather->mod_rate_iron), request->get_parameter("mod_rate_iron"));
-	ADMIN_EDIT_INPUT_TEXT("Mod Rate Mana:", "mod_rate_mana", show_post, String::num(weather->mod_rate_mana), request->get_parameter("mod_rate_mana"));
-
-	ADMIN_EDIT_LINE_SPACER();
-
 	ADMIN_EDIT_INPUT_TEXT("Mod Percent Food:", "mod_percent_food", show_post, String::num(weather->mod_percent_food), request->get_parameter("mod_percent_food"));
 	ADMIN_EDIT_INPUT_TEXT("Mod Percent Wood:", "mod_percent_wood", show_post, String::num(weather->mod_percent_wood), request->get_parameter("mod_percent_wood"));
 	ADMIN_EDIT_INPUT_TEXT("Mod Percent Stone:", "mod_percent_stone", show_post, String::num(weather->mod_percent_stone), request->get_parameter("mod_percent_stone"));
 	ADMIN_EDIT_INPUT_TEXT("Mod Percent Iron:", "mod_percent_iron", show_post, String::num(weather->mod_percent_iron), request->get_parameter("mod_percent_iron"));
 	ADMIN_EDIT_INPUT_TEXT("Mod Percent Mana:", "mod_percent_mana", show_post, String::num(weather->mod_percent_mana), request->get_parameter("mod_percent_mana"));
-
-	ADMIN_EDIT_LINE_SPACER();
-
-	//TODO <?=form_dropdown($name_assign1, $optass, $assign1, $attr_assign); ?>
-
-	ADMIN_EDIT_INPUT_TEXT("Assignment 1:", "assignment1", show_post, String::num(weather->assignment1), request->get_parameter("assignment1"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 2:", "assignment2", show_post, String::num(weather->assignment2), request->get_parameter("assignment2"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 3:", "assignment3", show_post, String::num(weather->assignment3), request->get_parameter("assignment3"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 4:", "assignment4", show_post, String::num(weather->assignment4), request->get_parameter("assignment4"));
-	ADMIN_EDIT_INPUT_TEXT("Assignment 5:", "assignment5", show_post, String::num(weather->assignment5), request->get_parameter("assignment5"));
-
-	ADMIN_EDIT_LINE_SPACER();
-
-	//TODO <?=form_dropdown($name_req_tech, $optreqtech, $selreqtech, $attr_req_tech); ?>
-	ADMIN_EDIT_INPUT_TEXT("Required Technology:", "req_tech", show_post, String::num(weather->req_tech), request->get_parameter("req_tech"));
-	ADMIN_EDIT_LINE_SPACER();
-	//TODO <?=form_dropdown($name_tech_group, $opttechgroup, $seltechgroup, $attr_assign);?>
-	ADMIN_EDIT_INPUT_TEXT("Technology Group:", "tech_group", show_post, String::num(weather->tech_group), request->get_parameter("tech_group"));
-	ADMIN_EDIT_LINE_SPACER();
-	//TODO <?=form_dropdown($name_tech_secondary_group, $opttechgroup, $seltechsecgroup, $attr_tech_secondary_group); ?>
-	ADMIN_EDIT_INPUT_TEXT("Secondary Technology Group:", "tech_secondary_group", show_post, String::num(weather->tech_secondary_group), request->get_parameter("tech_secondary_group"));
 
 	b.div("edit_submit")->f()->input_submit("Save", "submit")->f()->cdiv();
 
