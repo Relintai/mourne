@@ -4,15 +4,15 @@
 #include "core/string.h"
 #include "core/containers/vector.h"
 
-#include "modules/admin_panel/admin_controller.h"
+#include "modules/admin_panel/admin_node.h"
 
 #include "assignment.h"
 
 class Request;
 class FormValidator;
 
-class AssignmentController : public AdminController {
-	RCPP_OBJECT(AssignmentController, AdminController);
+class AssignmentController : public AdminNode {
+	RCPP_OBJECT(AssignmentController, AdminNode);
 	
 public:
 	void handle_request_default(Request *request);

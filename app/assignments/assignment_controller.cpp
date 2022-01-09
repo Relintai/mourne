@@ -68,11 +68,11 @@ void AssignmentController::admin_render_assignment_list(Request *request) {
 
 	HTMLBuilder b;
 
-	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
+	b.div("back")->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
 	b.fdiv("Assignment Editor", "top_menu");
 	b.br();
-	b.div("top_menu")->f()->fa(request->get_url_root("new"), "Create New")->cdiv();
+	b.div("top_menu")->fa(request->get_url_root("new"), "Create New")->cdiv();
 	b.br();
 
 	b.div("list_container");
@@ -93,7 +93,7 @@ void AssignmentController::admin_render_assignment_list(Request *request) {
 			b.fdiv(String::num(assignment->id), "attr_box");
 			b.fdiv(assignment->description, "name");
 
-			b.div("actionbox")->f()->fa(request->get_url_root("edit/" + String::num(assignment->id)), "Edit")->cdiv();
+			b.div("actionbox")->fa(request->get_url_root("edit/" + String::num(assignment->id)), "Edit")->cdiv();
 		}
 		b.cdiv();
 	}
@@ -114,7 +114,7 @@ void AssignmentController::admin_render_assignment(Request *request, Ref<Assignm
 
 	HTMLBuilder b;
 
-	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
+	b.div("back")->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
 	b.fdiv("Assignment Editor", "top_menu");
 	b.br();
@@ -159,7 +159,7 @@ void AssignmentController::admin_render_assignment(Request *request, Ref<Assignm
 
 	ADMIN_EDIT_INPUT_TEXTAREA("Description:", "description", show_post, assignment->description, request->get_parameter("description"));
 
-	b.div("edit_submit")->f()->input_submit("Save", "submit")->f()->cdiv();
+	b.div("edit_submit")->input_submit("Save", "submit")->cdiv();
 
 	b.cform();
 
@@ -178,7 +178,7 @@ AssignmentController *AssignmentController::get_singleton() {
 }
 
 AssignmentController::AssignmentController() :
-		AdminController() {
+		AdminNode() {
 
 	if (_self) {
 		printf("AssignmentController::AssignmentController(): Error! self is not null!/n");

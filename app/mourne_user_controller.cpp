@@ -6,7 +6,6 @@
 #include "core/http/http_session.h"
 #include "core/http/request.h"
 #include "core/http/session_manager.h"
-#include "modules/users/user_model.h"
 
 void MourneUserController::render_login_request_default(Request *request, LoginRequestData *data) {
 	HTMLBuilder b;
@@ -26,7 +25,7 @@ void MourneUserController::render_login_request_default(Request *request, LoginR
 
 	b.div()->cls("login");
 	{
-		//todo href path helper
+		// todo href path helper
 		b.form()->method("POST")->href("/user/login");
 		{
 			b.w("Username");
@@ -75,7 +74,7 @@ void MourneUserController::render_register_request_default(Request *request, Reg
 
 	b.div()->cls("register");
 	{
-		//todo href path helper
+		// todo href path helper
 		b.form()->method("POST")->href("/user/register");
 		{
 			b.w("Username");
@@ -101,7 +100,7 @@ void MourneUserController::render_register_request_default(Request *request, Reg
 			b.input()->type("password")->name("password_check");
 			b.cinput();
 			b.br();
-			
+
 			b.input()->type("submit")->value("Register");
 			b.cinput();
 		}
@@ -144,7 +143,7 @@ void MourneUserController::render_settings_request(Ref<User> &user, Request *req
 
 	b.div()->cls("settings");
 	{
-		//todo href path helper
+		// todo href path helper
 		b.form()->method("POST")->href("/user/settings");
 		{
 			b.w("Username");
@@ -181,6 +180,27 @@ void MourneUserController::render_settings_request(Ref<User> &user, Request *req
 	request->body += b.result;
 
 	request->compile_and_send_body();
+}
+
+void MourneUserController::create_test_users() {
+	Ref<User> user;
+	user = create_user();
+
+	user->rank = 6;
+	user->name_user_input = "admin";
+	user->email_user_input = "admin@admin.com";
+
+	create_password(user, "Password");
+	db_save_user(user);
+
+	user = create_user();
+
+	user->rank = 1;
+	user->name_user_input = "user";
+	user->email_user_input = "user@user.com";
+
+	create_password(user, "Password");
+	db_save_user(user);
 }
 
 MourneUserController::MourneUserController() :

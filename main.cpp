@@ -2,25 +2,23 @@
 #include <iostream>
 #include <string>
 
-#include "core/bry_http/http_server.h"
 #include "core/file_cache.h"
-#include "core/http/web_application.h"
+#include "core/http/web_root.h"
 
-#include "app/mourne_application.h"
+#include "app/mourne_root.h"
 
 #include "database/db_init.h"
 
-#include "core/settings.h"
+#include "core/settings/settings.h"
+#include "core/settings/db_settings.h"
 
 #include "core/http/session_manager.h"
 
-#include "modules/drogon/web_application.h"
+#include "modules/drogon/drogon_web_server.h"
 
 //Backends
 #include "backends/hash_hashlib/setup.h"
 
-#include "app/mourne_user_controller.h"
-#include "app/mourne_user_model.h"
 #include "modules/users/user.h"
 
 #include "core/os/platform.h"
@@ -49,13 +47,8 @@ int main(int argc, char **argv, char **envp) {
 
 	::SessionManager *session_manager = new ::SessionManager();
 
-	//todo init these in the module automatically
-	MourneUserController *user_controller = new MourneUserController();
-	MourneUserModel *user_model = new MourneUserModel();
-	//user_manager->set_path("./users/");
-
-	Settings *settings = new Settings(true);
-	//settings->parse_file("settings.json");
+	DBSettings *settings = new DBSettings(true);
+	// settings->parse_file("settings.json");
 
 	FileCache *file_cache = new FileCache(true);
 	file_cache->wwwroot = "./www";
@@ -65,18 +58,17 @@ int main(int argc, char **argv, char **envp) {
 
 	create_databases();
 
-	MourneApplication *app = new MourneApplication();
-
-	app->load_settings();
-	app->setup_routes();
-	app->setup_middleware();
+	DrogonWebServer *app = new DrogonWebServer();
+	MourneRoot *app_root = new MourneRoot();
+	app_root->setup();
 
 	bool migrate = Platform::get_singleton()->arg_parser.has_arg("-m");
 
 	if (!migrate) {
-		printf("Initialized!\n");
+		settings->load();
 		session_manager->load_sessions();
 
+		printf("Initialized!\n");
 		app->add_listener("127.0.0.1", 8080);
 		LOG_INFO << "Server running on 127.0.0.1:8080";
 
@@ -84,28 +76,15 @@ int main(int argc, char **argv, char **envp) {
 	} else {
 		printf("Running migrations.\n");
 
+		settings->migrate();
 		session_manager->migrate();
-		user_model->migrate();
-
-		if (Platform::get_singleton()->arg_parser.has_arg("-u")) {
-			printf("Creating test users.\n");
-			user_model->create_test_users();
-		}
-
-		app->migrate();
-
-		if (Platform::get_singleton()->arg_parser.has_arg("-d")) {
-			printf("Adding data.\n");
-			app->add_default_data();
-		}
+		app_root->migrate();
 	}
 
 	delete app;
 	delete dbm;
 	delete file_cache;
 	delete settings;
-	delete user_controller;
-	delete user_model;
 	delete session_manager;
 
 	PlatformInitializer::free_all();

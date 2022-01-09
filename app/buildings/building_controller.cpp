@@ -68,11 +68,11 @@ void BuildingController::admin_render_building_list(Request *request) {
 
 	HTMLBuilder b;
 
-	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
+	b.div("back")->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
 	b.fdiv("Building Editor", "top_menu");
 	b.br();
-	b.div("top_menu")->f()->fa(request->get_url_root("new"), "Create New")->cdiv();
+	b.div("top_menu")->fa(request->get_url_root("new"), "Create New")->cdiv();
 	b.br();
 
 	b.div("list_container");
@@ -95,7 +95,7 @@ void BuildingController::admin_render_building_list(Request *request) {
 			b.fdiv(String::num(building->next_rank), "attr_box");
 			b.fdiv(building->name, "name");
 
-			b.div("actionbox")->f()->fa(request->get_url_root("edit/" + String::num(building->id)), "Edit")->cdiv();
+			b.div("actionbox")->fa(request->get_url_root("edit/" + String::num(building->id)), "Edit")->cdiv();
 		}
 		b.cdiv();
 	}
@@ -116,7 +116,7 @@ void BuildingController::admin_render_building(Request *request, Ref<Building> b
 
 	HTMLBuilder b;
 
-	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
+	b.div("back")->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
 	b.fdiv("Building Editor", "top_menu");
 	b.br();
@@ -132,7 +132,7 @@ void BuildingController::admin_render_building(Request *request, Ref<Building> b
 	b.fdiv("Icon:", "edit_name");
 	//todo I'm not sure yet how this worked originally
 	//b.div("edit_input")->f()->input_image("icon", building->icon)->f()->cdiv();
-	b.div("edit_input")->f()->w("TODO")->cdiv();
+	b.div("edit_input")->w("TODO")->cdiv();
 	b.cdiv();
 
 	ADMIN_EDIT_INPUT_TEXT("Rank:", "rank", show_post, String::num(building->rank), request->get_parameter("rank"));
@@ -189,7 +189,7 @@ void BuildingController::admin_render_building(Request *request, Ref<Building> b
 
 	b.div("row_edit");
 	b.fdiv("Ability:", "edit_name");
-	b.div("edit_input")->f()->w("TODO")->cdiv();
+	b.div("edit_input")->w("TODO")->cdiv();
 	b.cdiv();
 
 	ADMIN_EDIT_LINE_SPACER();
@@ -219,7 +219,7 @@ void BuildingController::admin_render_building(Request *request, Ref<Building> b
 
 	b.div("row_edit");
 	b.fdiv("Creates:", "edit_name");
-	b.div("edit_input")->f()->w("TODO")->cdiv();
+	b.div("edit_input")->w("TODO")->cdiv();
 	b.cdiv();
 
 	ADMIN_EDIT_LINE_SPACER();
@@ -267,7 +267,7 @@ void BuildingController::admin_render_building(Request *request, Ref<Building> b
 	//TODO <?=form_dropdown($name_tech_secondary_group, $opttechgroup, $seltechsecgroup, $attr_tech_secondary_group); ?>
 	ADMIN_EDIT_INPUT_TEXT("Secondary Technology Group:", "tech_secondary_group", show_post, String::num(building->tech_secondary_group), request->get_parameter("tech_secondary_group"));
 
-	b.div("edit_submit")->f()->input_submit("Save", "submit")->f()->cdiv();
+	b.div("edit_submit")->input_submit("Save", "submit")->cdiv();
 
 	b.cform();
 
@@ -286,7 +286,7 @@ BuildingController *BuildingController::get_singleton() {
 }
 
 BuildingController::BuildingController() :
-		AdminController() {
+		AdminNode() {
 
 	if (_self) {
 		printf("BuildingController::BuildingController(): Error! self is not null!/n");

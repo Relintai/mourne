@@ -68,11 +68,11 @@ void WeatherController::admin_render_weather_list(Request *request) {
 
 	HTMLBuilder b;
 
-	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
+	b.div("back")->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
 	b.fdiv("Weather Editor", "top_menu");
 	b.br();
-	b.div("top_menu")->f()->fa(request->get_url_root("new"), "Create New")->cdiv();
+	b.div("top_menu")->fa(request->get_url_root("new"), "Create New")->cdiv();
 	b.br();
 
 	b.div("list_container");
@@ -93,7 +93,7 @@ void WeatherController::admin_render_weather_list(Request *request) {
 			b.fdiv(String::num(weather->id), "attr_box");
 			b.fdiv(weather->name, "name");
 
-			b.div("actionbox")->f()->fa(request->get_url_root("edit/" + String::num(weather->id)), "Edit")->cdiv();
+			b.div("actionbox")->fa(request->get_url_root("edit/" + String::num(weather->id)), "Edit")->cdiv();
 		}
 		b.cdiv();
 	}
@@ -114,7 +114,7 @@ void WeatherController::admin_render_weather(Request *request, Ref<Weather> weat
 
 	HTMLBuilder b;
 
-	b.div("back")->f()->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
+	b.div("back")->fa(request->get_url_root_parent(), "<--- Back")->cdiv();
 	b.br();
 	b.fdiv("Weather Editor", "top_menu");
 	b.br();
@@ -149,7 +149,7 @@ void WeatherController::admin_render_weather(Request *request, Ref<Weather> weat
 	ADMIN_EDIT_INPUT_TEXT("Mod Percent Iron:", "mod_percent_iron", show_post, String::num(weather->mod_percent_iron), request->get_parameter("mod_percent_iron"));
 	ADMIN_EDIT_INPUT_TEXT("Mod Percent Mana:", "mod_percent_mana", show_post, String::num(weather->mod_percent_mana), request->get_parameter("mod_percent_mana"));
 
-	b.div("edit_submit")->f()->input_submit("Save", "submit")->f()->cdiv();
+	b.div("edit_submit")->input_submit("Save", "submit")->cdiv();
 
 	b.cform();
 
@@ -168,7 +168,7 @@ WeatherController *WeatherController::get_singleton() {
 }
 
 WeatherController::WeatherController() :
-		AdminController() {
+		AdminNode() {
 
 	if (_self) {
 		printf("WeatherController::WeatherController(): Error! self is not null!/n");

@@ -18,6 +18,8 @@ public:
 	void render_already_logged_in_error(Request *request);
 	void render_settings_request(Ref<User> &user, Request *request, SettingsRequestData *data);
 
+	virtual void create_test_users();
+
 	MourneUserController();
 	~MourneUserController();
 };

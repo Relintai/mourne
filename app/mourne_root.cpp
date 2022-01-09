@@ -1,4 +1,4 @@
-#include "mourne_application.h"
+#include "mourne_root.h"
 
 #include "core/http/request.h"
 
@@ -6,7 +6,8 @@
 
 #include "core/file_cache.h"
 
-#include "core/http/handler_instance.h"
+#include "core/os/platform.h"
+#include "core/os/arg_parser.h"
 
 #include "core/database/database_manager.h"
 
@@ -18,13 +19,41 @@
 #include "modules/users/user.h"
 #include "modules/users/user_controller.h"
 
+#include "mourne_user_controller.h"
+
+#include "assignments/assignment_initializer.h"
 #include "buildings/building_initializer.h"
 #include "village/village_initializer.h"
-#include "assignments/assignment_initializer.h"
 #include "weather/weather_initializer.h"
 
-bool MourneApplication::is_logged_in(Request *request) {
-	if (!request->session) {
+void MourneRoot::handle_request_main(Request *request) {
+	if (process_middlewares(request)) {
+		return;
+	}
+
+	if (try_send_wwwroot_file(request)) {
+		return;
+	}
+
+	// this is a hack, until I have a simple index node, or port contentcontroller.
+	if (request->get_path_segment_count() == 0) {
+		index(request);
+		return;
+	}
+
+	WebNode *handler = get_request_handler_child(request);
+
+	if (!handler) {
+		request->send_error(404);
+		return;
+	}
+
+	add_menu(request, MENUENTRY_NEWS);
+	handler->handle_request_main(request);
+}
+
+bool MourneRoot::is_logged_in(Request *request) {
+	if (!request->session.is_valid()) {
 		return false;
 	}
 
@@ -33,7 +62,7 @@ bool MourneApplication::is_logged_in(Request *request) {
 	return u.is_valid();
 }
 
-void MourneApplication::index(Object *instance, Request *request) {
+void MourneRoot::index(Request *request) {
 	ENSURE_LOGIN(request);
 
 	add_menu(request, MENUENTRY_NEWS);
@@ -56,15 +85,12 @@ void MourneApplication::index(Object *instance, Request *request) {
 	<?php endif; ?>
 	*/
 
-	//dynamic_cast<ListPage *>(instance)->index(request);
+	// dynamic_cast<ListPage *>(instance)->index(request);
 	request->body += "test";
 	request->compile_and_send_body();
 }
 
-void MourneApplication::session_middleware_func(Object *instance, Request *request) {
-}
-
-void MourneApplication::add_menu(Request *request, const MenuEntries index) {
+void MourneRoot::add_menu(Request *request, const MenuEntries index) {
 	request->head += menu_head;
 
 	HTMLBuilder b;
@@ -73,7 +99,7 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 
 	int userlevel = 0;
 
-	if (request->session) {
+	if (request->session.is_valid()) {
 		Ref<User> user = request->reference_data["user"];
 
 		if (user.is_valid()) {
@@ -109,7 +135,7 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 			{
 				b.a()->href("/mail/inbox");
 				b.w("Mails");
-				//if ($newmail) echo '!';
+				// if ($newmail) echo '!';
 				b.ca();
 			}
 			b.cdiv();
@@ -125,7 +151,7 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 			b.div()->cls("menu_village");
 			{
 				b.a()->href("/village/selected");
-				b.w("Village"); //villagename
+				b.w("Village"); // villagename
 				b.ca();
 			}
 			b.cdiv();
@@ -221,57 +247,63 @@ void MourneApplication::add_menu(Request *request, const MenuEntries index) {
 	request->footer = footer;
 }
 
-void MourneApplication::village_page_func(Object *instance, Request *request) {
+void MourneRoot::village_page_func(Request *request) {
 	add_menu(request, MENUENTRY_VILLAGE);
 
-	//dynamic_cast<ListPage *>(instance)->index(request);
+	// dynamic_cast<ListPage *>(instance)->index(request);
 	request->body += "test";
 	request->compile_and_send_body();
 }
 
-void MourneApplication::user_page_func(Object *instance, Request *request) {
+void MourneRoot::user_page_func(Request *request) {
 	if (is_logged_in(request)) {
 		add_menu(request, MENUENTRY_SETTINGS);
 	}
 
-	UserController::get_singleton()->handle_request_default(request);
+	UserController::get_singleton()->handle_request_main(request);
 }
 
-void MourneApplication::admin_page_func(Object *instance, Request *request) {
+void MourneRoot::admin_page_func(Request *request) {
 	AdminPanel::get_singleton()->handle_request_main(request);
 }
 
-void MourneApplication::setup_routes() {
-	DWebApplication::setup_routes();
-
-	index_func = HandlerInstance(index);
-	main_route_map["village"] = HandlerInstance(village_page_func);
-	main_route_map["user"] = HandlerInstance(user_page_func);
-	main_route_map["admin"] = HandlerInstance(admin_page_func);
+void MourneRoot::setup_routes() {
+	// index_func = HandlerInstance(index);
+	//	main_route_map["village"] = HandlerInstance(village_page_func);
+	// main_route_map["user"] = HandlerInstance(user_page_func);
+	// main_route_map["admin"] = HandlerInstance(admin_page_func);
 }
 
-void MourneApplication::setup_middleware() {
-	middlewares.push_back(HandlerInstance(::SessionManager::session_setup_middleware));
-	middlewares.push_back(HandlerInstance(::UserController::user_session_setup_middleware));
-
-	DWebApplication::setup_middleware();
+void MourneRoot::setup_middleware() {
+	_middlewares.push_back(Ref<SessionSetupMiddleware>(new SessionSetupMiddleware()));
+	_middlewares.push_back(Ref<UserSessionSetupMiddleware>(new UserSessionSetupMiddleware()));
 }
 
-void MourneApplication::migrate() {
+void MourneRoot::migrate() {
 	BuildingController::get_singleton()->migrate();
 	VillageController::get_singleton()->migrate();
 	AssignmentController::get_singleton()->migrate();
 	WeatherController::get_singleton()->migrate();
+
+	if (Platform::get_singleton()->arg_parser.has_arg("-u")) {
+		printf("Creating test users.\n");
+		_user_controller->create_test_users();
+	}
+
+	if (Platform::get_singleton()->arg_parser.has_arg("-d")) {
+		printf("Adding data.\n");
+		add_default_data();
+	}
 }
 
-void MourneApplication::add_default_data() {
+void MourneRoot::add_default_data() {
 	BuildingController::get_singleton()->add_default_data();
 	VillageController::get_singleton()->add_default_data();
 	AssignmentController::get_singleton()->add_default_data();
 	WeatherController::get_singleton()->add_default_data();
 }
 
-void MourneApplication::compile_menu() {
+void MourneRoot::compile_menu() {
 	HTMLBuilder bh;
 
 	bh.meta()->charset_utf_8();
@@ -301,8 +333,8 @@ void MourneApplication::compile_menu() {
 	footer = bf.result;
 }
 
-MourneApplication::MourneApplication() :
-		DWebApplication() {
+MourneRoot::MourneRoot() :
+		WebRoot() {
 
 	BuildingInitializer::allocate_all();
 	VillageInitializer::allocate_all();
@@ -310,9 +342,17 @@ MourneApplication::MourneApplication() :
 	WeatherInitializer::allocate_all();
 
 	_admin_panel = new AdminPanel();
+	_admin_panel->set_uri_segment("admin");
 	_admin_panel->register_admin_controller("buildings", BuildingController::get_singleton());
 	_admin_panel->register_admin_controller("assignments", AssignmentController::get_singleton());
 	_admin_panel->register_admin_controller("weather", WeatherController::get_singleton());
+
+	_user_controller = new MourneUserController();
+	_user_controller->set_uri_segment("user");
+	// user_manager->set_path("./users/");
+	add_child(_user_controller);
+
+	add_child(_admin_panel);
 
 	HTMLBuilder b;
 
@@ -330,15 +370,13 @@ MourneApplication::MourneApplication() :
 	compile_menu();
 }
 
-MourneApplication::~MourneApplication() {
-	delete _admin_panel;
-
+MourneRoot::~MourneRoot() {
 	VillageInitializer::free_all();
 	BuildingInitializer::free_all();
 	AssignmentInitializer::free_all();
 	WeatherInitializer::free_all();
 }
 
-String MourneApplication::menu_head = "";
-String MourneApplication::admin_headers = "";
-String MourneApplication::footer = "";
+String MourneRoot::menu_head = "";
+String MourneRoot::admin_headers = "";
+String MourneRoot::footer = "";

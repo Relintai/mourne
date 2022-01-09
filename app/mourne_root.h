@@ -1,10 +1,10 @@
-#ifndef RDN_APPLICATION_H
-#define RDN_APPLICATION_H
+#ifndef MOURNE_ROOT_H
+#define MOURNE_ROOT_H
 
 //#include "core/http/web_application.h"
+#include "core/http/web_root.h"
 #include "core/object.h"
 #include "core/string.h"
-#include "modules/drogon/web_application.h"
 
 #include "modules/list_page/list_page.h"
 #include "modules/message_page/message_page.h"
@@ -12,6 +12,11 @@
 #include "modules/paged_list/paged_list.h"
 
 class AdminPanel;
+class RBACController;
+class RBACModel;
+class UserController;
+class MenuNode;
+class MourneUserController;
 
 #define ENSURE_LOGIN(request)                  \
 	if (!is_logged_in(request)) {              \
@@ -19,7 +24,9 @@ class AdminPanel;
 		return;                                \
 	}
 
-class MourneApplication : public DWebApplication {
+class MourneRoot : public WebRoot {
+	RCPP_OBJECT(MourneRoot, WebRoot);
+
 public:
 	enum MenuEntries {
 		MENUENTRY_NEWS = 0,
@@ -38,18 +45,16 @@ public:
 	};
 
 public:
-	static bool is_logged_in(Request *request);
+	void handle_request_main(Request *request);
 
-	static void index(Object *instance, Request *request);
+	bool is_logged_in(Request *request);
 
-	static void session_middleware_func(Object *instance, Request *request);
+	void add_menu(Request *request, const MenuEntries index);
 
-	static void add_menu(Request *request, const MenuEntries index);
-
-	static void village_page_func(Object *instance, Request *request);
-	static void user_page_func(Object *instance, Request *request);
-
-	static void admin_page_func(Object *instance, Request *request);
+	void index(Request *request);
+	void village_page_func(Request *request);
+	void user_page_func(Request *request);
+	void admin_page_func(Request *request);
 
 	virtual void setup_routes();
 	virtual void setup_middleware();
@@ -59,10 +64,12 @@ public:
 
 	void compile_menu();
 
-	MourneApplication();
-	~MourneApplication();
+	MourneRoot();
+	~MourneRoot();
 
-	AdminPanel *_admin_panel; 
+	AdminPanel *_admin_panel;
+	MourneUserController *_user_controller;
+	MenuNode *_menu;
 
 	static String menu_head;
 	static String admin_headers;

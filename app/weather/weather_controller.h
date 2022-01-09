@@ -4,15 +4,15 @@
 #include "core/string.h"
 #include "core/containers/vector.h"
 
-#include "modules/admin_panel/admin_controller.h"
+#include "modules/admin_panel/admin_node.h"
 
 #include "weather.h"
 
 class Request;
 class FormValidator;
 
-class WeatherController : public AdminController {
-	RCPP_OBJECT(WeatherController, AdminController);
+class WeatherController : public AdminNode {
+	RCPP_OBJECT(WeatherController, AdminNode);
 	
 public:
 	void handle_request_default(Request *request);
