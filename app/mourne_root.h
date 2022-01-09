@@ -52,11 +52,7 @@ public:
 	void add_menu(Request *request, const MenuEntries index);
 
 	void index(Request *request);
-	void village_page_func(Request *request);
-	void user_page_func(Request *request);
-	void admin_page_func(Request *request);
 
-	virtual void setup_routes();
 	virtual void setup_middleware();
 
 	virtual void migrate();

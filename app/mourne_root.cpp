@@ -247,33 +247,6 @@ void MourneRoot::add_menu(Request *request, const MenuEntries index) {
 	request->footer = footer;
 }
 
-void MourneRoot::village_page_func(Request *request) {
-	add_menu(request, MENUENTRY_VILLAGE);
-
-	// dynamic_cast<ListPage *>(instance)->index(request);
-	request->body += "test";
-	request->compile_and_send_body();
-}
-
-void MourneRoot::user_page_func(Request *request) {
-	if (is_logged_in(request)) {
-		add_menu(request, MENUENTRY_SETTINGS);
-	}
-
-	UserController::get_singleton()->handle_request_main(request);
-}
-
-void MourneRoot::admin_page_func(Request *request) {
-	AdminPanel::get_singleton()->handle_request_main(request);
-}
-
-void MourneRoot::setup_routes() {
-	// index_func = HandlerInstance(index);
-	//	main_route_map["village"] = HandlerInstance(village_page_func);
-	// main_route_map["user"] = HandlerInstance(user_page_func);
-	// main_route_map["admin"] = HandlerInstance(admin_page_func);
-}
-
 void MourneRoot::setup_middleware() {
 	_middlewares.push_back(Ref<SessionSetupMiddleware>(new SessionSetupMiddleware()));
 	_middlewares.push_back(Ref<UserSessionSetupMiddleware>(new UserSessionSetupMiddleware()));
