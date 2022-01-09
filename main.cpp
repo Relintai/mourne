@@ -62,6 +62,8 @@ int main(int argc, char **argv, char **envp) {
 	MourneRoot *app_root = new MourneRoot();
 	app_root->setup();
 
+	app->set_root(app_root);
+
 	bool migrate = Platform::get_singleton()->arg_parser.has_arg("-m");
 
 	if (!migrate) {
