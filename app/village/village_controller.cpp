@@ -1,22 +1,25 @@
 #include "village_controller.h"
 
-#include "core/html/form_validator.h"
-#include "core/html/html_builder.h"
-#include "core/http/cookie.h"
-#include "core/http/http_session.h"
-#include "core/http/request.h"
-#include "core/http/session_manager.h"
+#include "web/html/form_validator.h"
+#include "web/html/html_builder.h"
+#include "web/http/cookie.h"
+#include "web/http/http_session.h"
+#include "web/http/request.h"
+#include "web/http/session_manager.h"
 
 #include "village_model.h"
 
 void VillageController::handle_request_default(Request *request) {
 }
 
-void VillageController::migrate() {
-	VillageModel::get_singleton()->migrate();
+void VillageController::create_table() {
+	VillageModel::get_singleton()->create_table();
 }
-void VillageController::add_default_data() {
-	VillageModel::get_singleton()->add_default_data();
+void VillageController::drop_table() {
+	VillageModel::get_singleton()->drop_table();
+}
+void VillageController::create_default_entries() {
+	VillageModel::get_singleton()->create_default_entries();
 }
 
 VillageController *VillageController::get_singleton() {

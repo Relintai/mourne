@@ -12,8 +12,7 @@ class VillageModel : public Object {
 public:
 	virtual void create_table();
 	virtual void drop_table();
-	virtual void migrate();
-	virtual void add_default_data();
+	virtual void create_default_entries();
 
 	static VillageModel *get_singleton();
 

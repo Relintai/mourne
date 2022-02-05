@@ -1,12 +1,12 @@
 #include "assignment_model.h"
 
-#include "core/database/database.h"
-#include "core/database/database_manager.h"
-#include "core/database/query_builder.h"
-#include "core/database/query_result.h"
-#include "core/database/table_builder.h"
+#include "database/database.h"
+#include "database/database_manager.h"
+#include "database/query_builder.h"
+#include "database/query_result.h"
+#include "database/table_builder.h"
 
-#include "core/hash/sha256.h"
+#include "crypto/hash/sha256.h"
 
 #include "assignment.h"
 
@@ -224,12 +224,8 @@ void AssignmentModel::drop_table() {
 
 	tb->run_query();
 }
-void AssignmentModel::migrate() {
-	drop_table();
-	create_table();
-}
 
-void AssignmentModel::add_default_data() {
+void AssignmentModel::create_default_entries() {
 	String table_columns = "id, unitid, max, bonus_per_assigned, spellid, req_tech, mod_max_food, mod_max_wood, mod_max_stone, mod_max_iron, mod_max_mana, mod_rate_food, mod_rate_wood, mod_rate_stone, mod_rate_iron, mod_rate_mana, mod_percent_food, mod_percent_wood, mod_percent_stone, mod_percent_iron, mod_percent_mana, description";
 
 	Ref<QueryBuilder> qb = DatabaseManager::get_singleton()->ddb->get_query_builder();

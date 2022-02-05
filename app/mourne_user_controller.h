@@ -1,10 +1,10 @@
 #ifndef MOURNE_USER_CONTROLLER_H
 #define MOURNE_USER_CONTROLLER_H
 
-#include "modules/users/user_controller.h"
+#include "web_modules/users/user_controller.h"
 
 #include <string>
-#include "modules/users/user.h"
+#include "web_modules/users/user.h"
 
 class Request;
 class FormValidator;
@@ -18,7 +18,7 @@ public:
 	void render_already_logged_in_error(Request *request);
 	void render_settings_request(Ref<User> &user, Request *request, SettingsRequestData *data);
 
-	virtual void create_test_users();
+	void create_default_entries();
 
 	MourneUserController();
 	~MourneUserController();

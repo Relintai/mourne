@@ -1,23 +1,23 @@
 #include "mourne_root.h"
 
-#include "core/http/request.h"
+#include "web/http/request.h"
 
 #include <iostream>
 
-#include "core/file_cache.h"
+#include "web/file_cache.h"
 
-#include "core/os/platform.h"
 #include "core/os/arg_parser.h"
+#include "core/os/platform.h"
 
-#include "core/database/database_manager.h"
+#include "database/database_manager.h"
 
-#include "core/html/html_builder.h"
-#include "core/http/http_session.h"
-#include "core/http/session_manager.h"
+#include "web/html/html_builder.h"
+#include "web/http/http_session.h"
+#include "web/http/session_manager.h"
 
-#include "modules/admin_panel/admin_panel.h"
-#include "modules/users/user.h"
-#include "modules/users/user_controller.h"
+#include "web_modules/admin_panel/admin_panel.h"
+#include "web_modules/users/user.h"
+#include "web_modules/users/user_controller.h"
 
 #include "mourne_user_controller.h"
 
@@ -252,28 +252,31 @@ void MourneRoot::setup_middleware() {
 	_middlewares.push_back(Ref<UserSessionSetupMiddleware>(new UserSessionSetupMiddleware()));
 }
 
-void MourneRoot::migrate() {
-	BuildingController::get_singleton()->migrate();
-	VillageController::get_singleton()->migrate();
-	AssignmentController::get_singleton()->migrate();
-	WeatherController::get_singleton()->migrate();
-
-	if (Platform::get_singleton()->arg_parser.has_arg("-u")) {
-		printf("Creating test users.\n");
-		_user_controller->create_test_users();
-	}
-
-	if (Platform::get_singleton()->arg_parser.has_arg("-d")) {
-		printf("Adding data.\n");
-		add_default_data();
-	}
+void MourneRoot::create_table() {
+	// TODO move these to the node system and remove from here
+	BuildingController::get_singleton()->create_table();
+	VillageController::get_singleton()->create_table();
+	AssignmentController::get_singleton()->create_table();
+	WeatherController::get_singleton()->create_table();
 }
-
-void MourneRoot::add_default_data() {
-	BuildingController::get_singleton()->add_default_data();
-	VillageController::get_singleton()->add_default_data();
-	AssignmentController::get_singleton()->add_default_data();
-	WeatherController::get_singleton()->add_default_data();
+void MourneRoot::drop_table() {
+	BuildingController::get_singleton()->drop_table();
+	VillageController::get_singleton()->drop_table();
+	AssignmentController::get_singleton()->drop_table();
+	WeatherController::get_singleton()->drop_table();
+}
+void MourneRoot::udpate_table() {
+	// TODO move these to the node system and remove from here
+	BuildingController::get_singleton()->udpate_table();
+	AssignmentController::get_singleton()->udpate_table();
+	WeatherController::get_singleton()->udpate_table();
+}
+void MourneRoot::create_default_entries() {
+	// TODO move these to the node system and remove from here
+	BuildingController::get_singleton()->create_default_entries();
+	VillageController::get_singleton()->create_default_entries();
+	AssignmentController::get_singleton()->create_default_entries();
+	WeatherController::get_singleton()->create_default_entries();
 }
 
 void MourneRoot::compile_menu() {

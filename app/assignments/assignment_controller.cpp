@@ -1,12 +1,12 @@
 #include "assignment_controller.h"
 
-#include "core/html/form_validator.h"
-#include "core/html/html_builder.h"
-#include "core/http/cookie.h"
-#include "core/http/http_enums.h"
-#include "core/http/http_session.h"
-#include "core/http/request.h"
-#include "core/http/session_manager.h"
+#include "web/html/form_validator.h"
+#include "web/html/html_builder.h"
+#include "web/http/cookie.h"
+#include "web/http/http_enums.h"
+#include "web/http/http_session.h"
+#include "web/http/request.h"
+#include "web/http/session_manager.h"
 
 #include "assignment_model.h"
 
@@ -166,11 +166,14 @@ void AssignmentController::admin_render_assignment(Request *request, Ref<Assignm
 	request->body += b.result;
 }
 
-void AssignmentController::migrate() {
-	AssignmentModel::get_singleton()->migrate();
+void AssignmentController::create_table() {
+	AssignmentModel::get_singleton()->create_table();
 }
-void AssignmentController::add_default_data() {
-	AssignmentModel::get_singleton()->add_default_data();
+void AssignmentController::drop_table() {
+	AssignmentModel::get_singleton()->drop_table();
+}
+void AssignmentController::create_default_entries() {
+	AssignmentModel::get_singleton()->create_default_entries();
 }
 
 AssignmentController *AssignmentController::get_singleton() {

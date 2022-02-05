@@ -20,10 +20,9 @@ public:
 	
 	virtual void parse_row(Ref<QueryResult> &result, Ref<Building> &building);
 
-	virtual void create_table();
-	virtual void drop_table();
-	virtual void migrate();
-	virtual void add_default_data();
+	void create_table();
+	void drop_table();
+	void create_default_entries();
 
 	static BuildingModel *get_singleton();
 

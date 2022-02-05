@@ -1,12 +1,12 @@
 #include "weather_controller.h"
 
-#include "core/html/form_validator.h"
-#include "core/html/html_builder.h"
-#include "core/http/cookie.h"
-#include "core/http/http_enums.h"
-#include "core/http/http_session.h"
-#include "core/http/request.h"
-#include "core/http/session_manager.h"
+#include "web/html/form_validator.h"
+#include "web/html/html_builder.h"
+#include "web/http/cookie.h"
+#include "web/http/http_enums.h"
+#include "web/http/http_session.h"
+#include "web/http/request.h"
+#include "web/http/session_manager.h"
 
 #include "weather_model.h"
 
@@ -156,11 +156,14 @@ void WeatherController::admin_render_weather(Request *request, Ref<Weather> weat
 	request->body += b.result;
 }
 
-void WeatherController::migrate() {
-	WeatherModel::get_singleton()->migrate();
+void WeatherController::create_table() {
+	WeatherModel::get_singleton()->create_table();
 }
-void WeatherController::add_default_data() {
-	WeatherModel::get_singleton()->add_default_data();
+void WeatherController::drop_table() {
+	WeatherModel::get_singleton()->drop_table();
+}
+void WeatherController::create_default_entries() {
+	WeatherModel::get_singleton()->create_default_entries();
 }
 
 WeatherController *WeatherController::get_singleton() {

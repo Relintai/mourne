@@ -15,8 +15,9 @@ class VillageController : public Object {
 	RCPP_OBJECT(VillageController, Object);
 	
 public:
-	void migrate();
-	virtual void add_default_data();
+	void create_table();
+	void drop_table();
+	void create_default_entries();
 
 	virtual void handle_request_default(Request *request);
 

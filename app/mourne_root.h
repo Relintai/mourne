@@ -1,15 +1,10 @@
 #ifndef MOURNE_ROOT_H
 #define MOURNE_ROOT_H
 
-//#include "core/http/web_application.h"
-#include "core/http/web_root.h"
+//#include "web/http/web_application.h"
+#include "web/http/web_root.h"
 #include "core/object.h"
 #include "core/string.h"
-
-#include "modules/list_page/list_page.h"
-#include "modules/message_page/message_page.h"
-#include "modules/paged_article/paged_article.h"
-#include "modules/paged_list/paged_list.h"
 
 class AdminPanel;
 class RBACController;
@@ -55,8 +50,10 @@ public:
 
 	virtual void setup_middleware();
 
-	virtual void migrate();
-	virtual void add_default_data();
+	void create_table();
+	void drop_table();
+	void udpate_table();
+	void create_default_entries();
 
 	void compile_menu();
 

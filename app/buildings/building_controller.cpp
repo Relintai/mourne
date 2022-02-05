@@ -1,12 +1,12 @@
 #include "building_controller.h"
 
-#include "core/html/form_validator.h"
-#include "core/html/html_builder.h"
-#include "core/http/cookie.h"
-#include "core/http/http_enums.h"
-#include "core/http/http_session.h"
-#include "core/http/request.h"
-#include "core/http/session_manager.h"
+#include "web/html/form_validator.h"
+#include "web/html/html_builder.h"
+#include "web/http/cookie.h"
+#include "web/http/http_enums.h"
+#include "web/http/http_session.h"
+#include "web/http/request.h"
+#include "web/http/session_manager.h"
 
 #include "building_model.h"
 
@@ -274,11 +274,14 @@ void BuildingController::admin_render_building(Request *request, Ref<Building> b
 	request->body += b.result;
 }
 
-void BuildingController::migrate() {
-	BuildingModel::get_singleton()->migrate();
+void BuildingController::create_table() {
+	BuildingModel::get_singleton()->create_table();
 }
-void BuildingController::add_default_data() {
-	BuildingModel::get_singleton()->add_default_data();
+void BuildingController::drop_table() {
+	BuildingModel::get_singleton()->drop_table();
+}
+void BuildingController::create_default_entries() {
+	BuildingModel::get_singleton()->create_default_entries();
 }
 
 BuildingController *BuildingController::get_singleton() {
