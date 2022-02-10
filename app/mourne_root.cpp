@@ -49,6 +49,7 @@ void MourneRoot::handle_request_main(Request *request) {
 	}
 
 	add_menu(request, MENUENTRY_NEWS);
+	request->push_path();
 	handler->handle_request_main(request);
 }
 
