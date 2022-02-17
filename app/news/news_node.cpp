@@ -25,10 +25,10 @@ void NewsNode::admin_handle_request_main(Request *request) {
 	request->send_error(404);
 }
 String NewsNode::admin_get_section_name() {
-	return "Mail";
+	return "News";
 }
 void NewsNode::admin_add_section_links(Vector<AdminSectionLinkInfo> *links) {
-	links->push_back(AdminSectionLinkInfo("- Mail Editor", ""));
+	links->push_back(AdminSectionLinkInfo("- News Editor", ""));
 }
 bool NewsNode::admin_full_render() {
 	return false;
