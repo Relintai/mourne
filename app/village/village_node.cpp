@@ -1,4 +1,11 @@
-#include "village_model.h"
+#include "village_node.h"
+
+#include "web/html/form_validator.h"
+#include "web/html/html_builder.h"
+#include "web/http/cookie.h"
+#include "web/http/http_session.h"
+#include "web/http/request.h"
+#include "web/http/session_manager.h"
 
 #include "database/database.h"
 #include "database/database_manager.h"
@@ -17,9 +24,11 @@
 #define VILLAGE_BUILDING_SPELLS_TABLE_NAME "village_building_spells"
 #define VILLAGE_BUILDING_SPELL_COOLDOWNS_TABLE_NAME "village_building_spell_cooldowns"
 
+void VillageNode::handle_request_default(Request *request) {
+}
 
-void VillageModel::create_table() {
-	Ref<TableBuilder> tb = DatabaseManager::get_singleton()->ddb->get_table_builder();
+void VillageNode::create_table() {
+	Ref<TableBuilder> tb = get_table_builder();
 
 	tb->create_table(VILLAGE_TABLE_NAME);
 	tb->integer("id", 11)->auto_increment()->next_row();
@@ -194,8 +203,8 @@ void VillageModel::create_table() {
 #define VILLAGE_BUILDING_SPELLS_TABLE_NAME "village_building_spells"
 #define VILLAGE_BUILDING_SPELL_COOLDOWNS_TABLE_NAME "village_building_spell_cooldowns"
 
-void VillageModel::drop_table() {
-	Ref<TableBuilder> tb = DatabaseManager::get_singleton()->ddb->get_table_builder();
+void VillageNode::drop_table() {
+	Ref<TableBuilder> tb = get_table_builder();
 
 	tb->drop_table_if_exists(VILLAGE_BUILDING_ASSIGNMENTS_TABLE_NAME)->cdrop_table();
 	tb->drop_table_if_exists(VILLAGE_BUILDING_SPELLS_TABLE_NAME)->cdrop_table();
@@ -209,28 +218,29 @@ void VillageModel::drop_table() {
 	tb->run_query();
 }
 
-void VillageModel::create_default_entries() {
+void VillageNode::create_default_entries() {
 
 }
 
-VillageModel *VillageModel::get_singleton() {
+
+VillageNode *VillageNode::get_singleton() {
 	return _self;
 }
 
-VillageModel::VillageModel() :
-		Object() {
+VillageNode::VillageNode() :
+		WebNode() {
 
 	if (_self) {
-		printf("VillageModel::VillageModel(): Error! self is not null!/n");
+		printf("VillageNode::VillageNode(): Error! self is not null!/n");
 	}
 
 	_self = this;
 }
 
-VillageModel::~VillageModel() {
+VillageNode::~VillageNode() {
 	if (_self == this) {
 		_self = nullptr;
 	}
 }
 
-VillageModel *VillageModel::_self = nullptr;
+VillageNode *VillageNode::_self = nullptr;

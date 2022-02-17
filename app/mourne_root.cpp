@@ -23,8 +23,9 @@
 
 #include "assignments/assignment_initializer.h"
 #include "buildings/building_initializer.h"
-#include "village/village_initializer.h"
 #include "weather/weather_initializer.h"
+
+#include "village/village_node.h"
 
 void MourneRoot::handle_request_main(Request *request) {
 	if (process_middlewares(request)) {
@@ -256,13 +257,11 @@ void MourneRoot::setup_middleware() {
 void MourneRoot::create_table() {
 	// TODO move these to the node system and remove from here
 	BuildingController::get_singleton()->create_table();
-	VillageController::get_singleton()->create_table();
 	AssignmentController::get_singleton()->create_table();
 	WeatherController::get_singleton()->create_table();
 }
 void MourneRoot::drop_table() {
 	BuildingController::get_singleton()->drop_table();
-	VillageController::get_singleton()->drop_table();
 	AssignmentController::get_singleton()->drop_table();
 	WeatherController::get_singleton()->drop_table();
 }
@@ -275,7 +274,6 @@ void MourneRoot::udpate_table() {
 void MourneRoot::create_default_entries() {
 	// TODO move these to the node system and remove from here
 	BuildingController::get_singleton()->create_default_entries();
-	VillageController::get_singleton()->create_default_entries();
 	AssignmentController::get_singleton()->create_default_entries();
 	WeatherController::get_singleton()->create_default_entries();
 }
@@ -314,9 +312,12 @@ MourneRoot::MourneRoot() :
 		WebRoot() {
 
 	BuildingInitializer::allocate_all();
-	VillageInitializer::allocate_all();
 	AssignmentInitializer::allocate_all();
 	WeatherInitializer::allocate_all();
+
+	_village = new VillageNode();
+	_village->set_uri_segment("village");
+	add_child(_village);
 
 	_admin_panel = new AdminPanel();
 	_admin_panel->set_uri_segment("admin");
@@ -348,7 +349,6 @@ MourneRoot::MourneRoot() :
 }
 
 MourneRoot::~MourneRoot() {
-	VillageInitializer::free_all();
 	BuildingInitializer::free_all();
 	AssignmentInitializer::free_all();
 	WeatherInitializer::free_all();

@@ -12,6 +12,7 @@ class RBACModel;
 class UserController;
 class MenuNode;
 class MourneUserController;
+class VillageNode;
 
 #define ENSURE_LOGIN(request)                  \
 	if (!is_logged_in(request)) {              \
@@ -63,6 +64,8 @@ public:
 	AdminPanel *_admin_panel;
 	MourneUserController *_user_controller;
 	MenuNode *_menu;
+
+	VillageNode *_village;
 
 	static String menu_head;
 	static String admin_headers;
