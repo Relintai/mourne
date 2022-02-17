@@ -1,8 +1,8 @@
 #ifndef ASSIGNMENT_CONTROLLER_H
 #define ASSIGNMENT_CONTROLLER_H
 
-#include "core/string.h"
 #include "core/containers/vector.h"
+#include "core/string.h"
 
 #include "web_modules/admin_panel/admin_node.h"
 
@@ -10,10 +10,11 @@
 
 class Request;
 class FormValidator;
+class QueryResult;
 
-class AssignmentController : public AdminNode {
-	RCPP_OBJECT(AssignmentController, AdminNode);
-	
+class AssignmentNode : public AdminNode {
+	RCPP_OBJECT(AssignmentNode, AdminNode);
+
 public:
 	void handle_request_default(Request *request);
 
@@ -25,17 +26,23 @@ public:
 	void admin_render_assignment_list(Request *request);
 	void admin_render_assignment(Request *request, Ref<Assignment> assignment);
 
+	virtual Ref<Assignment> db_get_assignment(const int id);
+	virtual Vector<Ref<Assignment> > db_get_all();
+	virtual void db_save_assignment(Ref<Assignment> &assignment);
+
+	virtual void db_parse_row(Ref<QueryResult> &result, Ref<Assignment> &assignment);
+
 	void create_table();
 	void drop_table();
 	void create_default_entries();
 
-	static AssignmentController *get_singleton();
+	static AssignmentNode *get_singleton();
 
-	AssignmentController();
-	~AssignmentController();
+	AssignmentNode();
+	~AssignmentNode();
 
 protected:
-	static AssignmentController *_self;
+	static AssignmentNode *_self;
 };
 
 #endif
