@@ -22,10 +22,10 @@
 #include "mourne_user_controller.h"
 
 #include "assignments/assignment_initializer.h"
-#include "buildings/building_initializer.h"
 #include "weather/weather_initializer.h"
 
 #include "village/village_node.h"
+#include "buildings/building_node.h"
 
 void MourneRoot::handle_request_main(Request *request) {
 	if (process_middlewares(request)) {
@@ -256,24 +256,20 @@ void MourneRoot::setup_middleware() {
 
 void MourneRoot::create_table() {
 	// TODO move these to the node system and remove from here
-	BuildingController::get_singleton()->create_table();
 	AssignmentController::get_singleton()->create_table();
 	WeatherController::get_singleton()->create_table();
 }
 void MourneRoot::drop_table() {
-	BuildingController::get_singleton()->drop_table();
 	AssignmentController::get_singleton()->drop_table();
 	WeatherController::get_singleton()->drop_table();
 }
 void MourneRoot::udpate_table() {
 	// TODO move these to the node system and remove from here
-	BuildingController::get_singleton()->udpate_table();
 	AssignmentController::get_singleton()->udpate_table();
 	WeatherController::get_singleton()->udpate_table();
 }
 void MourneRoot::create_default_entries() {
 	// TODO move these to the node system and remove from here
-	BuildingController::get_singleton()->create_default_entries();
 	AssignmentController::get_singleton()->create_default_entries();
 	WeatherController::get_singleton()->create_default_entries();
 }
@@ -311,7 +307,6 @@ void MourneRoot::compile_menu() {
 MourneRoot::MourneRoot() :
 		WebRoot() {
 
-	BuildingInitializer::allocate_all();
 	AssignmentInitializer::allocate_all();
 	WeatherInitializer::allocate_all();
 
@@ -319,9 +314,13 @@ MourneRoot::MourneRoot() :
 	_village->set_uri_segment("village");
 	add_child(_village);
 
+	_building = new BuildingNode();
+	_building->set_uri_segment("building");
+	add_child(_building);
+
 	_admin_panel = new AdminPanel();
 	_admin_panel->set_uri_segment("admin");
-	_admin_panel->register_admin_controller("buildings", BuildingController::get_singleton());
+	_admin_panel->register_admin_controller("buildings", _building);
 	_admin_panel->register_admin_controller("assignments", AssignmentController::get_singleton());
 	_admin_panel->register_admin_controller("weather", WeatherController::get_singleton());
 
@@ -349,7 +348,6 @@ MourneRoot::MourneRoot() :
 }
 
 MourneRoot::~MourneRoot() {
-	BuildingInitializer::free_all();
 	AssignmentInitializer::free_all();
 	WeatherInitializer::free_all();
 }

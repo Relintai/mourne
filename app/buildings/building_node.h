@@ -1,5 +1,5 @@
-#ifndef BUILDING_CONTROLLER_H
-#define BUILDING_CONTROLLER_H
+#ifndef BUILDING_NODE_H
+#define BUILDING_NODE_H
 
 #include "core/string.h"
 #include "core/containers/vector.h"
@@ -10,9 +10,10 @@
 
 class Request;
 class FormValidator;
+class QueryResult;
 
-class BuildingController : public AdminNode {
-	RCPP_OBJECT(BuildingController, AdminNode);
+class BuildingNode : public AdminNode {
+	RCPP_OBJECT(BuildingNode, AdminNode);
 	
 public:
 	void handle_request_default(Request *request);
@@ -25,17 +26,23 @@ public:
 	void admin_render_building_list(Request *request);
 	void admin_render_building(Request *request, Ref<Building> building);
 
+	virtual Ref<Building> db_get_building(const int id);
+	virtual Vector<Ref<Building> > db_get_all();
+	virtual void db_save_building(Ref<Building> &building);
+	
+	virtual void db_parse_row(Ref<QueryResult> &result, Ref<Building> &building);
+
 	void create_table();
 	void drop_table();
 	void create_default_entries();
 
-	static BuildingController *get_singleton();
+	static BuildingNode *get_singleton();
 
-	BuildingController();
-	~BuildingController();
+	BuildingNode();
+	~BuildingNode();
 
 protected:
-	static BuildingController *_self;
+	static BuildingNode *_self;
 };
 
 #endif

@@ -13,6 +13,7 @@ class UserController;
 class MenuNode;
 class MourneUserController;
 class VillageNode;
+class BuildingNode;
 
 #define ENSURE_LOGIN(request)                  \
 	if (!is_logged_in(request)) {              \
@@ -66,6 +67,7 @@ public:
 	MenuNode *_menu;
 
 	VillageNode *_village;
+	BuildingNode *_building;
 
 	static String menu_head;
 	static String admin_headers;
