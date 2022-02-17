@@ -33,9 +33,14 @@ import traceback
 
 folders = [
     'app',
-    'app/buildings',
-    'app/village',
+    'app/alliance',
     'app/assignments',
+    'app/buildings',
+    'app/changelog',
+    'app/hero',
+    'app/mail',
+    'app/news',
+    'app/village',
     'app/weather',
 ]
 
