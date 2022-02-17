@@ -1,5 +1,5 @@
-#ifndef WEATHER_CONTROLLER_H
-#define WEATHER_CONTROLLER_H
+#ifndef WEATHER_NODE_H
+#define WEATHER_NODE_H
 
 #include "core/containers/vector.h"
 #include "core/string.h"
