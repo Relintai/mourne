@@ -21,11 +21,10 @@
 
 #include "mourne_user_controller.h"
 
-#include "weather/weather_initializer.h"
-
 #include "assignments/assignment_node.h"
 #include "buildings/building_node.h"
 #include "village/village_node.h"
+#include "weather/weather_node.h"
 
 void MourneRoot::handle_request_main(Request *request) {
 	if (process_middlewares(request)) {
@@ -254,22 +253,6 @@ void MourneRoot::setup_middleware() {
 	_middlewares.push_back(Ref<UserSessionSetupMiddleware>(new UserSessionSetupMiddleware()));
 }
 
-void MourneRoot::create_table() {
-	// TODO move these to the node system and remove from here
-	WeatherController::get_singleton()->create_table();
-}
-void MourneRoot::drop_table() {
-	WeatherController::get_singleton()->drop_table();
-}
-void MourneRoot::udpate_table() {
-	// TODO move these to the node system and remove from here
-	WeatherController::get_singleton()->udpate_table();
-}
-void MourneRoot::create_default_entries() {
-	// TODO move these to the node system and remove from here
-	WeatherController::get_singleton()->create_default_entries();
-}
-
 void MourneRoot::compile_menu() {
 	HTMLBuilder bh;
 
@@ -303,8 +286,6 @@ void MourneRoot::compile_menu() {
 MourneRoot::MourneRoot() :
 		WebRoot() {
 
-	WeatherInitializer::allocate_all();
-
 	_village = new VillageNode();
 	_village->set_uri_segment("village");
 	add_child(_village);
@@ -317,11 +298,16 @@ MourneRoot::MourneRoot() :
 	_assignments->set_uri_segment("assignments");
 	add_child(_assignments);
 
+	_weathers = new WeatherNode();
+	//_weathers->set_uri_segment("");
+
 	_admin_panel = new AdminPanel();
 	_admin_panel->set_uri_segment("admin");
 	_admin_panel->register_admin_controller("buildings", _building);
 	_admin_panel->register_admin_controller("assignments", _assignments);
-	_admin_panel->register_admin_controller("weather", WeatherController::get_singleton());
+	_admin_panel->register_admin_controller("weather", _weathers);
+
+	_admin_panel->add_child(_weathers);
 
 	_user_controller = new MourneUserController();
 	_user_controller->set_uri_segment("user");
@@ -347,7 +333,6 @@ MourneRoot::MourneRoot() :
 }
 
 MourneRoot::~MourneRoot() {
-	WeatherInitializer::free_all();
 }
 
 String MourneRoot::menu_head = "";

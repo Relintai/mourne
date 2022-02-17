@@ -1,8 +1,8 @@
 #ifndef WEATHER_CONTROLLER_H
 #define WEATHER_CONTROLLER_H
 
-#include "core/string.h"
 #include "core/containers/vector.h"
+#include "core/string.h"
 
 #include "web_modules/admin_panel/admin_node.h"
 
@@ -10,10 +10,11 @@
 
 class Request;
 class FormValidator;
+class QueryResult;
 
-class WeatherController : public AdminNode {
-	RCPP_OBJECT(WeatherController, AdminNode);
-	
+class WeatherNode : public AdminNode {
+	RCPP_OBJECT(WeatherNode, AdminNode);
+
 public:
 	void handle_request_default(Request *request);
 
@@ -25,17 +26,23 @@ public:
 	void admin_render_weather_list(Request *request);
 	void admin_render_weather(Request *request, Ref<Weather> weather);
 
+	virtual Ref<Weather> db_get_weather(const int id);
+	virtual Vector<Ref<Weather> > db_get_all();
+	virtual void db_save_weather(Ref<Weather> &weather);
+
+	virtual void db_parse_row(Ref<QueryResult> &result, Ref<Weather> &weather);
+
 	void create_table();
 	void drop_table();
 	void create_default_entries();
 
-	static WeatherController *get_singleton();
+	static WeatherNode *get_singleton();
 
-	WeatherController();
-	~WeatherController();
+	WeatherNode();
+	~WeatherNode();
 
 protected:
-	static WeatherController *_self;
+	static WeatherNode *_self;
 };
 
 #endif

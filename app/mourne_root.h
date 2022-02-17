@@ -15,6 +15,7 @@ class MourneUserController;
 class VillageNode;
 class BuildingNode;
 class AssignmentNode;
+class WeatherNode;
 
 #define ENSURE_LOGIN(request)                  \
 	if (!is_logged_in(request)) {              \
@@ -53,11 +54,6 @@ public:
 
 	virtual void setup_middleware();
 
-	void create_table();
-	void drop_table();
-	void udpate_table();
-	void create_default_entries();
-
 	void compile_menu();
 
 	MourneRoot();
@@ -70,6 +66,7 @@ public:
 	VillageNode *_village;
 	BuildingNode *_building;
 	AssignmentNode *_assignments;
+	WeatherNode *_weathers;
 
 	static String menu_head;
 	static String admin_headers;
