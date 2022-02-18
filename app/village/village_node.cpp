@@ -238,9 +238,6 @@ CREATE TABLE IF NOT EXISTS `events` (
 
 }
 
-#define VILLAGE_BUILDING_SPELLS_TABLE_NAME "village_building_spells"
-#define VILLAGE_BUILDING_SPELL_COOLDOWNS_TABLE_NAME "village_building_spell_cooldowns"
-
 void VillageNode::drop_table() {
 	Ref<TableBuilder> tb = get_table_builder();
 
