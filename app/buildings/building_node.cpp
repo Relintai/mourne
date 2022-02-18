@@ -571,6 +571,191 @@ void BuildingNode::create_table() {
 
 	tb->run_query();
 	//tb->print();
+
+	/*
+
+CREATE TABLE IF NOT EXISTS `spells` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `effect` int(11) NOT NULL DEFAULT '0',
+  `duration` int(11) NOT NULL DEFAULT '0',
+  `cooldown` int(11) NOT NULL DEFAULT '0',
+  `description` text NOT NULL,
+  `description_admin` text NOT NULL,
+  `weather_change_to` int(11) NOT NULL DEFAULT '0',
+  `cost_food` int(11) NOT NULL DEFAULT '0',
+  `cost_wood` int(11) NOT NULL DEFAULT '0',
+  `cost_stone` int(11) NOT NULL DEFAULT '0',
+  `cost_iron` int(11) NOT NULL DEFAULT '0',
+  `cost_mana` int(11) NOT NULL DEFAULT '0',
+  `mod_max_food` int(11) NOT NULL DEFAULT '0',
+  `mod_max_wood` int(11) NOT NULL DEFAULT '0',
+  `mod_max_stone` int(11) NOT NULL DEFAULT '0',
+  `mod_max_iron` int(11) NOT NULL DEFAULT '0',
+  `mod_max_mana` int(11) NOT NULL DEFAULT '0',
+  `mod_rate_food` float NOT NULL DEFAULT '0',
+  `mod_rate_wood` float NOT NULL DEFAULT '0',
+  `mod_rate_stone` float NOT NULL DEFAULT '0',
+  `mod_rate_iron` float NOT NULL DEFAULT '0',
+  `mod_rate_mana` float NOT NULL DEFAULT '0',
+  `mod_percent_food` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_wood` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_stone` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_iron` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_mana` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `spells`
+--
+
+INSERT INTO `spells` (`id`, `effect`, `duration`, `cooldown`, `description`, `description_admin`, `weather_change_to`, `cost_food`, `cost_wood`, `cost_stone`, `cost_iron`, `cost_mana`, `mod_max_food`, `mod_max_wood`, `mod_max_stone`, `mod_max_iron`, `mod_max_mana`, `mod_rate_food`, `mod_rate_wood`, `mod_rate_stone`, `mod_rate_iron`, `mod_rate_mana`, `mod_percent_food`, `mod_percent_wood`, `mod_percent_stone`, `mod_percent_iron`, `mod_percent_mana`) VALUES
+(1, 0, 60, 70, 'Increases productivity of this building, by a small amount.', 'Test spell', 0, 400, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10),
+(2, 0, 100, 100, 'Increases the food production rate of this building.', 'Test spell 2 (over the top crazy)', 0, 140, 140, 140, 140, 140, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0);
+
+
+	*/
+
+/*
+
+CREATE TABLE IF NOT EXISTS `technologies` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `description` text NOT NULL,
+  `time` int(11) NOT NULL DEFAULT '0',
+  `score` int(11) NOT NULL DEFAULT '0',
+  `cost_food` int(11) NOT NULL DEFAULT '0',
+  `cost_wood` int(11) NOT NULL DEFAULT '0',
+  `cost_stone` int(11) NOT NULL DEFAULT '0',
+  `cost_iron` int(11) NOT NULL DEFAULT '0',
+  `cost_mana` int(11) NOT NULL DEFAULT '0',
+  `mod_max_food` int(11) NOT NULL DEFAULT '0',
+  `mod_max_wood` int(11) NOT NULL DEFAULT '0',
+  `mod_max_stone` int(11) NOT NULL DEFAULT '0',
+  `mod_max_iron` int(11) NOT NULL DEFAULT '0',
+  `mod_max_mana` int(11) NOT NULL DEFAULT '0',
+  `mod_rate_food` float NOT NULL DEFAULT '0',
+  `mod_rate_wood` float NOT NULL DEFAULT '0',
+  `mod_rate_stone` float NOT NULL DEFAULT '0',
+  `mod_rate_iron` float NOT NULL DEFAULT '0',
+  `mod_rate_mana` float NOT NULL DEFAULT '0',
+  `mod_percent_food` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_wood` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_stone` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_iron` int(11) NOT NULL DEFAULT '0',
+  `mod_percent_mana` int(11) NOT NULL DEFAULT '0',
+  `mod_create_id` int(11) NOT NULL DEFAULT '0',
+  `mod_spell_id` int(11) NOT NULL DEFAULT '0',
+  `flag_ai` int(11) NOT NULL DEFAULT '0',
+  `is_secondary` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+
+--
+-- Dumping data for table `technologies`
+--
+
+INSERT INTO `technologies` (`id`, `description`, `time`, `score`, `cost_food`, `cost_wood`, `cost_stone`, `cost_iron`, `cost_mana`, `mod_max_food`, `mod_max_wood`, `mod_max_stone`, `mod_max_iron`, `mod_max_mana`, `mod_rate_food`, `mod_rate_wood`, `mod_rate_stone`, `mod_rate_iron`, `mod_rate_mana`, `mod_percent_food`, `mod_percent_wood`, `mod_percent_stone`, `mod_percent_iron`, `mod_percent_mana`, `mod_create_id`, `mod_spell_id`, `flag_ai`, `is_secondary`) VALUES
+(1, 'This will do something.', 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0.001, 0.001, 0.001, 0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(2, 'Allows you to track bugs.', 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0.1, 0.1, 0.1, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(3, 'Corn F opt test', 60, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+(4, 'Corn F opt test 2', 60, 0, 200, 200, 200, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+(5, 'Corn F test3', 60, 0, 100, 100, 100, 100, 100, 30, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(6, 'Test for the wicked.', 50, 10, 100000, 10000, 10000, 20000000, 20000, 30000, 20000, 20000, 20000, 20000, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `technology_groups`
+--
+
+CREATE TABLE IF NOT EXISTS `technology_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `groupid` int(11) NOT NULL,
+  `technologyid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=14 ;
+
+--
+-- Dumping data for table `technology_groups`
+--
+
+INSERT INTO `technology_groups` (`id`, `groupid`, `technologyid`) VALUES
+(3, 1, 1),
+(4, 1, 2),
+(5, 2, 1),
+(7, 3, 3),
+(8, 3, 4),
+(11, 2, 2),
+(12, 2, 5),
+(13, 2, 6);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `technology_group_descriptions`
+--
+
+CREATE TABLE IF NOT EXISTS `technology_group_descriptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_name` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+
+--
+-- Dumping data for table `technology_group_descriptions`
+--
+
+INSERT INTO `technology_group_descriptions` (`id`, `group_name`) VALUES
+(1, 'Lumber Mill R1-5'),
+(2, 'Corn Field R1-5'),
+(3, 'Corn Field R1-5 Sec');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `technology_have_requirements`
+--
+
+CREATE TABLE IF NOT EXISTS `technology_have_requirements` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `technologyid` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `technologyid` (`technologyid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+
+--
+-- Dumping data for table `technology_have_requirements`
+--
+
+INSERT INTO `technology_have_requirements` (`id`, `technologyid`, `comment`) VALUES
+(3, 2, 'test1'),
+(5, 4, 'Corn F opt test r1-5 sec');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `technology_requirements`
+--
+
+CREATE TABLE IF NOT EXISTS `technology_requirements` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `technologyid` int(11) NOT NULL,
+  `req_tech_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `technologyid` (`technologyid`,`req_tech_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+
+--
+-- Dumping data for table `technology_requirements`
+--
+
+INSERT INTO `technology_requirements` (`id`, `technologyid`, `req_tech_id`) VALUES
+(7, 2, 1),
+(8, 4, 3);
+
+
+*/
 }
 void BuildingNode::drop_table() {
 	Ref<TableBuilder> tb = get_table_builder();

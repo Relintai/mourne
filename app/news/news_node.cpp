@@ -34,6 +34,17 @@ bool NewsNode::admin_full_render() {
 	return false;
 }
 
+/*
+
+CREATE TABLE IF NOT EXISTS `news` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `written_by` varchar(32) NOT NULL,
+  `text` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+*/
+
 NewsNode::NewsNode() :
 		AdminNode() {
 }

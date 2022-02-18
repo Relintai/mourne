@@ -34,6 +34,30 @@ bool ChangelogNode::admin_full_render() {
 	return false;
 }
 
+/*
+CREATE TABLE IF NOT EXISTS `changelog_commits` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `versionid` int(11) NOT NULL,
+  `text` text NOT NULL,
+  `timestamp` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `changelog_versions`
+--
+
+CREATE TABLE IF NOT EXISTS `changelog_versions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version` varchar(64) NOT NULL,
+  `timestamp` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+*/
+
 ChangelogNode::ChangelogNode() :
 		AdminNode() {
 }

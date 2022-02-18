@@ -25,7 +25,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `ai_settings`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `ai_settings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `setting` text NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `ai_settings` (
 --
 -- Dumping data for table `ai_settings`
 --
-
+--done
 INSERT INTO `ai_settings` (`id`, `setting`, `value`, `description`) VALUES
 (1, 'on', '1', '1 if AI is on, 0 if AI is off.'),
 (2, 'max_attack_village_limit', '15', 'Max number of Ai Village that can attack at the same time.'),
@@ -49,7 +49,7 @@ INSERT INTO `ai_settings` (`id`, `setting`, `value`, `description`) VALUES
 --
 -- Table structure for table `ai_units`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `ai_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `ai_units` (
 --
 -- Dumping data for table `ai_units`
 --
-
+--done
 INSERT INTO `ai_units` (`id`, `name`, `icon`, `ability`, `can_carry`, `attack`, `defense`, `rate`, `per_score`, `turn`, `strong_against`, `weak_against`) VALUES
 (1, 'Soilder', 'E_NOTIMPL', 2, 1, 1, 1, 0.5, 3, 2, 0, 0),
 (2, 'test2', 'E_NOTIMPL', 1, 0, 1, 1, 1, 5, 1, 0, 0);
@@ -123,6 +123,7 @@ INSERT INTO `assignments` (`id`, `unitid`, `max`, `bonus_per_assigned`, `spellid
 -- Table structure for table `attacks`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `attacks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -187,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
 --
 -- Dumping data for table `buildings`
 --
-
+--done
 INSERT INTO `buildings` (`id`, `name`, `description`, `icon`, `rank`, `next_rank`, `time_to_build`, `creates`, `num_creates`, `score`, `defense`, `ability`, `cost_food`, `cost_wood`, `cost_stone`, `cost_iron`, `cost_mana`, `mod_max_food`, `mod_max_wood`, `mod_max_stone`, `mod_max_iron`, `mod_max_mana`, `mod_rate_food`, `mod_rate_wood`, `mod_rate_stone`, `mod_rate_iron`, `mod_rate_mana`, `mod_percent_food`, `mod_percent_wood`, `mod_percent_stone`, `mod_percent_iron`, `mod_percent_mana`, `assignment1`, `assignment2`, `assignment3`, `assignment4`, `assignment5`, `req_tech`, `tech_group`, `tech_secondary_group`) VALUES
 (1, 'empty', '', 'empty/empty.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (2, 'Build in Progress', '', 'bip/bip.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -270,6 +271,7 @@ CREATE TABLE IF NOT EXISTS `building_spell_cooldowns` (
 -- Table structure for table `changelog_commits`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `changelog_commits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `versionid` int(11) NOT NULL,
@@ -284,6 +286,7 @@ CREATE TABLE IF NOT EXISTS `changelog_commits` (
 -- Table structure for table `changelog_versions`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `changelog_versions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version` varchar(64) NOT NULL,
@@ -297,6 +300,7 @@ CREATE TABLE IF NOT EXISTS `changelog_versions` (
 -- Table structure for table `combat_logs`
 --
 
+--done
 CREATE TABLE IF NOT EXISTS `combat_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -316,6 +320,7 @@ CREATE TABLE IF NOT EXISTS `combat_logs` (
 -- Table structure for table `db_version`
 --
 
+-- Not needed Settings can handle it
 CREATE TABLE IF NOT EXISTS `db_version` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version` int(11) NOT NULL,
@@ -325,7 +330,7 @@ CREATE TABLE IF NOT EXISTS `db_version` (
 --
 -- Dumping data for table `db_version`
 --
-
+-- Not needed
 INSERT INTO `db_version` (`id`, `version`) VALUES
 (1, 1363701677);
 
@@ -334,7 +339,7 @@ INSERT INTO `db_version` (`id`, `version`) VALUES
 --
 -- Table structure for table `events`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `villageid` int(11) NOT NULL,
@@ -351,7 +356,7 @@ CREATE TABLE IF NOT EXISTS `events` (
 --
 -- Table structure for table `heroes`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `heroes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,
@@ -442,7 +447,7 @@ CREATE TABLE IF NOT EXISTS `heroes` (
 --
 -- Table structure for table `heros_inventory`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `heros_inventory` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `charid` int(11) NOT NULL DEFAULT '0',
@@ -464,7 +469,7 @@ CREATE TABLE IF NOT EXISTS `heros_inventory` (
 --
 -- Table structure for table `hero_inventory_templates`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `hero_inventory_templates` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `classid` tinyint(4) NOT NULL DEFAULT '0',
@@ -481,7 +486,7 @@ CREATE TABLE IF NOT EXISTS `hero_inventory_templates` (
 --
 -- Table structure for table `hero_items`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `hero_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(60) NOT NULL,
@@ -553,7 +558,7 @@ CREATE TABLE IF NOT EXISTS `hero_items` (
 --
 -- Table structure for table `hero_templates`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `hero_templates` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `classname` varchar(20) NOT NULL,
@@ -595,7 +600,7 @@ CREATE TABLE IF NOT EXISTS `hero_templates` (
 --
 -- Dumping data for table `hero_templates`
 --
-
+--done
 INSERT INTO `hero_templates` (`id`, `classname`, `nomod_max_health`, `nomod_max_mana`, `max_health`, `max_mana`, `agility`, `strength`, `stamina`, `intellect`, `spirit`, `nomod_attackpower`, `attackpower`, `armor`, `dodge`, `nomod_dodge`, `parry`, `nomod_parry`, `hit`, `crit`, `nomod_crit`, `nomod_damage_min`, `nomod_damage_max`, `damage_min`, `damage_max`, `ranged_damage_min`, `ranged_damage_max`, `nomod_ranged_damage_min`, `nomod_ranged_damage_max`, `nomod_heal_min`, `nomod_heal_max`, `heal_min`, `heal_max`) VALUES
 (1, 'Warrior', 100, 50, 250, 150, 10, 10, 15, 10, 10, 100, 400, 0, 5.3333333333333, 5, 5.3333333333333, 5, 80, 5.75, 5, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 0, 0),
 (2, 'Rogue', 100, 100, 200, 200, 15, 10, 10, 10, 10, 30, 0, 0, 5.5, 5, 5.3333333333333, 5, 85, 0, 5, 1, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -606,7 +611,7 @@ INSERT INTO `hero_templates` (`id`, `classname`, `nomod_max_health`, `nomod_max_
 --
 -- Table structure for table `mails`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `mails` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `owner` int(11) NOT NULL,
@@ -628,7 +633,7 @@ CREATE TABLE IF NOT EXISTS `mails` (
 --
 -- Table structure for table `mail_drafts`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `mail_drafts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,
@@ -652,7 +657,7 @@ CREATE TABLE IF NOT EXISTS `mail_drafts` (
 --
 -- Table structure for table `mail_sent`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `mail_sent` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,
@@ -674,7 +679,7 @@ CREATE TABLE IF NOT EXISTS `mail_sent` (
 --
 -- Table structure for table `news`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `news` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `written_by` varchar(32) NOT NULL,
@@ -751,7 +756,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 -- Table structure for table `spells`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `spells` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `effect` int(11) NOT NULL DEFAULT '0',
@@ -786,7 +791,7 @@ CREATE TABLE IF NOT EXISTS `spells` (
 --
 -- Dumping data for table `spells`
 --
-
+--done
 INSERT INTO `spells` (`id`, `effect`, `duration`, `cooldown`, `description`, `description_admin`, `weather_change_to`, `cost_food`, `cost_wood`, `cost_stone`, `cost_iron`, `cost_mana`, `mod_max_food`, `mod_max_wood`, `mod_max_stone`, `mod_max_iron`, `mod_max_mana`, `mod_rate_food`, `mod_rate_wood`, `mod_rate_stone`, `mod_rate_iron`, `mod_rate_mana`, `mod_percent_food`, `mod_percent_wood`, `mod_percent_stone`, `mod_percent_iron`, `mod_percent_mana`) VALUES
 (1, 0, 60, 70, 'Increases productivity of this building, by a small amount.', 'Test spell', 0, 400, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10),
 (2, 0, 100, 100, 'Increases the food production rate of this building.', 'Test spell 2 (over the top crazy)', 0, 140, 140, 140, 140, 140, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0);
@@ -796,7 +801,7 @@ INSERT INTO `spells` (`id`, `effect`, `duration`, `cooldown`, `description`, `de
 --
 -- Table structure for table `technologies`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `technologies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `description` text NOT NULL,
@@ -832,7 +837,7 @@ CREATE TABLE IF NOT EXISTS `technologies` (
 --
 -- Dumping data for table `technologies`
 --
-
+--done
 INSERT INTO `technologies` (`id`, `description`, `time`, `score`, `cost_food`, `cost_wood`, `cost_stone`, `cost_iron`, `cost_mana`, `mod_max_food`, `mod_max_wood`, `mod_max_stone`, `mod_max_iron`, `mod_max_mana`, `mod_rate_food`, `mod_rate_wood`, `mod_rate_stone`, `mod_rate_iron`, `mod_rate_mana`, `mod_percent_food`, `mod_percent_wood`, `mod_percent_stone`, `mod_percent_iron`, `mod_percent_mana`, `mod_create_id`, `mod_spell_id`, `flag_ai`, `is_secondary`) VALUES
 (1, 'This will do something.', 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0.001, 0.001, 0.001, 0.001, 0.001, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (2, 'Allows you to track bugs.', 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0.1, 0.1, 0.1, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -846,7 +851,7 @@ INSERT INTO `technologies` (`id`, `description`, `time`, `score`, `cost_food`, `
 --
 -- Table structure for table `technology_groups`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `technology_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `groupid` int(11) NOT NULL,
@@ -857,7 +862,7 @@ CREATE TABLE IF NOT EXISTS `technology_groups` (
 --
 -- Dumping data for table `technology_groups`
 --
-
+--done
 INSERT INTO `technology_groups` (`id`, `groupid`, `technologyid`) VALUES
 (3, 1, 1),
 (4, 1, 2),
@@ -873,7 +878,7 @@ INSERT INTO `technology_groups` (`id`, `groupid`, `technologyid`) VALUES
 --
 -- Table structure for table `technology_group_descriptions`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `technology_group_descriptions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` text NOT NULL,
@@ -883,7 +888,7 @@ CREATE TABLE IF NOT EXISTS `technology_group_descriptions` (
 --
 -- Dumping data for table `technology_group_descriptions`
 --
-
+--done
 INSERT INTO `technology_group_descriptions` (`id`, `group_name`) VALUES
 (1, 'Lumber Mill R1-5'),
 (2, 'Corn Field R1-5'),
@@ -894,7 +899,7 @@ INSERT INTO `technology_group_descriptions` (`id`, `group_name`) VALUES
 --
 -- Table structure for table `technology_have_requirements`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `technology_have_requirements` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `technologyid` int(11) NOT NULL,
@@ -906,7 +911,7 @@ CREATE TABLE IF NOT EXISTS `technology_have_requirements` (
 --
 -- Dumping data for table `technology_have_requirements`
 --
-
+--done
 INSERT INTO `technology_have_requirements` (`id`, `technologyid`, `comment`) VALUES
 (3, 2, 'test1'),
 (5, 4, 'Corn F opt test r1-5 sec');
@@ -916,7 +921,7 @@ INSERT INTO `technology_have_requirements` (`id`, `technologyid`, `comment`) VAL
 --
 -- Table structure for table `technology_requirements`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `technology_requirements` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `technologyid` int(11) NOT NULL,
@@ -928,7 +933,7 @@ CREATE TABLE IF NOT EXISTS `technology_requirements` (
 --
 -- Dumping data for table `technology_requirements`
 --
-
+--done
 INSERT INTO `technology_requirements` (`id`, `technologyid`, `req_tech_id`) VALUES
 (7, 2, 1),
 (8, 4, 3);
@@ -938,7 +943,7 @@ INSERT INTO `technology_requirements` (`id`, `technologyid`, `req_tech_id`) VALU
 --
 -- Table structure for table `units`
 --
-
+--done
 CREATE TABLE IF NOT EXISTS `units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) NOT NULL,
@@ -971,7 +976,7 @@ CREATE TABLE IF NOT EXISTS `units` (
 --
 -- Dumping data for table `units`
 --
-
+--done
 INSERT INTO `units` (`id`, `type`, `name`, `icon`, `score`, `can_defend`, `defense`, `attack`, `weak_against`, `strong_against`, `turn`, `ability`, `time_to_create`, `cost_unit`, `cost_num_unit`, `cost_food`, `cost_wood`, `cost_stone`, `cost_iron`, `cost_mana`, `mod_rate_food`, `mod_rate_wood`, `mod_rate_stone`, `mod_rate_iron`, `mod_rate_mana`) VALUES
 (1, 0, 'Villager', 'E_NOTIMPL', 1, 1, 5, 2, 1, 0, 1, 0, 5, 0, 0, 100, 1, 1, 1, 0, 0.001, 0, 0, 0, 0),
 (2, 0, 'Tester', 'E_NOTIMPL', 0, 0, 0, 0, 0, 0, 0, 0, 10, 1, 1, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -1111,7 +1116,7 @@ CREATE TABLE IF NOT EXISTS `weathers` (
 --
 -- Dumping data for table `weathers`
 --
-
+--done
 INSERT INTO `weathers` (`id`, `name`, `description`, `art`, `css`, `effect`, `mod_max_food`, `mod_max_wood`, `mod_max_stone`, `mod_max_iron`, `mod_max_mana`, `mod_percent_food`, `mod_percent_wood`, `mod_percent_stone`, `mod_percent_iron`, `mod_percent_mana`) VALUES
 (1, 'Sunny', 'Your maximum food increases by 1000, also increases food production by 10%.', 'E_NOTIMPL', 'sunny', 0, 1000, 0, 0, 0, 0, 10, 0, 0, 0, 0),
 (2, 'Cold', 'Your max iron increases by 1000, also iron production increases by 10%.', 'E_NOTIMPL', 'cold', 0, 0, 0, 0, 1000, 0, 0, 0, 0, 10, 0);

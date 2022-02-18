@@ -41,6 +41,7 @@ folders = [
     'app/event',
     'app/hero',
     'app/mail',
+    'app/units',
     'app/news',
     'app/village',
     'app/weather',

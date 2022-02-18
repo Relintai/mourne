@@ -198,6 +198,44 @@ void VillageNode::create_table() {
 	//tb->print();
 
 	tb->result = "";
+
+	/*
+	CREATE TABLE IF NOT EXISTS `attacks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `villageid` int(11) NOT NULL,
+  `attackid` int(11) NOT NULL,
+  `ai_unitid` int(11) NOT NULL,
+  `ai_unitcount` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `villageid` (`villageid`,`attackid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+*/
+
+/*
+CREATE TABLE IF NOT EXISTS `combat_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `villageid` int(11) NOT NULL,
+  `time` int(11) NOT NULL,
+  `new` tinyint(4) NOT NULL,
+  `log` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
+*/
+
+/*
+CREATE TABLE IF NOT EXISTS `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `villageid` int(11) NOT NULL,
+  `slotid` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
+  `end` int(11) NOT NULL,
+  `data1` int(11) NOT NULL,
+  `data2` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+*/
+
 }
 
 #define VILLAGE_BUILDING_SPELLS_TABLE_NAME "village_building_spells"

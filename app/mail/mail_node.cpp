@@ -34,6 +34,68 @@ bool MailNode::admin_full_render() {
 	return false;
 }
 
+/*
+CREATE TABLE IF NOT EXISTS `mails` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner` int(11) NOT NULL,
+  `sender` int(11) NOT NULL,
+  `time` int(11) NOT NULL,
+  `subject` text NOT NULL,
+  `body` text NOT NULL,
+  `new` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `owner` (`owner`,`sender`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
+
+--
+-- Dumping data for table `mails`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mail_drafts`
+--
+
+CREATE TABLE IF NOT EXISTS `mail_drafts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userid` int(11) NOT NULL,
+  `friend` int(11) NOT NULL,
+  `name` text NOT NULL,
+  `X` int(11) NOT NULL,
+  `Y` int(11) NOT NULL,
+  `time` int(11) NOT NULL,
+  `subject` text NOT NULL,
+  `body` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `time` (`time`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `mail_drafts`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mail_sent`
+--
+
+CREATE TABLE IF NOT EXISTS `mail_sent` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userid` int(11) NOT NULL,
+  `to_id` int(11) NOT NULL,
+  `to` text NOT NULL,
+  `time` int(11) NOT NULL,
+  `subject` text NOT NULL,
+  `body` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+
+
+*/
+
 MailNode::MailNode() :
 		AdminNode() {
 }
